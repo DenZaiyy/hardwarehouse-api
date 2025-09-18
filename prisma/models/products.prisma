@@ -1,0 +1,14 @@
+model Products {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  slug       String     @unique
+  image      String?
+  price      Float
+  categoryId String     @db.ObjectId
+  category   Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  Stocks     Stocks[]
+  Brands     Brands?    @relation(fields: [brandsId], references: [id])
+  brandsId   String?    @db.ObjectId
+
+  @@index([categoryId])
+}

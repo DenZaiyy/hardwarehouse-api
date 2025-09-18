@@ -1,0 +1,8 @@
+model Stocks {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  quantity  Int
+  product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}
