@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import slugify from "slugify";
+import {slugifyName} from "@/lib/utils";
 
 type TProductParams = {
     params: Promise<{ id: string}>
@@ -47,11 +47,7 @@ export async function PATCH(req: NextRequest, { params }: TProductParams) {
         if (name) {
             updateData.name = name;
             // Générer le slug seulement si le nom change
-            updateData.slug = slugify(name, {
-                lower: true,
-                strict: true,
-                locale: 'fr'
-            });
+            updateData.slug = slugifyName(name);
         }
 
         if (price !== undefined) updateData.price = price;

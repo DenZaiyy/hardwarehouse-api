@@ -1,19 +1,19 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import slugify from "slugify";
+import {slugifyName} from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
     try {
         const searchParams = req.nextUrl.searchParams;
-        const searchByName = searchParams.get('name');
-        const searchByCategory = searchParams.get('category');
-        const searchByItemsPerPage = searchParams.get('itemsPerPage');
+        const filterByName = searchParams.get('name');
+        const filterByCategory = searchParams.get('category');
+        const filterByItemsPerPage = searchParams.get('itemsPerPage');
 
-        if (searchByName) {
+        if (filterByName) {
             const productByName = await db.products.findMany({
                 where: {
                     name: {
-                        contains: searchByName,
+                        contains: filterByName,
                         mode: 'insensitive'
                     }
                 },
@@ -27,12 +27,12 @@ export async function GET(req: NextRequest) {
             return NextResponse.json(productByName, { status: 200 });
         }
 
-        if (searchByCategory) {
+        if (filterByCategory) {
             const productByCategory = await db.products.findMany({
                 where: {
                     category: {
                         name: {
-                            contains: searchByCategory,
+                            contains: filterByCategory,
                             mode: 'insensitive'
                         }
                     }
@@ -47,8 +47,8 @@ export async function GET(req: NextRequest) {
             return NextResponse.json(productByCategory, { status: 200 });
         }
 
-        if (searchByItemsPerPage) {
-            const itemsPerPage = parseInt(searchByItemsPerPage, 10);
+        if (filterByItemsPerPage) {
+            const itemsPerPage = parseInt(filterByItemsPerPage, 10);
             if (isNaN(itemsPerPage) || itemsPerPage <= 0) {
                 return new NextResponse("Invalid itemsPerPage parameter", { status: 400 });
             }
@@ -73,9 +73,11 @@ export async function GET(req: NextRequest) {
             }
         });
 
-        return NextResponse.json(products, { status: 200, statusText: 'OK' });
+        return NextResponse.json(products, { status: 200 });
     } catch (error) {
-        console.error('[PRODUCTS] ', error)
+        if (error instanceof Error) {
+            console.error('[PRODUCTS] ', error.message)
+        }
         return new NextResponse('Internal Error', { status: 500 });
     }
 }
@@ -85,11 +87,7 @@ export async function POST(req: NextRequest) {
 
     if (!name || !price || !categoryId) return new NextResponse("Missing required fields", { status: 400});
 
-    const slug = slugify(name, {
-        lower: true,      // Convertir en minuscules
-        strict: true,     // Supprimer tous les caractères spéciaux
-        locale: 'fr'      // Support spécifique pour le français
-    });
+    const slug = slugifyName(name)
 
     const existingProduct = await db.products.findUnique({
         where: { slug }

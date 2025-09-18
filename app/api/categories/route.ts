@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import slugify from "slugify";
+import {slugifyName} from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
     try {
@@ -34,11 +34,7 @@ export async function POST(req: NextRequest) {
 
     if (!name) return new NextResponse("Missing required fields", { status: 400});
 
-    const slug = slugify(name, {
-        lower: true,      // Convertir en minuscules
-        strict: true,     // Supprimer tous les caractères spéciaux
-        locale: 'fr'      // Support spécifique pour le français
-    });
+    const slug = slugifyName(name);
 
     const existingCategory = await db.categories.findUnique({
         where: { slug }
