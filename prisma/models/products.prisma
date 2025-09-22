@@ -9,6 +9,8 @@ model Products {
   Stocks     Stocks[]
   Brands     Brands?    @relation(fields: [brandsId], references: [id])
   brandsId   String?    @db.ObjectId
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 
   @@index([categoryId])
 }
