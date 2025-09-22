@@ -14,10 +14,13 @@
     "db:reset": "prisma db push --force-reset && npm run db:seed"
   },
   "dependencies": {
+    "@clerk/localizations": "^3.25.1",
+    "@clerk/nextjs": "^6.32.0",
     "@prisma/client": "^6.16.2",
     "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-hot-toast": "^2.6.0",
     "slugify": "^1.6.6"
   },
   "devDependencies": {
