@@ -2,10 +2,6 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {slugifyName} from "@/lib/utils";
 
-type TProductParams = {
-    params: Promise<{ id: string}>
-}
-
 interface UpdateProductData {
     name?: string;
     slug?: string;
@@ -14,8 +10,8 @@ interface UpdateProductData {
     categoryId?: string;
 }
 
-export async function GET(req: NextRequest, { params }: TProductParams) {
-    const { id } = await params;
+export async function GET(_req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
+    const { id } = await ctx.params;
 
     try {
         const product = await db.products.findUnique({
@@ -24,6 +20,10 @@ export async function GET(req: NextRequest, { params }: TProductParams) {
             }
         });
 
+        if (!product) {
+            return new NextResponse('Product not found', { status: 404 });
+        }
+
         return NextResponse.json(product, { status: 200 });
     } catch (error) {
         console.error('[PRODUCT] ', error)
@@ -31,9 +31,9 @@ export async function GET(req: NextRequest, { params }: TProductParams) {
     }
 }
 
-export async function PATCH(req: NextRequest, { params }: TProductParams) {
-    const { id } = await params;
-    const { name, price, image, categoryId } = await req.json();
+export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
+    const { id } = await ctx.params;
+    const { name, price, image, categoryId } = await _req.json();
 
     // Vérifier qu'au moins un champ est fourni
     if (!name && !price && !image && !categoryId) {
@@ -43,15 +43,22 @@ export async function PATCH(req: NextRequest, { params }: TProductParams) {
     try {
         // Construire l'objet de données dynamiquement
         const updateData: UpdateProductData = {};
+        const product = await db.products.findUnique({
+            where: { id }
+        })
 
-        if (name) {
+        if (!product) {
+            return new NextResponse('Product not found', { status: 404 });
+        }
+
+        if (name !== product.name) {
             updateData.name = name;
             // Générer le slug seulement si le nom change
             updateData.slug = slugifyName(name);
         }
 
-        if (price !== undefined) updateData.price = price;
-        if (image !== undefined) updateData.image = image;
+        if (price !== product.price) updateData.price = price;
+        if (image !== product.image) updateData.image = image;
         if (categoryId) updateData.categoryId = categoryId;
 
         const updatedProduct = await db.products.update({
@@ -68,10 +75,20 @@ export async function PATCH(req: NextRequest, { params }: TProductParams) {
     }
 }
 
-export async function DELETE(req: NextRequest, { params } : TProductParams) {
-    const { id } = await params;
+export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
+    const { id } = await ctx.params;
 
     try {
+        const product = await db.products.findUnique({
+            where: {
+                id
+            }
+        });
+
+        if (!product) {
+            return new NextResponse('Product not found', { status: 404 });
+        }
+
         await db.products.delete({
             where: {
                 id
