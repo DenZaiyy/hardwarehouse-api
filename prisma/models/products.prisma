@@ -6,8 +6,8 @@ model Products {
   price      Float
   categoryId String     @db.ObjectId
   category   Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  Stocks     Stocks[]
-  Brands     Brands?    @relation(fields: [brandsId], references: [id])
+  stocks     Stocks[]
+  brand      Brands?    @relation(fields: [brandsId], references: [id])
   brandsId   String?    @db.ObjectId
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
