@@ -1,4 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('../app/generated/prisma');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const slugify = require('slugify');
 
 const prisma = new PrismaClient();
