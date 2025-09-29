@@ -1,37 +1,14 @@
-interface TProduct {
-    id: string,
-    name: string,
-    slug: string
-    image?: string,
-    price: number,
-    category: TCategory,
-    Brands: TBrand,
-    createdAt: string,
-    updatedAt: string
+export interface ProductFilters {
+    name?: string;
+    category?: string;
+    brand?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    page?: number;
+    itemsPerPage?: number;
 }
 
-interface TCategory {
-    id: string,
-    name: string,
-    logo?: string,
-    slug: string,
-    createdAt: string,
-    updatedAt: string,
-    products: TProduct[]
-}
-
-interface TBrand {
-    id: string,
-    name: string,
-    logo?: string,
-    slug: string,
-    createdAt: string,
-    updatedAt: string,
-    products: TProduct[]
-}
-
-interface TStock {
-    id: string,
-    product: TProduct,
-    quantity: number
+export interface BrandFilters {
+    page?: number;
+    itemsPerPage?: number;
 }
