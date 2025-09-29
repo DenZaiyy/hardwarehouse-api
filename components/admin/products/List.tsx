@@ -2,59 +2,49 @@
 
 import Image from "next/image";
 import {useState} from "react";
+import {Products} from "@/app/generated/prisma/client";
+import {formatDate} from "@/lib/utils";
+import ProductDetailModal from "@/components/modal/ProductDetailModal";
 
-export default function List({products} : {products: TProduct[]} ) {
+type Props = {
+    products: Products[];
+}
 
-    const [results, setResults] = useState<TProduct[]>(products);
+export default function List({products } : Props) {
 
-    function handleSearch(q: string) {
-        const terms = q.toLowerCase().split(/\s+/).filter(Boolean)
+    const [selectedProduct, setSelectedProduct] = useState<Products | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-        const filteredProducts = products.filter(product => {
-            const haystack = [
-                product.name?.toLowerCase() || "",
-                product.category?.name?.toLowerCase() || "",
-                product.Brands?.name?.toLowerCase() || "",
-            ].join(" ")
+    function handleShowDetails(product: Products) {
+        setSelectedProduct(product);
+        setIsModalOpen(true);
+    }
 
-            // all search terms must appear somewhere
-            return terms.every(term => haystack.includes(term))
-        })
-
-        setResults(filteredProducts)
+    function handleCloseModal() {
+        setIsModalOpen(false);
+        setSelectedProduct(null);
     }
 
     return (
         <>
-            <div className="mb-4 flex gap-4">
-                <input
-                    type="text"
-                    name="name"
-                    onChange={(e) => handleSearch(e.target.value)}
-                    placeholder="Rechercher un produit..."
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-
-                <button className="p-4 rounded-md bg-background min-w-max cursor-pointer">Add product</button>
-            </div>
             <table>
                 <thead>
                 <tr>
                     <th>ID</th>
-                    <th>Name</th>
+                    <th>Nom</th>
                     <th>Slug</th>
                     <th>Image</th>
-                    <th>Price</th>
-                    <th>Category</th>
-                    <th>Brand</th>
-                    <th>Created At</th>
-                    <th>Updated At</th>
+                    <th>Prix</th>
+                    <th>Catégorie</th>
+                    <th>Marque</th>
+                    <th>Crée le</th>
+                    <th>Mise à jour le</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                {results && results.length > 0 ? (
-                    results.map((product) => (
+                {products && products.length > 0 ? (
+                    products.map((product) => (
                         <tr key={product.id}>
                             <td>{product.id}</td>
                             <td>{product.name}</td>
@@ -66,14 +56,20 @@ export default function List({products} : {products: TProduct[]} ) {
                                     'No Image'
                                 )}
                             </td>
-                            <td>${product.price}</td>
+                            <td>{product.price} €</td>
                             <td>{product.category ? product.category.name : 'Uncategorized'}</td>
-                            <td>{product.Brands ? product.Brands.name : 'No Brand'}</td>
-                            <td>{product.createdAt}</td>
-                            <td>{product.updatedAt}</td>
-                            <td>
-                                <button className="bg-blue-500 text-foreground hover:underline">Edit</button>
-                                <button className="bg-red-500 text-foreground hover:underline">Delete</button>
+                            <td>{product.brand ? product.brand.name : 'No Brand'}</td>
+                            <td>{formatDate(product.createdAt)}</td>
+                            <td>{formatDate(product.updatedAt)}</td>
+                            <td className={isModalOpen ? ' is-active' : ''}>
+                                <button
+                                    onClick={() => handleShowDetails(product)}
+                                    className="bg-green-500 text-foreground hover:underline mr-2 p-2 rounded cursor-pointer"
+                                >
+                                    View
+                                </button>
+                                <button className="bg-blue-500 text-foreground hover:underline mr-2 p-2 rounded cursor-pointer">Edit</button>
+                                <button className="bg-red-500 text-foreground hover:underline p-2 rounded cursor-pointer">Delete</button>
                             </td>
                         </tr>
                     ))
@@ -84,6 +80,13 @@ export default function List({products} : {products: TProduct[]} ) {
                 )}
                 </tbody>
             </table>
+
+            <ProductDetailModal
+                title="Product Details"
+                product={selectedProduct}
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+            />
         </>
     )
 }
