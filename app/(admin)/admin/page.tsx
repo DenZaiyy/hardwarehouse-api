@@ -14,7 +14,6 @@ export default function DashboardPage() {
                 <div className="mt-8 w-full bg-white p-6 rounded-lg shadow-md">
                     <h2 className="mix-blend-difference">Manage Products and Categories</h2>
                     <p className="text-gray-600">Use the navigation menu to manage products and categories.</p>
-                    {/* Add more admin functionalities here */}
                 </div>
             </div>
         </>

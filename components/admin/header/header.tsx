@@ -17,9 +17,9 @@ export default function Header() {
             <div className="flex md:flex-1 md:flex-col">
                 <ul className="flex flex-col">
                     <li className="border-b border-[#427AA1]">
-                        <Link href={'/admin/products'} className={`flex py-4 px-8 items-center hover:bg-[#427AA1]/10 transition-all duration-300 group`}>Products</Link>
-                        <Link href={'/admin/categories'} className={`flex py-4 px-8 items-center hover:bg-[#427AA1]/10 transition-all duration-300 group`}>Categories</Link>
-                        <Link href={'/admin/brands'} className={`flex py-4 px-8 items-center hover:bg-[#427AA1]/10 transition-all duration-300 group`}>Brands</Link>
+                        <Link href={'/admin/products'} className={`flex py-4 px-8 items-center hover:bg-[#427AA1]/10 transition-all duration-300 group ${pathname.includes('/products') && 'bg-[#427AA1]/10'}`}>Products</Link>
+                        <Link href={'/admin/categories'} className={`flex py-4 px-8 items-center hover:bg-[#427AA1]/10 transition-all duration-300 group ${pathname.includes('/categories') && 'bg-[#427AA1]/10'}`}>Categories</Link>
+                        <Link href={'/admin/brands'} className={`flex py-4 px-8 items-center hover:bg-[#427AA1]/10 transition-all duration-300 group ${pathname.includes('/brands') && 'bg-[#427AA1]/10'}`}>Brands</Link>
                     </li>
                 </ul>
             </div>
