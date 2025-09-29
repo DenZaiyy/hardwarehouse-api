@@ -1,75 +1,105 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {slugifyName} from "@/lib/utils";
+import {Prisma} from "@/app/generated/prisma/client";
 
 export async function GET(req: NextRequest) {
     try {
         const searchParams = req.nextUrl.searchParams;
         const filterByName = searchParams.get('name');
         const filterByCategory = searchParams.get('category');
+        const filterByBrand = searchParams.get('brand');
+        const filterByMinPrice = searchParams.get('minPrice');
+        const filterByMaxPrice = searchParams.get('maxPrice');
+        const filterByPage = searchParams.get('page');
         const filterByItemsPerPage = searchParams.get('itemsPerPage');
 
+        // Build the where clause dynamically
+        const whereClause: Prisma.ProductsWhereInput = {};
+        const andConditions: Prisma.ProductsWhereInput[] = [];
+
+        // Name filter
         if (filterByName) {
-            const productByName = await db.products.findMany({
-                where: {
-                    name: {
-                        contains: filterByName,
-                        mode: 'insensitive'
-                    }
-                },
-                include: {
-                    category: true,
-                    Stocks: true,
-                    Brands: true
+            andConditions.push({
+                name: {
+                    contains: filterByName,
+                    mode: 'insensitive'
                 }
-            })
-
-            return NextResponse.json(productByName, { status: 200 });
+            });
         }
 
+        // Category filter (supports multiple categories separated by comma)
         if (filterByCategory) {
-            const productByCategory = await db.products.findMany({
-                where: {
-                    category: {
-                        name: {
-                            contains: filterByCategory,
-                            mode: 'insensitive'
-                        }
-                    }
-                },
-                include: {
-                    category: true,
-                    Stocks: true,
-                    Brands: true
+            const categoryIds = filterByCategory.split(',');
+            andConditions.push({
+                categoryId: {
+                    in: categoryIds
                 }
-            })
-
-            return NextResponse.json(productByCategory, { status: 200 });
+            });
         }
 
-        if (filterByItemsPerPage) {
-            const itemsPerPage = parseInt(filterByItemsPerPage, 10);
-            if (isNaN(itemsPerPage) || itemsPerPage <= 0) {
-                return new NextResponse("Invalid itemsPerPage parameter", { status: 400 });
+        // Brand filter (supports multiple brands separated by comma)
+        if (filterByBrand) {
+            const brandIds = filterByBrand.split(',');
+            andConditions.push({
+                brandsId: {
+                    in: brandIds
+                }
+            });
+        }
+
+        // Price range filter
+        if (filterByMinPrice || filterByMaxPrice) {
+            const priceCondition: {gte?: number, lte?: number} = {};
+            if (filterByMinPrice) {
+                const minPrice = parseFloat(filterByMinPrice);
+                if (!isNaN(minPrice)) {
+                    priceCondition.gte = minPrice;
+                }
             }
+            if (filterByMaxPrice) {
+                const maxPrice = parseFloat(filterByMaxPrice);
+                if (!isNaN(maxPrice)) {
+                    priceCondition.lte = maxPrice;
+                }
+            }
+            if (Object.keys(priceCondition).length > 0) {
+                andConditions.push({
+                    price: priceCondition
+                });
+            }
+        }
 
-            const productsByItemsPerPage = await db.products.findMany({
-                take: itemsPerPage,
-                include: {
-                    category: true,
-                    Stocks: true,
-                    Brands: true
-                },
-            })
+        // Apply all conditions
+        if (andConditions.length > 0) {
+            whereClause.AND = andConditions;
+        }
 
-            return NextResponse.json(productsByItemsPerPage, { status: 200 });
+        // Pagination
+        const page = filterByPage ? parseInt(filterByPage, 10) : 1;
+        const itemsPerPage = filterByItemsPerPage ? parseInt(filterByItemsPerPage, 10) : undefined;
+
+        let skip = 0;
+        let take = undefined;
+
+        if (itemsPerPage && !isNaN(itemsPerPage) && itemsPerPage > 0) {
+            take = itemsPerPage;
+            if (page && !isNaN(page) && page > 0) {
+                skip = (page - 1) * itemsPerPage;
+            }
         }
 
         const products = await db.products.findMany({
+            where: whereClause,
             include: {
                 category: true,
-                Stocks: true,
-                Brands: true
+                stocks: true,
+                brand: true
+            },
+            skip,
+            take,
+            orderBy: {
+                createdAt: 'desc'
             }
         });
 
