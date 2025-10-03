@@ -1,3 +1,6 @@
+import {Prisma} from "@/app/generated/prisma/client";
+import ProductsGetPayload = Prisma.ProductsGetPayload;
+
 export interface ProductFilters {
     name?: string;
     category?: string;
@@ -12,3 +15,5 @@ export interface BrandFilters {
     page?: number;
     itemsPerPage?: number;
 }
+
+export type ProductsWithCategoryAndBrand = ProductsGetPayload<{ include: { category: true; brand: true } }>

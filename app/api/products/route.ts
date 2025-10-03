@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
         if (filterByBrand) {
             const brandIds = filterByBrand.split(',');
             andConditions.push({
-                brandsId: {
+                brandId: {
                     in: brandIds
                 }
             });
@@ -113,9 +113,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const { name, price, categoryId } = await req.json();
+    const { name, price, categoryId, brandId } = await req.json();
 
-    if (!name || !price || !categoryId) return new NextResponse("Missing required fields", { status: 400});
+    if (!name || !price || !categoryId || brandId) return new NextResponse("Missing required fields", { status: 400});
 
     const slug = slugifyName(name)
 
@@ -133,7 +133,8 @@ export async function POST(req: NextRequest) {
                 name,
                 slug,
                 price,
-                categoryId
+                categoryId,
+                brandId
             }
         })
 

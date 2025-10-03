@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { PrismaClient } = require('../app/generated/prisma');
+const { PrismaClient } = require('../app/generated/prisma/client');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const slugify = require('slugify');
 
@@ -39,43 +39,43 @@ const brandsData = [
 const categoriesData = [
     {
         name: 'Processeurs',
-        logo: 'https://example.com/logos/cpu.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Cartes mères',
-        logo: 'https://example.com/logos/motherboard.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Mémoire RAM',
-        logo: 'https://example.com/logos/ram.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Cartes graphiques',
-        logo: 'https://example.com/logos/gpu.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Disques durs',
-        logo: 'https://example.com/logos/hdd.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'SSD',
-        logo: 'https://example.com/logos/ssd.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Boîtiers',
-        logo: 'https://example.com/logos/case.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Alimentations',
-        logo: 'https://example.com/logos/psu.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Périphériques',
-        logo: 'https://example.com/logos/peripherals.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Écrans',
-        logo: 'https://example.com/logos/monitor.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     }
 ];
 
@@ -223,7 +223,7 @@ async function main() {
                     price: productData.price,
                     image: productData.image,
                     categoryId: category.id,
-                    brandsId: brand.id,
+                    brandId: brand.id,
                 },
             });
 

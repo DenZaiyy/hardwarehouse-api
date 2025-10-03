@@ -1,16 +1,16 @@
 "use client";
 
 import {Filter} from "@/components/admin/products/Filter";
-import List from "@/components/admin/products/List";
 import {useCallback, useEffect, useState} from "react";
-import {Brands, Categories, Products} from "@/app/generated/prisma/client";
+import {Brands, Categories} from "@/app/generated/prisma/client";
 import {apiProductService} from "@/services/productService";
 import {apiCategoryService} from "@/services/categoryService";
 import {apiBrandService} from "@/services/brandService";
-import {ProductFilters} from "@/types/types";
+import {ProductFilters, ProductsWithCategoryAndBrand} from "@/types/types";
+import List from "@/components/admin/products/List";
 
 export default function ProductClient() {
-    const [products, setProducts] = useState<Products[]>([]);
+    const [products, setProducts] = useState<ProductsWithCategoryAndBrand[]>([]);
     const [categories, setCategories] = useState<Categories[]>([]);
     const [brands, setBrands] = useState<Brands[]>([]);
     const [filterLoading, setFilterLoading] = useState(false);

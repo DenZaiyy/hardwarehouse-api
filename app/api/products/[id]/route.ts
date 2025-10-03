@@ -17,6 +17,10 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/products/[i
         const product = await db.products.findUnique({
             where: {
                 id: id
+            },
+            include: {
+                brand: true,
+                category: true,
             }
         });
 

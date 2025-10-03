@@ -2,20 +2,20 @@
 
 import Image from "next/image";
 import {useState} from "react";
-import {Products} from "@/app/generated/prisma/client";
 import {formatDate} from "@/lib/utils";
 import ProductDetailModal from "@/components/modal/ProductDetailModal";
+import {ProductsWithCategoryAndBrand} from "@/types/types";
 
 type Props = {
-    products: Products[];
+    products: ProductsWithCategoryAndBrand[];
 }
 
 export default function List({products } : Props) {
 
-    const [selectedProduct, setSelectedProduct] = useState<Products | null>(null);
+    const [selectedProduct, setSelectedProduct] = useState<ProductsWithCategoryAndBrand | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    function handleShowDetails(product: Products) {
+    function handleShowDetails(product: ProductsWithCategoryAndBrand) {
         setSelectedProduct(product);
         setIsModalOpen(true);
     }

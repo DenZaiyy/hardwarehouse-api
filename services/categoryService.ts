@@ -10,7 +10,7 @@ export interface CategoryService {
 
 export const apiCategoryService: CategoryService = {
     getCategories: async (): Promise<Categories[]> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, { cache: 'force-cache'});
 
         if (!res.ok) throw new Error("Failed to fetch categories");
 
@@ -18,7 +18,8 @@ export const apiCategoryService: CategoryService = {
     },
     getCategory: async (id: string): Promise<Categories> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`
+            `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
+            { cache: 'force-cache'}
         );
 
         if (!res.ok) throw new Error("Failed to fetch category");

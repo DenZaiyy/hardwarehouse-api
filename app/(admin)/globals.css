@@ -37,7 +37,7 @@ section {
 }
 
 table {
-    @apply w-full border-collapse;
+    @apply w-full border-collapse table-auto;
 }
 
 th, td {

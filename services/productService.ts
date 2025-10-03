@@ -1,16 +1,16 @@
-import {Products} from "@/app/generated/prisma/client";
-import {ProductFilters} from "@/types/types";
+import {ProductFilters, ProductsWithCategoryAndBrand} from "@/types/types";
+
 
 export interface ProductService {
-    getProducts: (filters?: ProductFilters) => Promise<Products[]>;
-    getProduct: (id: string) => Promise<Products>;
-    createProduct: (data: Partial<Products>) => Promise<Products>;
-    updateProduct: (id: string, data: Partial<Products>) => Promise<Products>;
+    getProducts: (filters?: ProductFilters) => Promise<ProductsWithCategoryAndBrand[]>;
+    getProduct: (id: string) => Promise<ProductsWithCategoryAndBrand>;
+    createProduct: (data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
+    updateProduct: (id: string, data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
     deleteProduct: (id: string) => Promise<void>;
 }
 
 export const apiProductService: ProductService = {
-    getProducts: async (filters?: ProductFilters): Promise<Products[]> => {
+    getProducts: async (filters?: ProductFilters): Promise<ProductsWithCategoryAndBrand[]> => {
         const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/products`);
         
         if (filters) {
@@ -23,22 +23,23 @@ export const apiProductService: ProductService = {
             if (filters.itemsPerPage) url.searchParams.append('itemsPerPage', filters.itemsPerPage.toString());
         }
 
-        const res = await fetch(url.toString());
+        const res = await fetch(url.toString(), { cache: 'force-cache'});
 
         if (!res.ok) throw new Error("Failed to fetch products");
 
         return res.json();
     },
-    getProduct: async (id: string): Promise<Products> => {
+    getProduct: async (id: string): Promise<ProductsWithCategoryAndBrand> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`
+            `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
+            { cache: 'force-cache'}
         );
 
         if (!res.ok) throw new Error("Failed to fetch product");
 
         return res.json();
     },
-    createProduct: async (data: Partial<Products>): Promise<Products> => {
+    createProduct: async (data: Partial<ProductsWithCategoryAndBrand>): Promise<ProductsWithCategoryAndBrand> => {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
             method: "POST",
             headers: {
@@ -53,8 +54,8 @@ export const apiProductService: ProductService = {
     },
     updateProduct: async (
         id: string,
-        data: Partial<Products>
-    ): Promise<Products> => {
+        data: Partial<ProductsWithCategoryAndBrand>
+    ): Promise<ProductsWithCategoryAndBrand> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
             {
