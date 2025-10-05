@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     const { name, price, categoryId, brandId } = await req.json();
 
-    if (!name || !price || !categoryId || brandId) return new NextResponse("Missing required fields", { status: 400});
+    if (!name || !price || !categoryId || !brandId) return new NextResponse("Missing required fields", { status: 400});
 
     const slug = slugifyName(name)
 
@@ -127,18 +127,38 @@ export async function POST(req: NextRequest) {
         return new NextResponse("Product already exists", { status: 400 });
     }
 
+    const existingCategory = await db.categories.findMany({
+        where: { id: categoryId }
+    })
+
+    if (!existingCategory) {
+        return new NextResponse('Category not exists', { status: 400 });
+    }
+
+    const existingBrand = await db.brands.findUnique({
+        where: { id: brandId }
+    })
+
+    if (!existingBrand) {
+        return new NextResponse('Brand not exists', { status: 404 });
+    }
+
     try {
         const product = await db.products.create({
             data: {
-                name,
-                slug,
-                price,
-                categoryId,
-                brandId
+                name: name,
+                slug: slug,
+                price: price,
+                image: "",
+                categoryId: categoryId,
+                brandId: brandId
             }
         })
 
-        return NextResponse.json(product);
+        return NextResponse.json({
+            product,
+            redirect: `/admin/products/${product.id}`
+        });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[PRODUCTS] ', error.message)
