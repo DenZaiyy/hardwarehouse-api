@@ -21,7 +21,7 @@ export default function ProductClient() {
         const fetchData = async () => {
             try {
                 const [productsData, categoriesData, brandsData] = await Promise.all([
-                    apiProductService.getProducts({ itemsPerPage: 5 }),
+                    apiProductService.getProducts({ itemsPerPage: 10 }),
                     apiCategoryService.getCategories(),
                     apiBrandService.getBrands()
                 ]);
