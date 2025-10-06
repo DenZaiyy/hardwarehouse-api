@@ -1,8 +1,9 @@
 import React from "react";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import {ClerkProvider} from "@clerk/nextjs";
 import Header from "@/components/admin/header/header";
-import type { Metadata } from "next";
+import type {Metadata} from "next";
+import {Toaster} from "react-hot-toast";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration",
@@ -31,6 +32,10 @@ export default function DashboardLayout({
             <html lang="fr">
                 <body className="antialiased flex">
                     <Header />
+                    <Toaster
+                        position="bottom-center"
+                        reverseOrder={false}
+                    />
                     <main className="p-2 md:p-4 flex-1">{children}</main>
                 </body>
             </html>
