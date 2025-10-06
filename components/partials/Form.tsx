@@ -1,16 +1,16 @@
 "use client"
 
 import React, {useState} from "react";
+import toast from "react-hot-toast";
 
 type FormProps = {
     action: string;
     method: string;
     fileUpload: boolean;
-    redirect: string;
     children: React.ReactNode;
 }
 
-export default function Form({ action, method = "POST", fileUpload = false, redirect, children } : FormProps) {
+export default function Form({ action, method = "POST", fileUpload = false, children } : FormProps) {
 
     const [selectedFile, setSelectedFile] = useState<File | null>()
 
@@ -35,13 +35,17 @@ export default function Form({ action, method = "POST", fileUpload = false, redi
             })
 
             const data = await response.json();
-            console.log(data)
+
+            toast.success("Form submitted successfully");
 
             if (data.redirect) {
-                window.location.href = redirect;
+                setTimeout(() => {
+                    window.location.href = data.redirect;
+                }, 2000)
             }
         } catch (err) {
             if (err instanceof Error) {
+                toast.error("Error submitting form");
                 console.error("Error submitting form:", err.message);
             }
         }
