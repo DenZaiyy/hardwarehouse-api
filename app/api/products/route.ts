@@ -150,8 +150,12 @@ export async function POST(req: NextRequest) {
                 slug: slug,
                 price: price,
                 image: "",
-                categoryId: categoryId,
-                brandId: brandId
+                category: {
+                    connect: { id: categoryId }
+                },
+                brand: {
+                    connect: { id: brandId }
+                }
             }
         })
 
