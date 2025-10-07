@@ -5,6 +5,7 @@ import {useState} from "react";
 import {formatDate} from "@/lib/utils";
 import ProductDetailModal from "@/components/modal/ProductDetailModal";
 import {ProductsWithCategoryAndBrand} from "@/types/types";
+import {apiProductService} from "@/services/productService";
 
 type Props = {
     products: ProductsWithCategoryAndBrand[];
@@ -18,6 +19,10 @@ export default function List({products } : Props) {
     function handleShowDetails(product: ProductsWithCategoryAndBrand) {
         setSelectedProduct(product);
         setIsModalOpen(true);
+    }
+
+    async function handleDeleteProduct(productId: string) {
+        await apiProductService.deleteProduct(productId);
     }
 
     function handleCloseModal() {
@@ -69,7 +74,7 @@ export default function List({products } : Props) {
                                     View
                                 </button>
                                 <button className="bg-blue-500 text-foreground hover:underline mr-2 p-2 rounded cursor-pointer">Edit</button>
-                                <button className="bg-red-500 text-foreground hover:underline p-2 rounded cursor-pointer">Delete</button>
+                                <button className="bg-red-500 text-foreground hover:underline p-2 rounded cursor-pointer" onClick={() => handleDeleteProduct(product.id)}>Delete</button>
                             </td>
                         </tr>
                     ))
