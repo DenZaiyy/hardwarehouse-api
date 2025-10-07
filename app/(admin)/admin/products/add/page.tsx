@@ -1,5 +1,3 @@
-
-
 import type {Metadata} from "next";
 import Form from "@/components/partials/Form";
 import {apiCategoryService} from "@/services/categoryService";
@@ -21,7 +19,7 @@ const ProductAddPage = async () => {
             <h1>Ajouter un produit</h1>
 
             <section>
-                <Form action={`/products`} method="POST" fileUpload={true} redirect='/admin/products'>
+                <Form action={`/products`} method="POST" fileUpload={false}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="flex flex-col">
                             <label htmlFor="name" className="mb-1 font-medium">Nom</label>
