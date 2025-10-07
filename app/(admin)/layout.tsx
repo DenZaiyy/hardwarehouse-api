@@ -1,9 +1,12 @@
 import React from "react";
-import "./globals.css";
+import "../globals.css";
 import {ClerkProvider} from "@clerk/nextjs";
-import Header from "@/components/admin/header/header";
 import type {Metadata} from "next";
 import {Toaster} from "react-hot-toast";
+import {ThemeProvider} from "@/components/theme-provider";
+import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
+import {cookies} from "next/headers";
+import {AdminSidebar} from "@/components/admin/admin-sidebar";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration",
@@ -22,21 +25,32 @@ export const metadata: Metadata = {
     ],
 };
 
-export default function DashboardLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
+export default async function DashboardLayout({ children}: { children: React.ReactNode }) {
+    const cookieStore = await cookies()
+    const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
+
     return (
         <ClerkProvider>
-            <html lang="fr">
-                <body className="antialiased flex">
-                    <Header />
-                    <Toaster
-                        position="bottom-center"
-                        reverseOrder={false}
-                    />
-                    <main className="p-2 md:p-4 flex-1">{children}</main>
+            <html lang="fr" suppressHydrationWarning>
+                <body className="antialiased">
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        <SidebarProvider defaultOpen={defaultOpen}>
+                            <AdminSidebar />
+                            <main className="p-4 flex-1">
+                                <SidebarTrigger />
+                                <Toaster
+                                    position="bottom-center"
+                                    reverseOrder={false}
+                                />
+                                {children}
+                            </main>
+                        </SidebarProvider>
+                    </ThemeProvider>
                 </body>
             </html>
         </ClerkProvider>

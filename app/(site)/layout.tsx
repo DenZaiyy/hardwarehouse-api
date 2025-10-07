@@ -1,10 +1,11 @@
 import type {Metadata} from "next";
-import "./globals.css";
+import "../globals.css";
 import React from "react";
 import {ClerkProvider} from "@clerk/nextjs";
 import {Toaster} from "react-hot-toast";
 import {frFR} from "@clerk/localizations";
 import Header from "@/components/app/header/header";
+import {ThemeProvider} from "@/components/theme-provider";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - API",
@@ -16,13 +17,20 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
     return (
         <ClerkProvider localization={frFR}>
-            <html lang="fr">
+            <html lang="fr" suppressHydrationWarning>
                 <body className={`antialiased`}>
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
                     <Header />
                     <main className="p-2 md:p-4">
                         <Toaster position={"bottom-right"} />
                         {children}
                     </main>
+                </ThemeProvider>
                 </body>
             </html>
         </ClerkProvider>

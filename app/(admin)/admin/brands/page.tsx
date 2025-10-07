@@ -1,4 +1,9 @@
 import type {Metadata} from "next";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
+import {DataTable} from "@/components/admin/data-table";
+import {columns} from "@/app/(admin)/admin/brands/columns";
+import {apiBrandService} from "@/services/brandService";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Brands",
@@ -6,17 +11,17 @@ export const metadata: Metadata = {
 }
 
 const BrandsPage = async () => {
-    // const brands = await apiBrandService.getBrands();
+    const brands = await apiBrandService.getBrands();
 
     return (
-        <div className="flex flex-col">
-            <h1>Brands Management</h1>
-            <p className="text-lg text-gray-700">Here you can manage your brands.</p>
-            <div className="mt-8 w-full bg-white p-6 rounded-lg shadow-md">
-                <h2 className="text-2xl font-semibold mb-4">Brand List</h2>
-                <p className="text-gray-600">This is where the brand management interface will be.</p>
-                {/* Add product management functionalities here */}
+        <div className="py-5">
+            <div className="flex justify-between items-center">
+                <h1>Gestion des marques</h1>
+                <Button asChild>
+                    <Link href="/admin/brands/add">Ajouter une marque</Link>
+                </Button>
             </div>
+            <DataTable columns={columns} data={brands} searchHolder="Filtrer les marques..." />
         </div>
     )
 }

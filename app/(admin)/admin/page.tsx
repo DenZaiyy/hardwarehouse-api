@@ -1,22 +1,28 @@
 import type {Metadata} from "next";
+import {auth, currentUser} from "@clerk/nextjs/server";
+
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Dashboard",
-    description: "Dashboard for managing products and categories in the HardWareHouse admin panel",
+    description: "Tableau de bord pour la gestion des produits et des catégories dans le panneau d'administration HardWareHouse",
 }
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+    const { isAuthenticated } = await auth()
+
+    if (!isAuthenticated) {
+        return <div>Connectez-vous pour afficher cette page.</div>
+    }
+
+    const user = await currentUser()
+
     return (
-        <>
+        <div className="py-5">
             <div className="flex flex-col">
-                <h1>Admin Dashboard</h1>
-                <p className="text-lg text-gray-700">Welcome to the HardWareHouse admin panel.</p>
-                <div className="mt-8 w-full bg-white p-6 rounded-lg shadow-md">
-                    <h2 className="mix-blend-difference">Manage Products and Categories</h2>
-                    <p className="text-gray-600">Use the navigation menu to manage products and categories.</p>
-                </div>
+                <h1>Tableau de bord d&#39;administration</h1>
+                <p>Vous êtes actuellement connecté sur <span className="font-bold">{user?.fullName} ({user?.username})</span></p>
             </div>
-        </>
+        </div>
 
     )
 }

@@ -1,21 +1,29 @@
-import ProductClient from "@/components/admin/products/ProductClient";
 import type {Metadata} from "next";
 import Link from "next/link";
+import {apiProductService} from "@/services/productService";
+import {columns} from "@/app/(admin)/admin/products/columns";
+import {Button} from "@/components/ui/button";
+import {DataTable} from "@/components/admin/data-table";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Produits",
     description: "Gérer les produits dans le panneau d'administration HardWareHouse",
 }
 
-const ProductsPage = () => {
+
+const ProductsPage = async () => {
+    const data = await apiProductService.getProducts();
+
     return (
-        <div className="flex flex-col">
+        <div className="py-5">
             <div className="flex justify-between items-center">
                 <h1>Gestion des produits</h1>
-                <Link href="/admin/products/add" className={"px-4 py-2 rounded-md cursor-pointer bg-foreground text-background border border-background transition-all duration-200 hover:text-foreground hover:bg-background hover:border-foreground"}>Ajouter un produit</Link>
+                <Button asChild>
+                    <Link href="/admin/products/add">Ajouter un produit</Link>
+                </Button>
             </div>
 
-            <ProductClient />
+            <DataTable columns={columns} data={data} searchHolder="Filtrer les produits..." />
         </div>
     )
 }

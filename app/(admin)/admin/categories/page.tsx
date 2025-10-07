@@ -1,6 +1,9 @@
 import type {Metadata} from "next";
-import Table from "@/components/partials/Table";
 import {apiCategoryService} from "@/services/categoryService";
+import {Button} from "@/components/ui/button";
+import Link from "next/link";
+import {DataTable} from "@/components/admin/data-table";
+import {columns} from "@/app/(admin)/admin/categories/columns";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Categories",
@@ -11,13 +14,15 @@ export default async function CategoriesPage() {
     const categories = await apiCategoryService.getCategories();
 
     return (
-        <div className="flex flex-col">
-            <h1>Categories Management</h1>
-            <p className="text-lg text-foreground">Here you can manage your categories.</p>
+        <div className="py-5">
+            <div className="flex justify-between items-center">
+                <h1>Gestion des catégories</h1>
+                <Button asChild>
+                    <Link href="/admin/categories/add">Ajouter une catégorie</Link>
+                </Button>
+            </div>
 
-            <section className="relative mt-8 flex-1">
-                <Table data={categories} />
-            </section>
+            <DataTable columns={columns} data={categories} searchHolder="Filtrer les catégories..." />
         </div>
     )
 }
