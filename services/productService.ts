@@ -1,4 +1,5 @@
 import {ProductFilters, ProductsWithCategoryAndBrand} from "@/types/types";
+import toast from "react-hot-toast";
 
 
 export interface ProductService {
@@ -23,7 +24,7 @@ export const apiProductService: ProductService = {
             if (filters.itemsPerPage) url.searchParams.append('itemsPerPage', filters.itemsPerPage.toString());
         }
 
-        const res = await fetch(url.toString(), { cache: 'force-cache'});
+        const res = await fetch(url.toString(), { cache: 'reload'});
 
         if (!res.ok) throw new Error("Failed to fetch products");
 
@@ -79,6 +80,11 @@ export const apiProductService: ProductService = {
             }
         );
 
-        if (!res.ok) throw new Error("Failed to delete product");
+        if (!res.ok) {
+            toast.error('Failed to delete product');
+            throw new Error("Failed to delete product");
+        }
+
+        toast.success('Product deleted successfully');
     },
 };
