@@ -1,5 +1,11 @@
+import {type ClassValue, clsx} from "clsx"
+import {twMerge} from "tailwind-merge"
 import slugify from "slugify";
 import {format} from "date-fns";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
 
 export function slugifyName(name: string): string {
     return slugify(name, {
