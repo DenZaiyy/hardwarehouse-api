@@ -1,8 +1,7 @@
 import {Brands} from "@/app/generated/prisma/client";
-import {BrandFilters} from "@/types/types";
 
 export interface BrandService {
-    getBrands: (filters?: BrandFilters) => Promise<Brands[]>;
+    getBrands: () => Promise<Brands[]>;
     getBrand: (id: string) => Promise<Brands>;
     createBrand: (data: Partial<Brands>) => Promise<Brands>;
     updateBrand: (id: string, data: Partial<Brands>) => Promise<Brands>;
@@ -10,15 +9,8 @@ export interface BrandService {
 }
 
 export const apiBrandService: BrandService = {
-    getBrands: async (filters?: BrandFilters): Promise<Brands[]> => {
-        const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/brands`);
-
-        if (filters) {
-            if (filters.page) url.searchParams.append('page', filters.page.toString());
-            if (filters.itemsPerPage) url.searchParams.append('itemsPerPage', filters.itemsPerPage.toString());
-        }
-
-        const res = await fetch(url.toString());
+    getBrands: async (): Promise<Brands[]> => {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brands`, { cache: 'default'});
 
         if (!res.ok) throw new Error("Failed to fetch brands");
 

@@ -1,9 +1,9 @@
-import {ProductFilters, ProductsWithCategoryAndBrand} from "@/types/types";
+import {ProductsWithCategoryAndBrand} from "@/types/types";
 import toast from "react-hot-toast";
 
 
 export interface ProductService {
-    getProducts: (filters?: ProductFilters) => Promise<ProductsWithCategoryAndBrand[]>;
+    getProducts: () => Promise<ProductsWithCategoryAndBrand[]>;
     getProduct: (id: string) => Promise<ProductsWithCategoryAndBrand>;
     createProduct: (data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
     updateProduct: (id: string, data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
@@ -11,20 +11,8 @@ export interface ProductService {
 }
 
 export const apiProductService: ProductService = {
-    getProducts: async (filters?: ProductFilters): Promise<ProductsWithCategoryAndBrand[]> => {
-        const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/products`);
-        
-        if (filters) {
-            if (filters.name) url.searchParams.append('name', filters.name);
-            if (filters.category) url.searchParams.append('category', filters.category);
-            if (filters.brand) url.searchParams.append('brand', filters.brand);
-            if (filters.minPrice) url.searchParams.append('minPrice', filters.minPrice.toString());
-            if (filters.maxPrice) url.searchParams.append('maxPrice', filters.maxPrice.toString());
-            if (filters.page) url.searchParams.append('page', filters.page.toString());
-            if (filters.itemsPerPage) url.searchParams.append('itemsPerPage', filters.itemsPerPage.toString());
-        }
-
-        const res = await fetch(url.toString(), { cache: 'reload'});
+    getProducts: async (): Promise<ProductsWithCategoryAndBrand[]> => {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, { cache: 'default'});
 
         if (!res.ok) throw new Error("Failed to fetch products");
 
