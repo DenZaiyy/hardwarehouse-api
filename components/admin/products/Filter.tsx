@@ -94,7 +94,7 @@ export function Filter({categories, brands, onFilterChange, initialFilters}: Fil
     return (
         <div className="flex flex-col p-6 rounded-lg shadow-sm border">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">Filters</h3>
+                <h3 className="text-lg font-semibold">Filtres</h3>
                 <button
                     onClick={clearFilters}
                     className="text-sm text-foreground/50 hover:text-foreground/70 underline"
@@ -113,7 +113,7 @@ export function Filter({categories, brands, onFilterChange, initialFilters}: Fil
                         type="text"
                         value={filters.name || ""}
                         onChange={(e) => handleInputChange('name', e.target.value)}
-                        placeholder="Search products..."
+                        placeholder="Rechercher des produits..."
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
@@ -121,7 +121,7 @@ export function Filter({categories, brands, onFilterChange, initialFilters}: Fil
                 {/* Price range */}
                 <div className="flex-1">
                     <label className="block text-sm font-medium text-foreground/70 mb-2">
-                        Ranger de prix (€)
+                        Fourchette de prix (€)
                     </label>
                     <div className="flex gap-2">
                         <input
