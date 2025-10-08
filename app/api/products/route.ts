@@ -2,74 +2,16 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {slugifyName} from "@/lib/utils";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
     try {
-        const searchParams = req.nextUrl.searchParams;
-        const filterByName = searchParams.get('name');
-        const filterByCategory = searchParams.get('category');
-        const filterByItemsPerPage = searchParams.get('itemsPerPage');
-
-        if (filterByName) {
-            const productByName = await db.products.findMany({
-                where: {
-                    name: {
-                        contains: filterByName,
-                        mode: 'insensitive'
-                    }
-                },
-                include: {
-                    category: true,
-                    Stocks: true,
-                    Brands: true
-                }
-            })
-
-            return NextResponse.json(productByName, { status: 200 });
-        }
-
-        if (filterByCategory) {
-            const productByCategory = await db.products.findMany({
-                where: {
-                    category: {
-                        name: {
-                            contains: filterByCategory,
-                            mode: 'insensitive'
-                        }
-                    }
-                },
-                include: {
-                    category: true,
-                    Stocks: true,
-                    Brands: true
-                }
-            })
-
-            return NextResponse.json(productByCategory, { status: 200 });
-        }
-
-        if (filterByItemsPerPage) {
-            const itemsPerPage = parseInt(filterByItemsPerPage, 10);
-            if (isNaN(itemsPerPage) || itemsPerPage <= 0) {
-                return new NextResponse("Invalid itemsPerPage parameter", { status: 400 });
-            }
-
-            const productsByItemsPerPage = await db.products.findMany({
-                take: itemsPerPage,
-                include: {
-                    category: true,
-                    Stocks: true,
-                    Brands: true
-                },
-            })
-
-            return NextResponse.json(productsByItemsPerPage, { status: 200 });
-        }
-
         const products = await db.products.findMany({
             include: {
                 category: true,
-                Stocks: true,
-                Brands: true
+                stocks: true,
+                brand: true
+            },
+            orderBy: {
+                createdAt: 'desc'
             }
         });
 
@@ -83,9 +25,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const { name, price, categoryId } = await req.json();
+    const { name, price, categoryId, brandId } = await req.json();
 
-    if (!name || !price || !categoryId) return new NextResponse("Missing required fields", { status: 400});
+    if (!name || !price || !categoryId || !brandId) return new NextResponse("Missing required fields", { status: 400});
 
     const slug = slugifyName(name)
 
@@ -97,17 +39,46 @@ export async function POST(req: NextRequest) {
         return new NextResponse("Product already exists", { status: 400 });
     }
 
+    const existingCategory = await db.categories.findMany({
+        where: { id: categoryId }
+    })
+
+    if (!existingCategory) {
+        return new NextResponse('Category not exists', { status: 400 });
+    }
+
+    const existingBrand = await db.brands.findUnique({
+        where: { id: brandId }
+    })
+
+    if (!existingBrand) {
+        return new NextResponse('Brand not exists', { status: 404 });
+    }
+
     try {
         const product = await db.products.create({
+            include: {
+                category: true,
+                brand:  true
+            },
             data: {
-                name,
-                slug,
-                price,
-                categoryId
+                name: name,
+                slug: slug,
+                price: price,
+                image: "",
+                category: {
+                    connect: { id: categoryId }
+                },
+                brand: {
+                    connect: { id: brandId }
+                }
             }
         })
 
-        return NextResponse.json(product);
+        return NextResponse.json({
+            product,
+            redirect: `/admin/products/${product.id}`
+        });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[PRODUCTS] ', error.message)

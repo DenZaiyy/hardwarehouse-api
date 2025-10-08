@@ -1,79 +1,81 @@
-const { PrismaClient } = require('../app/generated/prisma');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { PrismaClient } = require('../app/generated/prisma/client');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const slugify = require('slugify');
 
 const prisma = new PrismaClient();
 
 // Données des marques
 const brandsData = [
-    { name: 'Intel', logo: 'https://example.com/logos/intel.png' },
-    { name: 'AMD', logo: 'https://example.com/logos/amd.png' },
-    { name: 'NVIDIA', logo: 'https://example.com/logos/nvidia.png' },
-    { name: 'ASUS', logo: 'https://example.com/logos/asus.png' },
-    { name: 'MSI', logo: 'https://example.com/logos/msi.png' },
-    { name: 'Gigabyte', logo: 'https://example.com/logos/gigabyte.png' },
-    { name: 'ASRock', logo: 'https://example.com/logos/asrock.png' },
-    { name: 'Corsair', logo: 'https://example.com/logos/corsair.png' },
-    { name: 'G.Skill', logo: 'https://example.com/logos/gskill.png' },
-    { name: 'Kingston', logo: 'https://example.com/logos/kingston.png' },
-    { name: 'Crucial', logo: 'https://example.com/logos/crucial.png' },
-    { name: 'Samsung', logo: 'https://example.com/logos/samsung.png' },
-    { name: 'Western Digital', logo: 'https://example.com/logos/wd.png' },
-    { name: 'Seagate', logo: 'https://example.com/logos/seagate.png' },
-    { name: 'Toshiba', logo: 'https://example.com/logos/toshiba.png' },
-    { name: 'Fractal Design', logo: 'https://example.com/logos/fractal.png' },
-    { name: 'NZXT', logo: 'https://example.com/logos/nzxt.png' },
-    { name: 'Cooler Master', logo: 'https://example.com/logos/coolermaster.png' },
-    { name: 'Seasonic', logo: 'https://example.com/logos/seasonic.png' },
-    { name: 'EVGA', logo: 'https://example.com/logos/evga.png' },
-    { name: 'be quiet!', logo: 'https://example.com/logos/bequiet.png' },
-    { name: 'Logitech', logo: 'https://example.com/logos/logitech.png' },
-    { name: 'Razer', logo: 'https://example.com/logos/razer.png' },
-    { name: 'SteelSeries', logo: 'https://example.com/logos/steelseries.png' },
-    { name: 'Dell', logo: 'https://example.com/logos/dell.png' },
-    { name: 'LG', logo: 'https://example.com/logos/lg.png' }
+    { name: 'Intel', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'AMD', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'NVIDIA', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'ASUS', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'MSI', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Gigabyte', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'ASRock', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Corsair', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'G.Skill', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Kingston', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Crucial', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Samsung', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Western Digital', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Seagate', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Toshiba', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Fractal Design', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'NZXT', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Cooler Master', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Seasonic', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'EVGA', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'be quiet!', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Logitech', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Razer', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'SteelSeries', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'Dell', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' },
+    { name: 'LG', logo: 'https://res.cloudinary.com/dy2lo18vx/image/upload/v1759838805/Nvidia-Logo_uk8j79.png' }
 ];
 
 // Données des catégories
 const categoriesData = [
     {
         name: 'Processeurs',
-        logo: 'https://example.com/logos/cpu.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Cartes mères',
-        logo: 'https://example.com/logos/motherboard.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Mémoire RAM',
-        logo: 'https://example.com/logos/ram.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Cartes graphiques',
-        logo: 'https://example.com/logos/gpu.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Disques durs',
-        logo: 'https://example.com/logos/hdd.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'SSD',
-        logo: 'https://example.com/logos/ssd.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Boîtiers',
-        logo: 'https://example.com/logos/case.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Alimentations',
-        logo: 'https://example.com/logos/psu.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Périphériques',
-        logo: 'https://example.com/logos/peripherals.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     },
     {
         name: 'Écrans',
-        logo: 'https://example.com/logos/monitor.png'
+        logo: 'https://images.unsplash.com/photo-1716062890647-60feae0609d0'
     }
 ];
 
@@ -221,7 +223,7 @@ async function main() {
                     price: productData.price,
                     image: productData.image,
                     categoryId: category.id,
-                    brandsId: brand.id,
+                    brandId: brand.id,
                 },
             });
 

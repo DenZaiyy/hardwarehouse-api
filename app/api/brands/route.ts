@@ -5,29 +5,30 @@ import {slugifyName} from "@/lib/utils";
 export async function GET(req: NextRequest) {
     try {
         const searchParams = req.nextUrl.searchParams;
-        const filterByName = searchParams.get('name');
+        const filterByPage = searchParams.get('page');
+        const filterByItemsPerPage = searchParams.get('itemsPerPage');
 
-        if (filterByName) {
-            const brandsByName = await db.brands.findMany({
-                where: {
-                    name: {
-                        contains: filterByName,
-                        mode: 'insensitive'
-                    }
-                }
-            })
+        // Pagination
+        const page = filterByPage ? Math.max(1, parseInt(filterByPage)) : 1;
+        const itemsPerPage = filterByItemsPerPage ? Math.max(1, parseInt(filterByItemsPerPage)) : 10;
+        const skip = (page - 1) * itemsPerPage;
+        const take = itemsPerPage;
 
-            return NextResponse.json(brandsByName, { status: 200 });
-        }
+        // Fetch brands with pagination
+        const brands = await db.brands.findMany({
+            skip,
+            take,
+            orderBy: {
+                name: 'asc'
+            }
+        });
 
-        const brands = await db.brands.findMany();
-
-        return NextResponse.json(brands, { status: 200 })
+        return NextResponse.json(brands, { status: 200 });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[BRANDS] ', error.message)
-            return new NextResponse('Internal Error: ' + error.message, { status: 500, statusText: error.message });
         }
+        return new NextResponse('Internal Error', { status: 500 });
     }
 }
 

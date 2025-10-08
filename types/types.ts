@@ -1,37 +1,19 @@
-interface TProduct {
-    id: string,
-    name: string,
-    slug: string
-    image?: string,
-    price: number,
-    category: TCategory,
-    Brands: TBrand,
-    createdAt: string,
-    updatedAt: string
+import {Prisma} from "@/app/generated/prisma/client";
+import ProductsGetPayload = Prisma.ProductsGetPayload;
+
+export interface ProductFilters {
+    name?: string;
+    category?: string;
+    brand?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    page?: number;
+    itemsPerPage?: number;
 }
 
-interface TCategory {
-    id: string,
-    name: string,
-    logo?: string,
-    slug: string,
-    createdAt: string,
-    updatedAt: string,
-    products: TProduct[]
+export interface BrandFilters {
+    page?: number;
+    itemsPerPage?: number;
 }
 
-interface TBrand {
-    id: string,
-    name: string,
-    logo?: string,
-    slug: string,
-    createdAt: string,
-    updatedAt: string,
-    products: TProduct[]
-}
-
-interface TStock {
-    id: string,
-    product: TProduct,
-    quantity: number
-}
+export type ProductsWithCategoryAndBrand = ProductsGetPayload<{ include: { category: true; brand: true } }>
