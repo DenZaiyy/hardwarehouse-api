@@ -17,19 +17,7 @@ import {formatDate} from "@/lib/utils";
 import Image from "next/image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Product = {
-    id: string
-    name: string
-    image?: string
-    price: number
-    categoryId: string
-    brandId: string
-    createdAt: Date
-    updatedAt: Date
-}
+import Link from "next/link";
 
 export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
     {
@@ -116,7 +104,9 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
     },
     {
         accessorKey: "updatedAt",
-        header: "Mise à jour le",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Mise à jour le" />
+        ),
         cell: ({ row }) => {
             const updatedAt: string = row.getValue('updatedAt')
             return <div>{formatDate(updatedAt)}</div>
@@ -143,8 +133,8 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                             Copier l&#39;ID du produit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Voir le produit</DropdownMenuItem>
-                        <DropdownMenuItem>Modifier le produit</DropdownMenuItem>
+                        <DropdownMenuItem><Link href={`/admin/products/${product.id}`} >Voir le produit</Link></DropdownMenuItem>
+                        <DropdownMenuItem><Link href={`/admin/products/${product.id}/edit`} >Modifier le produit</Link></DropdownMenuItem>
                         <DropdownMenuItem>Supprimer le produit</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
