@@ -29,9 +29,11 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     searchHolder?: string
+    searchColumn?: string
+    inputSearch?: boolean
 }
 
-export function DataTable<TData, TValue>({ columns, data, searchHolder }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, searchHolder, searchColumn, inputSearch = true }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -54,19 +56,22 @@ export function DataTable<TData, TValue>({ columns, data, searchHolder }: DataTa
     })
 
     return (
-        <div className="w-full">
-            <div className="flex items-center py-4">
-                <Input
-                    placeholder={searchHolder ?? "Filtrer les données..."}
-                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("name")?.setFilterValue(event.target.value)
-                    }
-                    className="max-w-sm"
-                />
+        <div className="md:w-full">
+            <div className="flex flex-col md:flex-row md:items-center gap-y-4 py-4">
+                {inputSearch && (
+                    <Input
+                        placeholder={searchHolder ?? "Filtrer les données..."}
+                        value={(table.getColumn(searchColumn ?? "name")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn(searchColumn ?? "name")?.setFilterValue(event.target.value)
+                        }
+                        className="md:max-w-sm"
+                    />
+                )}
+
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
+                        <Button variant="outline" className="md:ml-auto">
                             Colonnes
                         </Button>
                     </DropdownMenuTrigger>
