@@ -16,6 +16,7 @@ import {formatDate} from "@/lib/utils";
 import Image from "next/image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import Link from "next/link";
 
 export const columns: ColumnDef<Brands>[] = [
     {
@@ -94,8 +95,8 @@ export const columns: ColumnDef<Brands>[] = [
                             Copier l&#39;ID de la marque
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Voir la marque</DropdownMenuItem>
-                        <DropdownMenuItem>Modifier la marque</DropdownMenuItem>
+                        <DropdownMenuItem><Link href={`/admin/brands/${brand.id}`} >Voir la marque</Link></DropdownMenuItem>
+                        <DropdownMenuItem><Link href={`/admin/brands/${brand.id}/edit`}>Modifier la marque</Link></DropdownMenuItem>
                         <DropdownMenuItem>Supprimer la marque</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

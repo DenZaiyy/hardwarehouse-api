@@ -16,6 +16,7 @@ import {formatDate} from "@/lib/utils";
 import Image from "next/image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import Link from "next/link";
 
 export const columns: ColumnDef<Categories>[] = [
     {
@@ -94,8 +95,8 @@ export const columns: ColumnDef<Categories>[] = [
                             Copier l&#39;ID de la categorie
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Voir la catégorie</DropdownMenuItem>
-                        <DropdownMenuItem>Modifier la catégorie</DropdownMenuItem>
+                        <DropdownMenuItem><Link href={`/admin/categories/${category.id}`}>Voir la catégorie</Link></DropdownMenuItem>
+                        <DropdownMenuItem><Link href={`/admin/categories/${category.id}/edit`}>Modifier la catégorie</Link></DropdownMenuItem>
                         <DropdownMenuItem>Supprimer la catégorie</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
