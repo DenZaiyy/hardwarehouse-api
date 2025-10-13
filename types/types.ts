@@ -1,5 +1,6 @@
 import {Prisma} from "@/app/generated/prisma/client";
 import ProductsGetPayload = Prisma.ProductsGetPayload;
+import StocksGetPayload = Prisma.StocksGetPayload;
 
 export interface ProductFilters {
     name?: string;
@@ -17,3 +18,5 @@ export interface BrandFilters {
 }
 
 export type ProductsWithCategoryAndBrand = ProductsGetPayload<{ include: { category: true; brand: true } }>
+
+export type StocksWithProduct = StocksGetPayload<{ include: { product: true } }>
