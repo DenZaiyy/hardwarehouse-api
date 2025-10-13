@@ -10,7 +10,10 @@ export interface BrandService {
 
 export const apiBrandService: BrandService = {
     getBrands: async (): Promise<Brands[]> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brands`, { cache: 'default'});
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/brands`,
+            { cache: 'default'}
+        );
 
         if (!res.ok) throw new Error("Failed to fetch brands");
 
@@ -18,7 +21,8 @@ export const apiBrandService: BrandService = {
     },
     getBrand: async (id: string): Promise<Brands> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`
+            `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
+            { cache: 'default'}
         );
 
         if (!res.ok) throw new Error("Failed to fetch brand");

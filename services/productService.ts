@@ -12,7 +12,10 @@ export interface ProductService {
 
 export const apiProductService: ProductService = {
     getProducts: async (): Promise<ProductsWithCategoryAndBrand[]> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, { cache: 'default'});
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/products`,
+            { cache: 'default'}
+        );
 
         if (!res.ok) throw new Error("Failed to fetch products");
 
@@ -21,7 +24,7 @@ export const apiProductService: ProductService = {
     getProduct: async (id: string): Promise<ProductsWithCategoryAndBrand> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
-            { cache: 'force-cache'}
+            { cache: 'default'}
         );
 
         if (!res.ok) throw new Error("Failed to fetch product");
