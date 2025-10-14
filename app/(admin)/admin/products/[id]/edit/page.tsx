@@ -27,7 +27,7 @@ const ProductEditPage = async ({ params }: ProductParams) => {
                     <CardTitle>{product.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <ProductForm product={product} brands={brands} categories={categories} />
+                    <ProductForm product={product} brands={brands} categories={categories} method="PATCH" />
                 </CardContent>
             </Card>
         </div>
