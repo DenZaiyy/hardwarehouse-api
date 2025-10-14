@@ -12,13 +12,13 @@ export function DataTablePagination<TData>({
                                                table,
                                            }: DataTablePaginationProps<TData>) {
     return (
-        <div className="flex items-center justify-between px-2 mt-2">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between px-2 mt-2">
             <div className="text-muted-foreground flex-1 text-sm">
                 {table.getFilteredSelectedRowModel().rows.length} sur{" "}
                 {table.getFilteredRowModel().rows.length} ligne(s) sélectionnée(s).
             </div>
-            <div className="flex items-center space-x-6 lg:space-x-8">
-                <div className="flex items-center space-x-2">
+            <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center space-x-6 lg:space-x-8">
+                <div className="flex flex-col gap-y-2 md:gap-y-0 md:flex-row md:items-center space-x-2">
                     <p className="text-sm font-medium">Lignes par page</p>
                     <Select
                         value={`${table.getState().pagination.pageSize}`}
@@ -26,7 +26,7 @@ export function DataTablePagination<TData>({
                             table.setPageSize(Number(value))
                         }}
                     >
-                        <SelectTrigger className="h-8 w-[70px]">
+                        <SelectTrigger className="h-8 w-full md:w-[70px]">
                             <SelectValue placeholder={table.getState().pagination.pageSize} />
                         </SelectTrigger>
                         <SelectContent side="top">
@@ -38,8 +38,8 @@ export function DataTablePagination<TData>({
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-                    Page {table.getState().pagination.pageIndex + 1} of{" "}
+                <div className="flex md:w-[100px] md:items-center md:justify-center text-sm font-medium">
+                    Page {table.getState().pagination.pageIndex + 1} sur{" "}
                     {table.getPageCount()}
                 </div>
                 <div className="flex items-center space-x-2">

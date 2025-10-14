@@ -1,4 +1,5 @@
 import {Categories} from "@/app/generated/prisma/client";
+import toast from "react-hot-toast";
 
 export interface CategoryService {
     getCategories: () => Promise<Categories[]>;
@@ -10,19 +11,19 @@ export interface CategoryService {
 
 export const apiCategoryService: CategoryService = {
     getCategories: async (): Promise<Categories[]> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, { cache: 'force-cache'});
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, { cache: 'default'});
 
-        if (!res.ok) throw new Error("Failed to fetch categories");
+        if (!res.ok) toast.error("Échec de la récupération des catégories");
 
         return res.json();
     },
     getCategory: async (id: string): Promise<Categories> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
-            { cache: 'force-cache'}
+            { cache: 'default'}
         );
 
-        if (!res.ok) throw new Error("Failed to fetch category");
+        if (!res.ok) toast.error("Échec de récupération de la catégorie");
 
         return res.json();
     },
@@ -35,7 +36,7 @@ export const apiCategoryService: CategoryService = {
             body: JSON.stringify(data),
         });
 
-        if (!res.ok) throw new Error("Failed to create category");
+        if (!res.ok) toast.error("Échec de la création de la catégorie");
 
         return res.json();
     },
@@ -54,7 +55,7 @@ export const apiCategoryService: CategoryService = {
             }
         );
 
-        if (!res.ok) throw new Error("Failed to update category");
+        if (!res.ok) toast.error("Échec de la mise à jour de la catégorie");
 
         return res.json();
     },
@@ -66,6 +67,6 @@ export const apiCategoryService: CategoryService = {
             }
         );
 
-        if (!res.ok) throw new Error("Failed to delete category");
+        if (!res.ok) toast.error("Échec de la suppression de la catégorie");
     },
 };

@@ -2,24 +2,12 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {slugifyName} from "@/lib/utils";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
     try {
-        const searchParams = req.nextUrl.searchParams;
-        const filterByPage = searchParams.get('page');
-        const filterByItemsPerPage = searchParams.get('itemsPerPage');
-
-        // Pagination
-        const page = filterByPage ? Math.max(1, parseInt(filterByPage)) : 1;
-        const itemsPerPage = filterByItemsPerPage ? Math.max(1, parseInt(filterByItemsPerPage)) : 10;
-        const skip = (page - 1) * itemsPerPage;
-        const take = itemsPerPage;
-
         // Fetch brands with pagination
         const brands = await db.brands.findMany({
-            skip,
-            take,
             orderBy: {
-                name: 'asc'
+                createdAt: 'desc'
             }
         });
 
@@ -44,7 +32,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (existingBrand) {
-        return new NextResponse("Brand already exists", { status: 400 });
+        return new NextResponse("Brand already exists", { status: 400, statusText: "Brand already exists" });
     }
 
     try {
@@ -55,7 +43,7 @@ export async function POST(req: NextRequest) {
             }
         })
 
-        return NextResponse.json(brand, { status: 201, statusText: 'Created' });
+        return NextResponse.json(brand, { status: 201 });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[BRAND] ', error.message)

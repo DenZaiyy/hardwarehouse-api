@@ -1,21 +1,20 @@
 "use client"
 
 import {ColumnDef} from "@tanstack/react-table"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {Button} from "@/components/ui/button";
-import {MoreHorizontal} from "lucide-react";
 import {Categories} from "@/app/generated/prisma/client";
 import {formatDate} from "@/lib/utils";
 import Image from "next/image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import toast from "react-hot-toast";
+import {apiCategoryService} from "@/services/categoryService";
+import {CategoryActions} from "@/components/admin/categories/actions";
+
+async function handleConfirm(categoryId: string) {
+    await apiCategoryService.deleteCategory(categoryId)
+    toast.success("Catégorie supprimée avec succès")
+    setTimeout(() => window.location.reload(), 1500)
+}
 
 export const columns: ColumnDef<Categories>[] = [
     {
@@ -79,26 +78,11 @@ export const columns: ColumnDef<Categories>[] = [
             const category = row.original
 
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant={"ghost"} className={"h-8 w-8 p-0"}>
-                            <span className="sr-only">Ouvrir le menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(category.id)}
-                        >
-                            Copier l&#39;ID de la categorie
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>Voir la catégorie</DropdownMenuItem>
-                        <DropdownMenuItem>Modifier la catégorie</DropdownMenuItem>
-                        <DropdownMenuItem>Supprimer la catégorie</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <CategoryActions
+                    categoryId={category.id}
+                    categoryName={category.name}
+                    onDelete={(id) => handleConfirm(id)}
+                />
             )
         }
     }

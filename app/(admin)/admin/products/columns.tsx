@@ -2,22 +2,20 @@
 
 import {ColumnDef} from "@tanstack/react-table"
 import {ProductsWithCategoryAndBrand} from "@/types/types";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {Button} from "@/components/ui/button";
-import {MoreHorizontal} from "lucide-react";
 import {Brands, Categories} from "@/app/generated/prisma/client";
 import {formatDate} from "@/lib/utils";
 import Image from "next/image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import Link from "next/link";
+import toast from "react-hot-toast";
+import {ProductActions} from "@/components/admin/products/actions";
+import {apiProductService} from "@/services/productService";
+
+async function handleConfirm(productId: string) {
+    await apiProductService.deleteProduct(productId)
+    toast.success("Produit supprimée avec succès")
+    setTimeout(() => window.location.reload(), 1500)
+}
 
 export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
     {
@@ -118,26 +116,11 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
             const product = row.original
 
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant={"ghost"} className={"h-8 w-8 p-0"}>
-                            <span className="sr-only">Ouvrir le menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(product.id)}
-                        >
-                            Copier l&#39;ID du produit
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem><Link href={`/admin/products/${product.id}`} >Voir le produit</Link></DropdownMenuItem>
-                        <DropdownMenuItem><Link href={`/admin/products/${product.id}/edit`} >Modifier le produit</Link></DropdownMenuItem>
-                        <DropdownMenuItem>Supprimer le produit</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <ProductActions
+                    productId={product.id}
+                    productName={product.name}
+                    onDelete={(id) => handleConfirm(id)}
+                />
             )
         }
     }
