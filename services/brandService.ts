@@ -1,4 +1,5 @@
 import {Brands} from "@/app/generated/prisma/client";
+import toast from "react-hot-toast";
 
 export interface BrandService {
     getBrands: () => Promise<Brands[]>;
@@ -15,7 +16,7 @@ export const apiBrandService: BrandService = {
             { cache: 'default'}
         );
 
-        if (!res.ok) throw new Error("Failed to fetch brands");
+        if (!res.ok) toast.error("Échec de la récupération des marques");
 
         return res.json();
     },
@@ -25,7 +26,7 @@ export const apiBrandService: BrandService = {
             { cache: 'default'}
         );
 
-        if (!res.ok) throw new Error("Failed to fetch brand");
+        if (!res.ok) toast.error("Échec de récupération de la marque");
 
         return res.json();
     },
@@ -38,7 +39,7 @@ export const apiBrandService: BrandService = {
             body: JSON.stringify(data),
         });
 
-        if (!res.ok) throw new Error("Failed to create brand");
+        if (!res.ok) toast.error("Échec de la création de la marque");
 
         return res.json();
     },
@@ -57,7 +58,7 @@ export const apiBrandService: BrandService = {
             }
         );
 
-        if (!res.ok) throw new Error("Failed to update brand");
+        if (!res.ok) toast.error("Échec de la mise à jour de la marque");
 
         return res.json();
     },
@@ -69,6 +70,6 @@ export const apiBrandService: BrandService = {
             }
         );
 
-        if (!res.ok) throw new Error("Failed to delete brand");
+        if (!res.ok) toast.error("Échec de la suppression de la marque");
     },
 };
