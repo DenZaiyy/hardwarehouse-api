@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {slugifyName} from "@/lib/utils";
+import {rateLimiter, slugifyName} from "@/lib/utils";
 
 interface UpdateProductData {
     name?: string;
@@ -10,10 +10,21 @@ interface UpdateProductData {
     categoryId?: string;
 }
 
-export async function GET(_req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
+export async function GET(req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+
     const { id } = await ctx.params;
 
     try {
+        const { success, remaining, reset } = await rateLimiter.limit(ip);
+
+        if (!success) {
+            return NextResponse.json(
+                {error: "Trop de demandes"},
+                { status: 429 }
+            );
+        }
+
         const product = await db.products.findUnique({
             where: {
                 id: id
@@ -25,26 +36,45 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/products/[i
         });
 
         if (!product) {
-            return new NextResponse('Product not found', { status: 404 });
+            return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
         }
 
-        return NextResponse.json(product, { status: 200 });
+        const res = NextResponse.json(product, { status: 200 })
+        res.headers.set('X-RateLimit-Remaining', remaining.toString());
+        res.headers.set('X-RateLimit-Reset', reset.toString());
+
+        return res;
     } catch (error) {
-        console.error('[PRODUCT] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        if (error instanceof Error) {
+            console.error('[PRODUCT] ', error.message)
+            return NextResponse.json(
+                {error: `[PRODUCT] Erreur interne : ${error ? error.message : 'Erreur inconnue'}`},
+                {status: 500}
+            );
+        }
     }
 }
 
 export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
+    const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
     const { id } = await ctx.params;
     const { name, price, image, categoryId } = await _req.json();
 
     // Vérifier qu'au moins un champ est fourni
     if (!name && !price && !image && !categoryId) {
-        return new NextResponse("At least one field is required", { status: 400 });
+        return NextResponse.json({ error: "Au moins un champ est obligatoire." }, { status: 400 });
     }
 
     try {
+        const { success, remaining, reset } = await rateLimiter.limit(ip);
+
+        if (!success) {
+            return NextResponse.json(
+                { error: "Trop de demandes" },
+                { status: 429 }
+            );
+        }
+
         // Construire l'objet de données dynamiquement
         const updateData: UpdateProductData = {};
         const product = await db.products.findUnique({
@@ -52,17 +82,20 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/products/
         })
 
         if (!product) {
-            return new NextResponse('Product not found', { status: 404 });
+            return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
         }
 
+        // Mettre à jour le slug seulement si le nom change
         if (name !== product.name) {
             updateData.name = name;
-            // Générer le slug seulement si le nom change
             updateData.slug = slugifyName(name);
         }
 
+        // Mettre à jour le prix seulement s'il change
         if (price !== product.price) updateData.price = price;
+        // Mettre à jour l'image seulement si elle change
         if (image !== product.image) updateData.image = image;
+        // Mettre à jour la categoryId seulement si elle change
         if (categoryId) updateData.categoryId = categoryId;
 
         const updatedProduct = await db.products.update({
@@ -72,10 +105,19 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/products/
             data: updateData
         });
 
-        return NextResponse.json(updatedProduct, { status: 200 });
+        const res = NextResponse.json(updatedProduct, { status: 200 })
+        res.headers.set('X-RateLimit-Remaining', remaining.toString());
+        res.headers.set('X-RateLimit-Reset', reset.toString());
+
+        return res;
     } catch(error) {
-        console.error('[PRODUCT PATCH] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        if (error instanceof Error) {
+            console.error('[PRODUCT PATCH] ', error.message)
+            return NextResponse.json(
+                { error: `[PRODUCT PATCH] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
+                { status: 500 }
+            );
+        }
     }
 }
 
@@ -90,7 +132,7 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/products
         });
 
         if (!product) {
-            return new NextResponse('Product not found', { status: 404 });
+            return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
         }
 
         await db.products.delete({
@@ -101,7 +143,12 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/products
 
         return new NextResponse(`Product with id ${id} deleted`, { status: 200 });
     } catch (error) {
-        console.error('[PRODUCT DELETE] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        if (error instanceof Error) {
+            console.error('[PRODUCT DELETE] ', error.message)
+            return NextResponse.json(
+                { error: `[PRODUCT DELETE] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
+                { status: 500 }
+            );
+        }
     }
 }

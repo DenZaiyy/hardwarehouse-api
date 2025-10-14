@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {slugifyName} from "@/lib/utils";
+import {rateLimiter, slugifyName} from "@/lib/utils";
 
 interface UpdateBrandData {
     name?: string;
@@ -10,8 +10,18 @@ interface UpdateBrandData {
 
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/brands/[id]'>) {
     const { id } = await ctx.params;
+    const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
 
     try {
+        const { success, remaining, reset } = await rateLimiter.limit(ip);
+
+        if (!success) {
+            return NextResponse.json(
+                { error: "Trop de demandes" },
+                { status: 429 }
+            );
+        }
+
         const brand = await db.brands.findUnique({
             where: {
                 id: id
@@ -19,13 +29,25 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/brands/[id]
         });
 
         if (!brand) {
-            return new NextResponse('Brand not found', { status: 404 });
+            return NextResponse.json(
+                { error: 'Marque introuvable' },
+                { status: 404 }
+            );
         }
 
-        return NextResponse.json(brand, { status: 200 });
+        const res = NextResponse.json(brand, { status: 200 });
+        res.headers.set('X-RateLimit-Remaining', remaining.toString());
+        res.headers.set('X-RateLimit-Reset', reset.toString());
+
+        return res;
     } catch (error) {
-        console.error('[BRAND] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        if (error instanceof Error) {
+            console.error('[BRAND] ', error.message)
+            return NextResponse.json(
+                { error: `[BRAND] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
+                { status: 500 }
+            );
+        }
     }
 }
 
@@ -35,7 +57,7 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/brands/[i
 
     // Vérifier qu'au moins un champ est fourni
     if (!name && !logo) {
-        return new NextResponse("At least one field is required", { status: 400 });
+        return NextResponse.json({ error: "Au moins un champ est obligatoire." }, { status: 400 });
     }
 
     try {
@@ -46,15 +68,16 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/brands/[i
         })
 
         if (!brand) {
-            return new NextResponse('Brand not found', { status: 404 });
+            return NextResponse.json({ error: 'Marque introuvable' }, { status: 404 });
         }
 
+        // Mettre à jour le slug seulement si le nom change
         if (name !== brand.name) {
             updateData.name = name;
-            // Générer le slug seulement si le nom change
             updateData.slug = slugifyName(name);
         }
 
+        // Mettre à jour le logo seulement s'il change
         if (logo !== brand.logo) updateData.logo = logo;
 
         const updatedBrand = await db.brands.update({
@@ -66,8 +89,13 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/brands/[i
 
         return NextResponse.json(updatedBrand, { status: 200 });
     } catch(error) {
-        console.error('[BRAND PATCH] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        if (error instanceof Error) {
+            console.error('[BRAND PATCH] ', error.message)
+            return NextResponse.json(
+                { error: `[BRAND PATCH] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
+                { status: 500 }
+            );
+        }
     }
 }
 
@@ -82,7 +110,7 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/brands/[
         });
 
         if (!brand) {
-            return new NextResponse('Brand not found', { status: 404 });
+            return NextResponse.json({ error: 'Marque introuvable' }, { status: 404 });
         }
 
         await db.brands.delete({
@@ -93,7 +121,12 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/brands/[
 
         return new NextResponse(`Brand with id ${id} deleted`, { status: 200 });
     } catch (error) {
-        console.error('[BRAND DELETE] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        if (error instanceof Error) {
+            console.error('[BRAND DELETE] ', error.message)
+            return NextResponse.json(
+                { error: `[BRAND DELETE] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
+                { status: 500 }
+            );
+        }
     }
 }
