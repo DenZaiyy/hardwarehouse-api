@@ -6,7 +6,7 @@ export async function GET() {
     try {
         const categories = await db.categories.findMany({
             orderBy: {
-                name: 'asc'
+                createdAt: 'desc'
             }
         });
 
@@ -42,7 +42,10 @@ export async function POST(req: NextRequest) {
             }
         })
 
-        return NextResponse.json(category, { status: 201, statusText: 'Created' });
+        return NextResponse.json({
+            category,
+            status: 201,
+            redirect: `/admin/categories/${category.id}` });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[CATEGORIES] ', error.message)
