@@ -10,6 +10,7 @@ import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui
 import toast from "react-hot-toast";
 import {ProductActions} from "@/components/admin/products/actions";
 import {apiProductService} from "@/services/productService";
+import Link from "next/link";
 
 async function handleConfirm(productId: string) {
     await apiProductService.deleteProduct(productId)
@@ -77,7 +78,12 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
         ),
         cell: ({ row }) => {
             const brand: Brands = row.getValue('brand');
-            return <div>{brand ? brand.name : 'N/A'}</div>
+
+            if (!brand) {
+                return <div>N/A</div>
+            }
+
+            return <div><Link href={`/admin/brands/${brand.id}`} className="underline underline-offset-5">{brand.name}</Link></div>
         }
     },
     {
@@ -87,7 +93,12 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
         ),
         cell: ({ row }) => {
             const category: Categories = row.getValue('category');
-            return <div>{category ? category.name : 'N/A'}</div>
+
+            if (!category) {
+                return <div>N/A</div>
+            }
+
+            return <div><Link href={`/admin/categories/${category.id}`} className="underline underline-offset-5">{category.name}</Link></div>
         }
     },
     {
