@@ -46,6 +46,10 @@ const BrandForm = ({ brand, method }: BrandFormProps) => {
 
             toast.success("Marque créé avec succès.")
             form.reset()
+
+            if (result.redirect) {
+                setTimeout(() => window.location.href = result.redirect, 1500)
+            }
         } else {
             const result = await apiBrandService.updateBrand(brand.id, values)
 
