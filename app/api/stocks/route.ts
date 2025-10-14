@@ -6,6 +6,9 @@ export async function GET() {
         const stocks = await db.stocks.findMany({
             include: {
                 product: true
+            },
+            orderBy: {
+                createdAt: "desc"
             }
         });
 
@@ -28,7 +31,13 @@ export async function POST(req: NextRequest) {
     })
 
     if (existingProduct) {
-        return new NextResponse("Product already exists, please update stocks", { status: 400 });
+        const existingStock = await db.stocks.findFirst({
+            where: { productId: existingProduct.id }
+        })
+
+        if (existingStock) {
+            return new NextResponse("Le produit est déjà en stock, veuillez mettre à jour les stocks.", { status: 400 });
+        }
     }
 
     try {
