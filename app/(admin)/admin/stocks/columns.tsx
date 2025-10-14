@@ -1,22 +1,21 @@
 "use client"
 
 import {ColumnDef} from "@tanstack/react-table"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {Button} from "@/components/ui/button";
-import {MoreHorizontal} from "lucide-react";
-import {Stocks} from "@/app/generated/prisma/client";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import Link from "next/link";
-import {ProductsWithCategoryAndBrand} from "@/types/types";
+import {ProductsWithCategoryAndBrand, StocksWithProduct} from "@/types/types";
+import toast from "react-hot-toast";
+import {apiStockService} from "@/services/stockService";
+import {StockActions} from "@/components/admin/stocks/actions";
+import {formatDate} from "@/lib/utils";
 
-export const columns: ColumnDef<Stocks>[] = [
+async function handleConfirm(stockId: string) {
+    await apiStockService.deleteStock(stockId)
+    toast.success("Stock supprimée avec succès")
+    setTimeout(() => window.location.reload(), 1500)
+}
+
+export const columns: ColumnDef<StocksWithProduct>[] = [
     {
         accessorKey: "id",
         header: "ID",
@@ -42,32 +41,38 @@ export const columns: ColumnDef<Stocks>[] = [
             <DataTableColumnHeader column={column} title="Quantity" />
         ),
     },
+
+    {
+        accessorKey: "createdAt",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Crée le" />
+        ),
+        cell: ({ row }) => {
+            const createdAt: string = row.getValue('createdAt')
+            return <div>{formatDate(createdAt)}</div>
+        }
+    },
+    {
+        accessorKey: "updatedAt",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Mise à jour le" />
+        ),
+        cell: ({ row }) => {
+            const updatedAt: string = row.getValue('updatedAt')
+            return <div>{formatDate(updatedAt)}</div>
+        }
+    },
     {
         id: "actions",
         cell: ({ row }) => {
             const stock = row.original
 
             return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant={"ghost"} className={"h-8 w-8 p-0"}>
-                            <span className="sr-only">Ouvrir le menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(stock.id)}
-                        >
-                            Copier l&#39;ID du stock
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem><Link href={`/admin/stocks/${stock.id}`} >Voir le stock</Link></DropdownMenuItem>
-                        <DropdownMenuItem><Link href={`/admin/stocks/${stock.id}/edit`} >Modifier le stock</Link></DropdownMenuItem>
-                        <DropdownMenuItem>Supprimer le stock</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <StockActions
+                    stockId={stock.id}
+                    stockProductName={stock.product.name}
+                    onDelete={(id) => handleConfirm(id)}
+                />
             )
         }
     }
