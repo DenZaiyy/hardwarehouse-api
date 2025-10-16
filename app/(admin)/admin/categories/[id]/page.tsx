@@ -4,7 +4,6 @@ interface BrandParams {
     params: Promise<{ id: string }>;
 }
 
-
 const CategoryDetails = async ({ params }: BrandParams) => {
     const { id } = await params;
     const category = await apiCategoryService.getCategory(id);

@@ -4,7 +4,6 @@ interface ProductParams {
     params: Promise<{ id: string }>;
 }
 
-
 const ProductDetails = async ({ params }: ProductParams) => {
     const { id } = await params;
     const product = await apiProductService.getProduct(id);
