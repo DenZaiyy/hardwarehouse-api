@@ -1,37 +1,35 @@
-import {apiProductService} from "@/services/productService";
-import ProductForm from "@/components/admin/products/form";
-import {apiBrandService} from "@/services/brandService";
-import {apiCategoryService} from "@/services/categoryService";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {apiStockService} from "@/services/stockService";
+import StockForm from "@/components/admin/stocks/form";
+import {apiProductService} from "@/services/productService";
 
-interface ProductParams {
+interface StockParams {
     params: Promise<{ id: string }>;
 }
 
-const ProductEditPage = async ({ params }: ProductParams) => {
+const StockEditPage = async ({ params }: StockParams) => {
     const { id } = await params;
-    const product = await apiProductService.getProduct(id);
-    const brands = await apiBrandService.getBrands();
-    const categories = await apiCategoryService.getCategories();
+    const stock = await apiStockService.getStock(id);
+    const products = await apiProductService.getProducts();
 
-    if(!product) {
-        return <div>Product not found</div>;
+    if(!stock) {
+        return <div>Stock not found</div>;
     }
 
     return (
         <div className="py-5">
-            <h1>Modifier le produit</h1>
+            <h1>Modifier le stock</h1>
 
             <Card>
                 <CardHeader>
-                    <CardTitle>{product.name}</CardTitle>
+                    <CardTitle>{stock.product.name} ({stock.quantity})</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <ProductForm product={product} brands={brands} categories={categories} method="PATCH" />
+                    <StockForm stock={stock} products={products}  method="PATCH" />
                 </CardContent>
             </Card>
         </div>
     );
 }
 
-export default ProductEditPage;
+export default StockEditPage;
