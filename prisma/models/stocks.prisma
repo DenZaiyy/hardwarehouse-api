@@ -1,10 +1,8 @@
 model Stocks {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId String   @db.ObjectId
+  productId String   @unique @db.ObjectId
   quantity  Int
   product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@index([productId])
 }
