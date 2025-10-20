@@ -1,4 +1,4 @@
-import {ProductsWithCategoryAndBrand} from "@/types/types";
+import {ProductsWithCategoryAndBrand, ProductsWithStocks} from "@/types/types";
 import toast from "react-hot-toast";
 
 
@@ -8,6 +8,7 @@ export interface ProductService {
     createProduct: (data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
     updateProduct: (id: string, data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
     deleteProduct: (id: string) => Promise<void>;
+    getProductStock: (id: string) => Promise<ProductsWithStocks>
 }
 
 export const apiProductService: ProductService = {
@@ -78,4 +79,14 @@ export const apiProductService: ProductService = {
 
         toast.success('Product deleted successfully');
     },
+    getProductStock: async (id: string): Promise<ProductsWithStocks> => {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/stats/product/${id}`,
+            { cache: "default" }
+        )
+
+        if (!res.ok) throw new Error("Failed to fetch product stocks")
+
+        return res.json();
+    }
 };
