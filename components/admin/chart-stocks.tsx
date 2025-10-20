@@ -1,15 +1,12 @@
-import {apiProductService} from "@/services/productService";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import Link from "next/link";
-import {Separator} from "@/components/ui/separator";
-import {formatDate} from "@/lib/utils";
-import {BarChartCard} from "@/components/admin/bar-chart-card";
+"use client"
 
-interface ProductParams {
-    params: Promise<{ id: string }>;
-}
+import * as React from "react"
+import {Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 
-const data = [
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "@/components/ui/card"
+import {ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent,} from "@/components/ui/chart"
+
+const chartData = [
     { date: "2024-04-01", stocks: 222, mobile: 150 },
     { date: "2024-04-02", stocks: 97, mobile: 180 },
     { date: "2024-04-03", stocks: 167, mobile: 120 },
@@ -103,56 +100,116 @@ const data = [
     { date: "2024-06-30", stocks: 446, mobile: 400 },
 ]
 
+const chartConfig = {
+    product: {
+        label: "Produit",
+    },
+    stocks: {
+        label: "Stocks",
+        color: "var(--chart-2)",
+    },
+    mobile: {
+        label: "Mobile",
+        color: "var(--chart-1)",
+    },
+} satisfies ChartConfig
 
-const config = {
-    stocks: { label: "Stocks", color: "var(--chart-2)" },
-    mobile: { label: "Mobile", color: "var(--chart-1)" },
-} as const
+export function ChartBarInteractive() {
+    const [activeChart, setActiveChart] =
+        React.useState<keyof typeof chartConfig>("stocks")
 
-const ProductDetails = async ({ params }: ProductParams) => {
-    const { id } = await params;
-    const product = await apiProductService.getProduct(id);
+    const total = React.useMemo(
+        () => ({
+            stocks: chartData.reduce((acc, curr) => acc + curr.stocks, 0),
+            mobile: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
+        }),
+        []
+    )
 
     return (
-        <>
-            <h1>Détails du produit</h1>
-            <Card>
-                <CardHeader>
-                    <CardTitle>
-                        {product.name}
-                    </CardTitle>
+        <Card className="py-0">
+            <CardHeader className="flex flex-col items-stretch border-b !p-0 sm:flex-row">
+                <div className="flex flex-1 flex-col justify-center gap-1 px-6 pt-4 pb-3 sm:!py-0">
+                    <CardTitle>Bar Chart - Interactive</CardTitle>
                     <CardDescription>
-                        Voici les caractéristiques du produit en détails
+                        Showing total visitors for the last 3 months
                     </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4 flex flex-row justify-between gap-2">
-                    <div className="flex flex-col gap-2">
-                        <p>Nom: <strong>{product.name}</strong></p>
-                        <p>Prix HT: <strong>{product.price}</strong></p>
-                        <p>Prix TTC: <strong>{Number(((product.price * 0.2) + product.price).toFixed(2))}</strong></p>
-                    </div>
-                    <Separator orientation="vertical" />
-                    <div className="flex flex-col gap-2">
-                        <p>Catégorie: <strong><Link href={`/admin/categories/${product.category.id}`}>{product.category.name}</Link></strong></p>
-                        <p>Marque: <strong><Link href={`/admin/brands/${product.brand.id}`}>{product.brand.name}</Link></strong></p>
-                    </div>
-                    <Separator orientation="vertical" />
-                    <div className="flex flex-col gap-2">
-                        <p>Crée le: <strong>{formatDate(product.createdAt)}</strong></p>
-                        <p>Mise à jour le: <strong>{formatDate(product.updatedAt)}</strong></p>
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <p>ID: {product.id}</p>
-                </CardFooter>
-            </Card>
-
-            <section className="mt-4 space-y-4">
-                <BarChartCard title="Evolution du stock" description="Showing total visitors for the last 3 months" data={data} config={config} defaultKey="stocks" />
-                <BarChartCard title="Evolution du stock" description="" data={data} config={config} defaultKey="stocks" />
-            </section>
-        </>
+                </div>
+                <div className="flex">
+                    {["stocks"].map((key) => {
+                        const chart = key as keyof typeof chartConfig
+                        return (
+                            <button
+                                key={chart}
+                                data-active={activeChart === chart}
+                                className="data-[active=true]:bg-muted/50 relative z-30 flex flex-1 flex-col justify-center gap-1 border-t px-6 py-4 text-left even:border-l sm:border-t-0 sm:border-l sm:px-8 sm:py-6"
+                                onClick={() => setActiveChart(chart)}
+                            >
+                                <span className="text-muted-foreground text-xs">
+                                  {chartConfig[chart].label}
+                                </span>
+                                <span className="text-lg leading-none font-bold sm:text-3xl">
+                                  {total[key as keyof typeof total].toLocaleString()}
+                                </span>
+                            </button>
+                        )
+                    })}
+                </div>
+            </CardHeader>
+            <CardContent className="px-2 sm:p-6">
+                <ChartContainer
+                    config={chartConfig}
+                    className="aspect-auto h-[250px] w-full"
+                >
+                    <BarChart
+                        accessibilityLayer
+                        data={chartData}
+                        margin={{
+                            left: 12,
+                            right: 12,
+                        }}
+                    >
+                        <CartesianGrid vertical={false} />
+                        <XAxis
+                            dataKey="date"
+                            tickLine={true}
+                            axisLine={false}
+                            tickMargin={8}
+                            minTickGap={32}
+                            tickFormatter={(value) => {
+                                const date = new Date(value)
+                                return date.toLocaleDateString("fr-FR", {
+                                    month: "short",
+                                    day: "numeric",
+                                })
+                            }}
+                        />
+                        <YAxis
+                            dataKey="stocks"
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                            width={40}
+                        />
+                        <ChartTooltip
+                            content={
+                                <ChartTooltipContent
+                                    className="w-[150px]"
+                                    nameKey="product"
+                                    labelFormatter={(value) => {
+                                        return new Date(value).toLocaleDateString("fr-FR", {
+                                            month: "short",
+                                            day: "numeric",
+                                            year: "numeric",
+                                        })
+                                    }}
+                                />
+                            }
+                        />
+                        <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`} />
+                    </BarChart>
+                </ChartContainer>
+            </CardContent>
+        </Card>
     )
 }
-
-export default ProductDetails;
