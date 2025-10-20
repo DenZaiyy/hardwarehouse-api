@@ -1,12 +1,15 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
+import {currentUser} from "@clerk/nextjs/server";
 
 export async function GET(req: NextRequest) {
-    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-
     try {
+        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
+        const user = await currentUser();
+
+        console.table(user?.privateMetadata)
 
         if (!success) {
             return NextResponse.json(
@@ -15,16 +18,33 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        const products = await db.products.findMany({
-            include: {
-                category: true,
-                stocks: true,
-                brand: true
-            },
-            orderBy: {
-                createdAt: 'desc'
-            }
-        });
+        let products;
+
+        if (user && user.privateMetadata) {
+            products = await db.products.findMany({
+                include: {
+                    category: true,
+                    brand: true
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            });
+        } else {
+            products = await db.products.findMany({
+                include: {
+                    category: true,
+                    stocks: true,
+                    brand: true
+                },
+                where: {
+                    active: true
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            });
+        }
 
         const res = NextResponse.json(products, { status: 200 });
         res.headers.set('X-RateLimit-Remaining', remaining.toString());
@@ -51,7 +71,7 @@ export async function POST(req: NextRequest) {
         return new NextResponse('Too Many Requests', { status: 429 });
     }
 
-    const { name, price, categoryId, brandId } = await req.json();
+    const { name, price, active, categoryId, brandId } = await req.json();
 
     if (!name || !price || !categoryId || !brandId) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
 
@@ -100,6 +120,7 @@ export async function POST(req: NextRequest) {
                 name: name,
                 slug: slug,
                 price: price,
+                active: active,
                 image: "",
                 category: {
                     connect: { id: categoryId }

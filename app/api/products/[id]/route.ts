@@ -6,6 +6,7 @@ interface UpdateProductData {
     name?: string;
     slug?: string;
     price?: number;
+    active?: boolean;
     image?: string;
     categoryId?: string;
 }
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/products/[id
 
         const product = await db.products.findUnique({
             where: {
-                id: id
+                id: id,
             },
             include: {
                 brand: true,
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/products/[id
 export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
     const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
     const { id } = await ctx.params;
-    const { name, price, image, categoryId } = await _req.json();
+    const { name, price, active, image, categoryId } = await _req.json();
 
     // Vérifier qu'au moins un champ est fourni
     if (!name && !price && !image && !categoryId) {
@@ -92,6 +93,8 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/products/
 
         // Mettre à jour le prix seulement s'il change
         if (price !== product.price) updateData.price = price;
+        // Mettre à jour le status actif seulement s'il change
+        if (active !== product.active) updateData.active = active;
         // Mettre à jour l'image seulement si elle change
         if (image !== product.image) updateData.image = image;
         // Mettre à jour la categoryId seulement si elle change
@@ -114,38 +117,6 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/products/
             console.error('[PRODUCT PATCH] ', error.message)
             return NextResponse.json(
                 { error: `[PRODUCT PATCH] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
-                { status: 500 }
-            );
-        }
-    }
-}
-
-export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
-    const { id } = await ctx.params;
-
-    try {
-        const product = await db.products.findUnique({
-            where: {
-                id
-            }
-        });
-
-        if (!product) {
-            return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
-        }
-
-        await db.products.delete({
-            where: {
-                id
-            }
-        });
-
-        return new NextResponse(`Product with id ${id} deleted`, { status: 200 });
-    } catch (error) {
-        if (error instanceof Error) {
-            console.error('[PRODUCT DELETE] ', error.message)
-            return NextResponse.json(
-                { error: `[PRODUCT DELETE] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
                 { status: 500 }
             );
         }
