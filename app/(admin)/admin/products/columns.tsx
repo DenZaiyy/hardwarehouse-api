@@ -59,7 +59,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
     {
         accessorKey: "price",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Prix" />
+            <DataTableColumnHeader column={column} title="Prix HT" />
         ),
         cell: ({ row }) => {
             const price = parseFloat(row.getValue('price'));
@@ -99,6 +99,17 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
             }
 
             return <div><Link href={`/admin/categories/${category.id}`} className="underline underline-offset-5">{category.name}</Link></div>
+        }
+    },
+    {
+        accessorKey: "active",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Actif" />
+        ),
+        cell: ({ row }) => {
+            const active = row.getValue('active');
+
+            return <div className="font-medium">{active ? "Oui" : "Non"}</div>
         }
     },
     {

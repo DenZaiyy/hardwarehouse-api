@@ -21,6 +21,7 @@ import toast from "react-hot-toast";
 import React from "react";
 import {Label} from "@/components/ui/label";
 import Image from "next/image";
+import {Switch} from "@/components/ui/switch";
 
 type ProductFormProps = {
     product?: ProductsWithCategoryAndBrand
@@ -32,6 +33,7 @@ type ProductFormProps = {
 const formSchema = z.object({
     name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
     price: z.coerce.number<number>().min(0, "Le prix doit être un nombre positif"),
+    active: z.boolean(),
     image: z.string().url("L'URL de l'image doit être valide").optional().or(z.literal("")),
     brandId: z.string().nonempty(),
     categoryId: z.string().nonempty(),
@@ -43,6 +45,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
         defaultValues: {
             name: product?.name ?? "",
             price: product?.price ?? 0,
+            active: product?.active,
             image: product?.image ?? "",
             brandId: product?.brand.id ?? "",
             categoryId: product?.category.id ?? "",
@@ -86,8 +89,8 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} method={method} className="space-y-8">
-                <div className="md:flex md:gap-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} method={method} className="space-y-4">
+                <div className="space-y-4 md:space-y-0 md:flex md:gap-4">
                     <FormField
                         control={form.control}
                         name="name"
@@ -109,7 +112,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                         name="price"
                         render={({ field }) => (
                             <FormItem className="w-full">
-                                <FormLabel>Prix</FormLabel>
+                                <FormLabel>Prix HT</FormLabel>
                                 <FormControl>
                                     <InputGroup>
                                         <InputGroupAddon>
@@ -134,8 +137,27 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="active"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Produit actif</FormLabel>
+                                <FormControl>
+                                    <Switch
+                                        defaultChecked={field.value}
+                                        onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <FormDescription>
+                                    Définir si le produit est disponible à la vente ou non.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </div>
-                <div className="md:flex md:gap-4">
+                <div className="space-y-4 md:space-y-0 md:flex md:gap-4">
                     <FormField
                         control={form.control}
                         name="brandId"
