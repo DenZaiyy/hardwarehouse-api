@@ -18,8 +18,6 @@ export const apiProductService: ProductService = {
             { cache: 'default'}
         );
 
-        if (!res.ok) throw new Error("Failed to fetch products");
-
         return res.json();
     },
     getProduct: async (id: string): Promise<ProductsWithCategoryAndBrand> => {

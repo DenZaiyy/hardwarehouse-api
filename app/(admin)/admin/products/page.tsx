@@ -16,12 +16,8 @@ export const metadata: Metadata = {
 }
 
 async function ProductsTable() {
-    const { data, error } = await apiProductService.getProducts();
-    if (error !== null) {
-        return error;
-    } else {
-        return <DataTable columns={columns} data={data} searchHolder="Filtrer les produits..." />;
-    }
+    const data = await apiProductService.getProducts();
+    return <DataTable columns={columns} data={data} searchHolder="Filtrer les produits..." />;
 }
 
 function ProductsTableSkeleton() {

@@ -1,17 +1,11 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
-import {currentUser} from "@clerk/nextjs/server";
 
 export async function GET(req: NextRequest) {
     try {
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
-        const user = await currentUser()
-
-        if (!user) {
-            return NextResponse.json({ error: "Utilisateur non authentifié user", data: [] }, { status: 401 });
-        }
 
         if (!success) {
             return NextResponse.json(
