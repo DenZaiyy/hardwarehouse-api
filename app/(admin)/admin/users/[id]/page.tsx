@@ -23,12 +23,14 @@ const UserDetails = async ({ params }: UserParams) => {
             <div>
                 <h1>Détails de l&#39;utilisateur</h1>
                 <p>ID: {user.id}</p>
+                <p>Pseudo: {user.username}</p>
                 <p>Nom de famille: {user.lastName}</p>
                 <p>Prénom: {user.firstName}</p>
                 <p>Email: {user.emailAddresses[0].emailAddress}</p>
-                <p>Pseudo: {user.username}</p>
-                <p>Créé le: {new Date(user.createdAt).toLocaleDateString()}</p>
-                <p>Mis à jour le: {new Date(user.updatedAt).toLocaleDateString()}</p>
+                <p>Créé le: {new Date(user.createdAt).toLocaleDateString('fr', {day: "numeric", hour: "2-digit", minute: "2-digit", year: "numeric", month: "numeric"})}</p>
+                <p>Mis à jour le: {new Date(user.updatedAt).toLocaleDateString('fr', {day: "numeric", hour: "2-digit", minute: "2-digit", year: "numeric", month: "numeric"})}</p>
+                <p>Dernière connexion: {user.lastSignInAt && new Date(user.lastSignInAt).toLocaleDateString('fr', {weekday: "long", day: "2-digit", hour: "2-digit", minute: "2-digit", year: "numeric", month: "short"})}</p>
+                <p>Dernière activité: {user.lastActiveAt && new Date(user.lastActiveAt).toLocaleDateString('fr', {weekday: "long", day: "2-digit", hour: "2-digit", minute: "2-digit", year: "numeric", month: "short"})}</p>
             </div>
         </>
     )

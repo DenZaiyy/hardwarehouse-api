@@ -30,7 +30,7 @@ const UserEditPage = async ({ params }: UserParams) => {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>{user.username}</CardTitle>
+                    <CardTitle>Pseudo: {user.username}</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <UserForm user={user} method="PATCH" />
