@@ -27,10 +27,11 @@ import {
 type ProductActionsProps = {
     productId: string;
     productName: string;
+    productActive: boolean;
     onDisable: (id: string) => void;
 }
 
-export function ProductActions({ productId, productName, onDisable }: ProductActionsProps) {
+export function ProductActions({ productId, productName, productActive, onDisable }: ProductActionsProps) {
     const [open, setOpen] = useState(false)
 
     return (
@@ -68,17 +69,23 @@ export function ProductActions({ productId, productName, onDisable }: ProductAct
                         variant="destructive"
                         onClick={() => setOpen(true)}
                     >
-                        Désactiver
+                        {productActive ? "Désactiver" : "Activer"}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
             <AlertDialog open={open} onOpenChange={setOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Désactiver le produit ?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            La désactivation du produit : <strong>{productName}</strong> de la boutique entraîne l&#39;impossibilité d&#39;effectuer un achat.
-                        </AlertDialogDescription>
+                        <AlertDialogTitle>{productActive ? "Désactiver" : "Activer"} le produit ?</AlertDialogTitle>
+                        {productActive ? (
+                            <AlertDialogDescription>
+                                La désactivation du produit : <strong>{productName}</strong> de la boutique entraîne l&#39;impossibilité d&#39;effectuer un achat.
+                            </AlertDialogDescription>
+                            ) : (
+                            <AlertDialogDescription>
+                                L’activation du produit : <strong>{productName}</strong> dans la boutique permet de le rendre à nouveau disponible à l’achat.
+                            </AlertDialogDescription>
+                        )}
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>

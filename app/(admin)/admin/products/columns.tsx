@@ -19,10 +19,10 @@ async function handleConfirm(productId: string) {
         "image": product.image,
         "price": product.price,
         "categoryId": product.categoryId,
-        "active": false
+        "active": !product.active
     }
     await apiProductService.updateProduct(productId, data)
-    toast.success("Produit désactiver avec succès")
+    toast.success(`Produit ${product.active ? "désactiver" : "activer"} avec succès`)
     setTimeout(() => window.location.reload(), 1500)
 }
 
@@ -150,6 +150,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                     productId={product.id}
                     productName={product.name}
                     onDisable={(id) => handleConfirm(id)}
+                    productActive={product.active}
                 />
             )
         }
