@@ -7,44 +7,28 @@ export async function GET(req: NextRequest) {
     try {
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
-        const user = await currentUser();
+        const user = await currentUser()
 
-        console.table(user?.privateMetadata)
+        if (!user) {
+            return NextResponse.json({ error: "Utilisateur non authentifié user", data: [] }, { status: 401 });
+        }
 
         if (!success) {
             return NextResponse.json(
-                { error: "Trop de demandes" },
+                { error: "Trop de demandes", data: null },
                 { status: 429 }
             );
         }
 
-        let products;
-
-        if (user && user.privateMetadata) {
-            products = await db.products.findMany({
-                include: {
-                    category: true,
-                    brand: true
-                },
-                orderBy: {
-                    createdAt: 'desc'
-                }
-            });
-        } else {
-            products = await db.products.findMany({
-                include: {
-                    category: true,
-                    stocks: true,
-                    brand: true
-                },
-                where: {
-                    active: true
-                },
-                orderBy: {
-                    createdAt: 'desc'
-                }
-            });
-        }
+        const products = await db.products.findMany({
+            include: {
+                category: true,
+                brand: true
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
 
         const res = NextResponse.json(products, { status: 200 });
         res.headers.set('X-RateLimit-Remaining', remaining.toString());

@@ -55,17 +55,17 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/products/[id
     }
 }
 
-export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
-    const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
-    const { id } = await ctx.params;
-    const { name, price, active, image, categoryId } = await _req.json();
-
-    // Vérifier qu'au moins un champ est fourni
-    if (!name && !price && !image && !categoryId) {
-        return NextResponse.json({ error: "Au moins un champ est obligatoire." }, { status: 400 });
-    }
-
+export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
     try {
+        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+        const { id } = await ctx.params;
+        const { name, price, active, image, categoryId } = await req.json();
+
+        // Vérifier qu'au moins un champ est fourni
+        if (!name && !price && !image && !categoryId && !active) {
+            return NextResponse.json("Au moins un champ est obligatoire.", { status: 400 });
+        }
+
         const { success, remaining, reset } = await rateLimiter.limit(ip);
 
         if (!success) {

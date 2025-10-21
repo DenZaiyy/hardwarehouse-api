@@ -4,6 +4,7 @@ import Link from "next/link";
 import {Separator} from "@/components/ui/separator";
 import {formatDate} from "@/lib/utils";
 import {BarChartCard} from "@/components/admin/bar-chart-card";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 interface ProductParams {
     params: Promise<{ id: string }>;
@@ -119,7 +120,7 @@ const ProductDetails = async ({ params }: ProductParams) => {
             <Card>
                 <CardHeader>
                     <CardTitle>
-                        {product.name}
+                        Produit: {product.name}
                     </CardTitle>
                     <CardDescription>
                         Voici les caractéristiques du produit en détails
@@ -129,7 +130,8 @@ const ProductDetails = async ({ params }: ProductParams) => {
                     <div className="flex flex-col gap-2">
                         <p>Nom: <strong>{product.name}</strong></p>
                         <p>Prix HT: <strong>{product.price}</strong></p>
-                        <p>Prix TTC: <strong>{Number(((product.price * 0.2) + product.price).toFixed(2))}</strong></p>
+                        <p>TVA: <strong>20%</strong></p>
+                        <p>Prix TTC: <strong>{Number((product.price * 1.2)).toFixed(2)}</strong></p>
                     </div>
                     <Separator orientation="vertical" />
                     <div className="flex flex-col gap-2">
@@ -147,10 +149,17 @@ const ProductDetails = async ({ params }: ProductParams) => {
                 </CardFooter>
             </Card>
 
-            <section className="mt-4 space-y-4">
-                <BarChartCard title="Evolution du stock" description="Showing total visitors for the last 3 months" data={data} config={config} defaultKey="stocks" />
-                <BarChartCard title="Evolution du stock" description="" data={data} config={config} defaultKey="stocks" />
-            </section>
+            <Tabs defaultValue="statistics" className="mt-4">
+                <TabsList>
+                    <TabsTrigger value="statistics">Statistiques</TabsTrigger>
+                    <TabsTrigger value="transactions">Transactions</TabsTrigger>
+                </TabsList>
+                <TabsContent value="statistics" className="space-y-4">
+                    <BarChartCard title="Evolution du stock" description="Showing total visitors for the last 3 months" data={data} config={config} defaultKey="stocks" />
+                    <BarChartCard title="Evolution du stock" description="" data={data} config={config} defaultKey="stocks" />
+                </TabsContent>
+                <TabsContent value="transactions">Change your password here.</TabsContent>
+            </Tabs>
         </>
     )
 }

@@ -27,10 +27,10 @@ import {
 type ProductActionsProps = {
     productId: string;
     productName: string;
-    onDelete: (id: string) => void;
+    onDisable: (id: string) => void;
 }
 
-export function ProductActions({ productId, productName, onDelete }: ProductActionsProps) {
+export function ProductActions({ productId, productName, onDisable }: ProductActionsProps) {
     const [open, setOpen] = useState(false)
 
     return (
@@ -68,22 +68,21 @@ export function ProductActions({ productId, productName, onDelete }: ProductActi
                         variant="destructive"
                         onClick={() => setOpen(true)}
                     >
-                        Supprimer
+                        Désactiver
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
             <AlertDialog open={open} onOpenChange={setOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Supprimer le produit ?</AlertDialogTitle>
+                        <AlertDialogTitle>Désactiver le produit ?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Cette action est irréversible. Le produit{" "}
-                            <strong>{productName}</strong> sera définitivement supprimée.
+                            La désactivation du produit : <strong>{productName}</strong> de la boutique entraîne l&#39;impossibilité d&#39;effectuer un achat.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => onDelete(productId)}>
+                        <AlertDialogAction onClick={() => onDisable(productId)}>
                             Confirmer
                         </AlertDialogAction>
                     </AlertDialogFooter>

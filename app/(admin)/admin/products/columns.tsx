@@ -13,8 +13,16 @@ import {apiProductService} from "@/services/productService";
 import Link from "next/link";
 
 async function handleConfirm(productId: string) {
-    await apiProductService.deleteProduct(productId)
-    toast.success("Produit supprimée avec succès")
+    const product = await apiProductService.getProduct(productId);
+    const data = {
+        "name": product.name,
+        "image": product.image,
+        "price": product.price,
+        "categoryId": product.categoryId,
+        "active": false
+    }
+    await apiProductService.updateProduct(productId, data)
+    toast.success("Produit désactiver avec succès")
     setTimeout(() => window.location.reload(), 1500)
 }
 
@@ -141,7 +149,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                 <ProductActions
                     productId={product.id}
                     productName={product.name}
-                    onDelete={(id) => handleConfirm(id)}
+                    onDisable={(id) => handleConfirm(id)}
                 />
             )
         }
