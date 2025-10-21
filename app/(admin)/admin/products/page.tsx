@@ -9,6 +9,10 @@ import {Suspense} from "react";
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Produits",
     description: "Gérer les produits dans le panneau d'administration HardWareHouse",
+    robots: {
+        index: false,
+        follow: false
+    }
 }
 
 async function ProductsTable() {

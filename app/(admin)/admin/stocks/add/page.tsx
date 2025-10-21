@@ -7,6 +7,10 @@ import StockForm from "@/components/admin/stocks/form";
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Products - Add",
     description: "Adding a new product in a products list",
+    robots: {
+        index: false,
+        follow: false
+    }
 }
 
 const StockAddPage = async () => {

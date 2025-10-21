@@ -6,6 +6,10 @@ import UserForm from "@/components/admin/users/form";
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Utilisateurs - Ajout",
     description: "Ajouter un nouvelle utilisateur dans la liste des marques",
+    robots: {
+        index: false,
+        follow: false
+    }
 }
 
 const UserAddPage = async () => {

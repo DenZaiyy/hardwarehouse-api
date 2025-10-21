@@ -9,6 +9,10 @@ import {apiBrandService} from "@/services/brandService";
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Brands",
     description: "Manage brands in the HardWareHouse admin panel",
+    robots: {
+        index: false,
+        follow: false
+    }
 }
 
 async function BrandsTable() {

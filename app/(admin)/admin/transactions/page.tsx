@@ -9,6 +9,10 @@ import {columns} from "@/app/(admin)/admin/transactions/column";
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Transactions de stocks",
     description: "Gérer les transactions de stocks (bon de commande) dans le panneau d'administration HardWareHouse",
+    robots: {
+        index: false,
+        follow: false
+    }
 }
 
 async function TransactionsTable() {

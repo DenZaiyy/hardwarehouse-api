@@ -9,6 +9,10 @@ import {columns} from "@/app/(admin)/admin/users/columns";
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Utilisateurs",
     description: "Gérer les utilisateurs associés à la boutique et le panel d'administration.",
+    robots: {
+        index: false,
+        follow: false
+    }
 }
 
 async function UsersTable() {

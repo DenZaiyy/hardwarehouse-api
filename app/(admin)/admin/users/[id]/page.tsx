@@ -1,24 +1,37 @@
-import {apiBrandService} from "@/services/brandService";
+import {apiUserService} from "@/services/userService";
+import type {Metadata} from "next";
 
-interface BrandParams {
+export const metadata: Metadata = {
+    title: "HardWareHouse - Administration - Utilisateur - Détails",
+    description: "Gérer le détails d'un utilisateur et voir les dernières transactions effectuées",
+    robots: {
+        index: false,
+        follow: false
+    }
+}
+
+interface UserParams {
     params: Promise<{ id: string }>;
 }
 
-const BrandDetails = async ({ params }: BrandParams) => {
+const UserDetails = async ({ params }: UserParams) => {
     const { id } = await params;
-    const brand = await apiBrandService.getBrand(id);
+    const user = await apiUserService.getUser(id);
 
     return (
         <>
             <div>
-                <h1>Détails de la marque</h1>
-                <p>ID: {brand.id}</p>
-                <p>Nom: {brand.name}</p>
-                <p>Créé le: {new Date(brand.createdAt).toLocaleDateString()}</p>
-                <p>Mis à jour le: {new Date(brand.updatedAt).toLocaleDateString()}</p>
+                <h1>Détails de l&#39;utilisateur</h1>
+                <p>ID: {user.id}</p>
+                <p>Nom de famille: {user.lastName}</p>
+                <p>Prénom: {user.firstName}</p>
+                <p>Email: {user.emailAddresses[0].emailAddress}</p>
+                <p>Pseudo: {user.username}</p>
+                <p>Créé le: {new Date(user.createdAt).toLocaleDateString()}</p>
+                <p>Mis à jour le: {new Date(user.updatedAt).toLocaleDateString()}</p>
             </div>
         </>
     )
 }
 
-export default BrandDetails;
+export default UserDetails;

@@ -1,10 +1,10 @@
 import {apiCategoryService} from "@/services/categoryService";
 
-interface BrandParams {
+interface CategoryParams {
     params: Promise<{ id: string }>;
 }
 
-const CategoryDetails = async ({ params }: BrandParams) => {
+const CategoryDetails = async ({ params }: CategoryParams) => {
     const { id } = await params;
     const category = await apiCategoryService.getCategory(id);
 

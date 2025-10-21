@@ -6,6 +6,10 @@ import BrandForm from "@/components/admin/brands/form";
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Marques - Ajout",
     description: "Ajouter une nouvelle marque dans la liste des marques",
+    robots: {
+        index: false,
+        follow: false
+    }
 }
 
 const BrandAddPage = async () => {

@@ -5,6 +5,10 @@ import {ChartBarInteractive} from "@/components/admin/chart-stocks";
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Dashboard",
     description: "Tableau de bord pour la gestion des produits et des catégories dans le panneau d'administration HardWareHouse",
+    robots: {
+        index: false,
+        follow: false
+    }
 }
 
 export default async function DashboardPage() {

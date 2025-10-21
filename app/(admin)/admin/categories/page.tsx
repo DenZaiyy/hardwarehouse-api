@@ -9,6 +9,10 @@ import {Suspense} from "react";
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Categories",
     description: "Manage categories in the HardWareHouse admin panel",
+    robots: {
+        index: false,
+        follow: false
+    }
 }
 
 async function CategoriesTable() {
