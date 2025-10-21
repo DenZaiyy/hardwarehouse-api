@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import {User} from "@clerk/backend";
-import {PurchaseOrdersWithProduct, TransactionsWithProduct} from "@/types/types";
+import {OrdersResponse, TransactionsResponse} from "@/types/types";
 
 export interface UserService {
     getUsers: () => Promise<User[]>;
@@ -8,8 +8,8 @@ export interface UserService {
     createUser: (data: Partial<User>) => Promise<User>;
     updateUser: (id: string, data: Partial<User>) => Promise<User>;
     deleteUser: (id: string) => Promise<void>;
-    getPurchaseOrders: (id: string) => Promise<PurchaseOrdersWithProduct[]>;
-    getTransactions: (id: string) => Promise<TransactionsWithProduct[]>
+    getPurchaseOrders: (id: string) => Promise<OrdersResponse>;
+    getTransactions: (id: string) => Promise<TransactionsResponse>
 }
 
 export const apiUserService: UserService = {
@@ -75,7 +75,7 @@ export const apiUserService: UserService = {
 
         if (!res.ok) toast.error("Échec de la suppression de l'utilisateur");
     },
-    getPurchaseOrders: async (id: string): Promise<PurchaseOrdersWithProduct[]> => {
+    getPurchaseOrders: async (id: string): Promise<OrdersResponse> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/users/${id}/orders`,
             { cache: "default"}
@@ -83,9 +83,9 @@ export const apiUserService: UserService = {
 
         if (!res.ok) throw new Error("L'utilisateur n'a pas effectué de bon de commandes");
 
-        return res.json();
+        return await res.json();
     },
-    getTransactions: async (id: string): Promise<TransactionsWithProduct[]> => {
+    getTransactions: async (id: string): Promise<TransactionsResponse> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/users/${id}/transactions`,
             { cache: "default" }
@@ -93,6 +93,6 @@ export const apiUserService: UserService = {
 
         if (!res.ok) throw new Error("L'utilisateur n'a pas effectué de transaction de stocks");
 
-        return res.json();
+        return await res.json();
     }
 };

@@ -30,16 +30,36 @@ type DataMap = {
     transactions: TransactionsWithProduct
 }
 
-async function Table<T extends TableType>({id, type, columns,}: { id: string, type: T, columns: ColumnDef<DataMap[T]>[] }) {
+async function Table<T extends TableType>({
+    id, 
+    type, 
+    columns,
+    preloadedData
+}: { 
+    id: string, 
+    type: T, 
+    columns: ColumnDef<DataMap[T]>[],
+    preloadedData?: DataMap[T][]
+}) {
+    // Si les données sont déjà chargées, les utiliser directement
     let data: DataMap[T][]
 
-    switch (type) {
-        case "orders":
-            data = await apiUserService.getPurchaseOrders(id) as DataMap[T][]
-            break
-        case "transactions":
-            data = await apiUserService.getTransactions(id) as DataMap[T][]
-            break
+    if (preloadedData) {
+        data = preloadedData
+    } else {
+        // Sinon, les charger (fallback)
+        switch (type) {
+            case "orders": {
+                const response = await apiUserService.getPurchaseOrders(id)
+                data = response.data as DataMap[T][]
+                break
+            }
+            case "transactions": {
+                const response = await apiUserService.getTransactions(id)
+                data = response.data as DataMap[T][]
+                break
+            }
+        }
     }
 
     return (
@@ -60,9 +80,22 @@ function OrdersTableSkeleton() {
     return <DataTable columns={ordersColumns} data={[]} inputSearch={false} isLoading={true} />;
 }
 
+function TransactionsTableSkeleton() {
+    return <DataTable columns={transactionsColumns} data={[]} inputSearch={false} isLoading={true} />;
+}
+
 const UserDetails = async ({ params }: UserParams) => {
     const { id } = await params;
     const user = await apiUserService.getUser(id);
+
+    const [ordersResponse, transactionsResponse] = await Promise.all([
+        apiUserService.getPurchaseOrders(id),
+        apiUserService.getTransactions(id)
+    ]);
+
+    const hasOrders = ordersResponse.count > 0;
+    const hasTransactions = transactionsResponse.count > 0;
+    const hasAnyData = hasOrders || hasTransactions;
 
     return (
         <>
@@ -98,22 +131,51 @@ const UserDetails = async ({ params }: UserParams) => {
                 </CardFooter>
             </Card>
 
-            <Tabs defaultValue="orders" className="mt-4">
-                <TabsList>
-                    <TabsTrigger value="orders">Bon de commandes</TabsTrigger>
-                    <TabsTrigger value="transactions">Transactions</TabsTrigger>
-                </TabsList>
-                <TabsContent value="orders" className="space-y-4">
-                    <Suspense fallback={<OrdersTableSkeleton />}>
-                        <Table id={user.id} type="orders" columns={ordersColumns} />
-                    </Suspense>
-                </TabsContent>
-                <TabsContent value="transactions">
-                    <Suspense fallback={<OrdersTableSkeleton />}>
-                        <Table id={user.id} type="transactions" columns={transactionsColumns} />
-                    </Suspense>
-                </TabsContent>
-            </Tabs>
+            {hasAnyData && (
+                <Tabs 
+                    defaultValue={hasOrders ? "orders" : "transactions"} 
+                    className="mt-4"
+                >
+                    <TabsList>
+                        {hasOrders && (
+                            <TabsTrigger value="orders">
+                                Bon de commandes ({ordersResponse.count})
+                            </TabsTrigger> 
+                        )}
+                        {hasTransactions && (
+                            <TabsTrigger value="transactions">
+                                Transactions ({transactionsResponse.count})
+                            </TabsTrigger>
+                        )}
+                    </TabsList>
+                    
+                    {hasOrders && (
+                        <TabsContent value="orders" className="space-y-4">
+                            <Suspense fallback={<OrdersTableSkeleton />}>
+                                <Table 
+                                    id={user.id} 
+                                    type="orders" 
+                                    columns={ordersColumns}
+                                    preloadedData={ordersResponse.data}
+                                />
+                            </Suspense>
+                        </TabsContent>
+                    )}
+                    
+                    {hasTransactions && (
+                        <TabsContent value="transactions" className="space-y-4">
+                            <Suspense fallback={<TransactionsTableSkeleton />}>
+                                <Table 
+                                    id={user.id} 
+                                    type="transactions" 
+                                    columns={transactionsColumns}
+                                    preloadedData={transactionsResponse.data}
+                                />
+                            </Suspense>
+                        </TabsContent>
+                    )}
+                </Tabs>
+            )}
         </>
     )
 }

@@ -16,16 +16,12 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/users/[id]/o
             )
         }
 
-        const orders = await db.purchaseOrder.findMany({
-            where: {
-                userId: id
-            },
-            include: {
-                product: true
-            }
-        })
+        const [orders, totalOrders] = await db.$transaction([
+            db.purchaseOrder.findMany({ where: { userId: id }, include: { product: true } }),
+            db.purchaseOrder.count({ where: { userId: id } }),
+        ])
 
-        return NextResponse.json(orders, { status: 200 })
+        return NextResponse.json({data: orders, count: totalOrders}, { status: 200 })
     } catch(err) {
         if (err instanceof Error) {
             console.error(`[USER ORDERS ERROR] ${err.message}`);
