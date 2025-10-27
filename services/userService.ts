@@ -1,4 +1,3 @@
-import toast from "react-hot-toast";
 import {User} from "@clerk/backend";
 import {OrdersResponse, TransactionsResponse} from "@/types/types";
 
@@ -15,11 +14,13 @@ export interface UserService {
 export const apiUserService: UserService = {
     getUsers: async (): Promise<User[]> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/users`,
-            { cache: 'default'}
+            `${process.env.NEXT_PUBLIC_API_URL}/users`, {
+                method: "GET",
+                cache: 'default'
+            }
         );
 
-        if (!res.ok) toast.error("Échec de la récupération des utilisateurs");
+        if (!res.ok) throw new Error("Échec de la récupération des utilisateurs");
 
         return res.json();
     },
@@ -42,7 +43,7 @@ export const apiUserService: UserService = {
             body: JSON.stringify(data),
         });
 
-        if (!res.ok) toast.error("Échec de la création de l'utilisateur");
+        if (!res.ok) throw new Error("Échec de la création de l'utilisateur");
 
         return res.json();
     },
@@ -61,7 +62,7 @@ export const apiUserService: UserService = {
             }
         );
 
-        if (!res.ok) toast.error("Échec de la mise à jour de l'utilisateur");
+        if (!res.ok) throw new Error("Échec de la mise à jour de l'utilisateur");
 
         return res.json();
     },
@@ -73,7 +74,7 @@ export const apiUserService: UserService = {
             }
         );
 
-        if (!res.ok) toast.error("Échec de la suppression de l'utilisateur");
+        if (!res.ok) throw new Error("Échec de la suppression de l'utilisateur");
     },
     getPurchaseOrders: async (id: string): Promise<OrdersResponse> => {
         const res = await fetch(
