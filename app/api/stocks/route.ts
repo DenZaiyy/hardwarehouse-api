@@ -38,9 +38,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const { quantity, productId } = await req.json();
+    const { minQuantity, quantity, productId } = await req.json();
 
-    if (!quantity || !productId) return new NextResponse("Missing required fields", { status: 400});
+    if (!minQuantity && !quantity && !productId) return new NextResponse("Missing required fields", { status: 400});
 
     const existingProduct = await db.products.findUnique({
         where: { id: productId }
@@ -62,6 +62,7 @@ export async function POST(req: NextRequest) {
                 product: true
             },
             data: {
+                minQuantity: minQuantity,
                 quantity: quantity,
                 product: {
                     connect: { id: productId }
