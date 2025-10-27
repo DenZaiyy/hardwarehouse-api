@@ -1,15 +1,30 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import {clerkMiddleware, createRouteMatcher} from "@clerk/nextjs/server";
 
 const isProtectedRoute = createRouteMatcher(["/admin(.*)"]);
+const isAdminRoute = createRouteMatcher(["/admin/users(.*)", "/admin/transactions(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-    if (isProtectedRoute(req)) await auth.protect();
+    const { userId, sessionClaims } = await auth();
+
+    // Require login for all protected routes
+    if (isProtectedRoute(req)) {
+        if (!userId) return (await auth()).redirectToSignIn();
+    }
+
+    // Require admin role for specific routes
+    if (isAdminRoute(req)) {
+        if (!userId) return (await auth()).redirectToSignIn();
+
+        const userRole = sessionClaims?.publicMetadata?.role;
+        if (userRole !== "admin") {
+            return new Response("Unauthorized", { status: 401 });
+        }
+    }
 });
 
 export const config = {
     matcher: [
         "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-        // Always run for API routes
         "/(api|trpc)(.*)",
     ],
 };
