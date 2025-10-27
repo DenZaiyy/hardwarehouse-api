@@ -28,10 +28,13 @@ type UserActionsProps = {
     userId: string;
     userFullName: string;
     onDelete: (id: string) => void;
+    onBlock: (id: string, lock: boolean) => void;
+    isBlocking: boolean;
 }
 
-export function UserActions({ userId, userFullName, onDelete }: UserActionsProps) {
+export default function UserActions({ userId, userFullName, onDelete, onBlock, isBlocking}: UserActionsProps) {
     const [open, setOpen] = useState(false)
+    const [lockOpen, setLockOpen] = useState(false)
 
     return (
         <>
@@ -66,6 +69,12 @@ export function UserActions({ userId, userFullName, onDelete }: UserActionsProps
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         variant="destructive"
+                        onClick={() => setLockOpen(true)}
+                    >
+                        {isBlocking ? "Débloquer" : "Bloquer"}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        variant="destructive"
                         onClick={() => setOpen(true)}
                     >
                         Supprimer
@@ -84,6 +93,30 @@ export function UserActions({ userId, userFullName, onDelete }: UserActionsProps
                     <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
                         <AlertDialogAction onClick={() => onDelete(userId)}>
+                            Confirmer
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog open={lockOpen} onOpenChange={setLockOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            {isBlocking
+                                ? "Débloquer l'utilisateur ?"
+                                : "Bloquer l'utilisateur"
+                            }
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {isBlocking
+                                ? "Débloquer l'utilisateur lui donnera la possibilité d'accéder à nouveau au site"
+                                : "Bloquer l'utilisateur, lui empêchera la connexion au site"
+                            }
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => onBlock(userId, isBlocking)}>
                             Confirmer
                         </AlertDialogAction>
                     </AlertDialogFooter>

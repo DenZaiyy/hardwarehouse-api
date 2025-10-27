@@ -5,7 +5,7 @@ import {formatDate} from "@/lib/utils"
 import {DataTableColumnHeader} from "@/components/data-table-column-header"
 import toast from "react-hot-toast"
 import {User} from "@clerk/backend";
-import {UserActions} from "@/components/admin/users/actions";
+import UserActions from "@/components/admin/users/actions";
 import {apiUserService} from "@/services/userService";
 
 async function handleConfirm(userId: string) {
@@ -14,10 +14,26 @@ async function handleConfirm(userId: string) {
     setTimeout(() => window.location.reload(), 1500)
 }
 
+async function handleBlock(userId: string, lock: boolean) {
+    await apiUserService.updateUser(userId, {
+        locked: lock
+    })
+    toast.success(lock ? "Utilisateur débloqué avec succès" : "Utilisateur bloqué avec succès")
+    setTimeout(() => window.location.reload(), 1500)
+}
+
 export const columns: ColumnDef<User>[] = [
     {
         accessorKey: "id",
         header: "ID",
+    },
+    {
+        accessorKey: "locked",
+        header: "Verrouiller",
+        cell: ({ row }) => {
+            const user = row.original
+            return user.locked ? "Oui" : "Non"
+        }
     },
     {
         accessorKey: "username",
@@ -48,13 +64,13 @@ export const columns: ColumnDef<User>[] = [
         }
     },
     {
-        accessorKey: "privateMetadata",
+        accessorKey: "publicMetadata",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Rôle" />
         ),
         cell: ({row}) => {
             const user = row.original
-            const role = user.privateMetadata["ROLE"]
+            const role = user.publicMetadata["role"]
 
             if (!role) return "Employé"
 
@@ -99,6 +115,8 @@ export const columns: ColumnDef<User>[] = [
                     userId={user.id}
                     userFullName={user.fullName ?? ""}
                     onDelete={(id) => handleConfirm(id)}
+                    onBlock={(id, lock) => handleBlock(id, lock)}
+                    isBlocking={user.locked}
                 />
             )
         },

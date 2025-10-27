@@ -19,9 +19,10 @@ type UserFormProps = {
 const formSchema = z.object({
     firstname: z.string().nonempty(),
     lastname: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
-    email: z.string().nonempty(),
     username: z.string().nonempty(),
+    email: z.string().nonempty(),
     password: z.string().nonempty(),
+    passwordConfirm: z.string().nonempty(),
 })
 
 const UserForm = ({ user, method }: UserFormProps) => {
@@ -30,23 +31,31 @@ const UserForm = ({ user, method }: UserFormProps) => {
         defaultValues: {
             firstname: user?.firstName ?? "",
             lastname: user?.lastName ?? "",
-            email: user?.emailAddresses[0].emailAddress ?? "",
             username: user?.username ?? "",
-            password: ""
+            email: user?.emailAddresses[0].emailAddress ?? "",
+            password: "",
+            passwordConfirm: ""
         }
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (!user) {
-            const result = await apiUserService.createUser(values)
+            const password = values['password'];
+            const confirmPassword = values['passwordConfirm'];
 
-            if (!result) {
-                toast.error("Une erreur est survenue lors de la création de l'utilisateur.")
-                return
+            if (password === confirmPassword) {
+                const result = await apiUserService.createUser(values)
+
+                if (!result) {
+                    toast.error("Une erreur est survenue lors de la création de l'utilisateur.")
+                    return
+                }
+
+                toast.success("Utilisateur créé avec succès.")
+                form.reset()
+            } else {
+                toast.error('Mot de passe différent')
             }
-
-            toast.success("Utilisateur créé avec succès.")
-            form.reset()
         } else {
             const result = await apiUserService.updateUser(user.id, values)
 
@@ -131,6 +140,45 @@ const UserForm = ({ user, method }: UserFormProps) => {
                                 </FormControl>
                                 <FormDescription>
                                     Le prénom doit être renseigné
+                                </FormDescription>
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <div className="flex flex-col md:flex-row gap-2">
+                    <FormField
+                        control={form.control}
+                        name="password"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Mot de passe</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="password"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormDescription>
+                                    Renseignez votre mot de passe
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="passwordConfirm"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Confirmer le mot de passe</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="password"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormDescription>
+                                    Pour confirmer, veuillez renseigner à nouveau le mot de passe.
                                 </FormDescription>
                             </FormItem>
                         )}
