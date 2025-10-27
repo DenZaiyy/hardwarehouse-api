@@ -230,9 +230,11 @@ async function main() {
 
             // Créer un stock aléatoire pour chaque produit
             const randomStock = Math.floor(Math.random() * 50) + 1; // Stock entre 1 et 50
+            const randomMinStock = Math.floor(Math.random() * 30) + 1
             await prisma.stocks.create({
                 data: {
                     productId: product.id,
+                    minQuantity: randomMinStock,
                     quantity: randomStock,
                 },
             });
