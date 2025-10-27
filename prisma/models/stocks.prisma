@@ -1,8 +1,9 @@
 model Stocks {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId String   @unique @db.ObjectId
-  quantity  Int
-  product   Products @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId   String   @unique @db.ObjectId
+  quantity    Int
+  minQuantity Int      @default(0)
+  product     Products @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
