@@ -117,7 +117,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
         cell: ({ row }) => {
             const active = row.getValue('active');
 
-            return <div className="font-medium">{active ? "Oui" : "Non"}</div>
+            return <div className={`font-medium ${active ? 'text-green-500' : 'text-red-500'}`}>{active ? "Oui" : "Non"}</div>
         }
     },
     {
