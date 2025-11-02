@@ -14,9 +14,11 @@ export interface ProductService {
 export const apiProductService: ProductService = {
     getProducts: async (): Promise<ProductsWithCategoryAndBrand[]> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/products`,
+            `${process.env.NEXT_PUBLIC_API_URL}/protected/products`,
             { cache: 'default'}
         );
+
+        console.trace(res);
 
         return res.json();
     },
