@@ -14,9 +14,8 @@ export interface UserService {
 export const apiUserService: UserService = {
     getUsers: async (): Promise<User[]> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/protected/users`, {
+            `${process.env.NEXT_PUBLIC_API_URL}/users`, {
                 method: "GET",
-                cache: 'default'
             }
         );
 
@@ -26,8 +25,9 @@ export const apiUserService: UserService = {
     },
     getUser: async (id: string): Promise<User> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/protected/users/${id}`,
-            { cache: 'default'}
+            `${process.env.NEXT_PUBLIC_API_URL}/users/${id}`, {
+                method: "GET"
+            }
         );
 
         if (!res.ok) throw new Error("Échec de récupération de l'utilisateur");
@@ -35,7 +35,7 @@ export const apiUserService: UserService = {
         return res.json();
     },
     createUser: async (data: Partial<User>): Promise<User> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/protected/users`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -52,7 +52,7 @@ export const apiUserService: UserService = {
         data: Partial<User>
     ): Promise<User> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/protected/users/${id}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/users/${id}`,
             {
                 method: "PATCH",
                 headers: {
@@ -68,7 +68,7 @@ export const apiUserService: UserService = {
     },
     deleteUser: async (id: string): Promise<void> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/protected/users/${id}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/users/${id}`,
             {
                 method: "DELETE",
             }
@@ -78,8 +78,9 @@ export const apiUserService: UserService = {
     },
     getPurchaseOrders: async (id: string): Promise<OrdersResponse> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/protected/users/${id}/orders`,
-            { cache: "default"}
+            `${process.env.NEXT_PUBLIC_API_URL}/users/${id}/orders`, {
+                method: "GET"
+            }
         );
 
         if (!res.ok) throw new Error("L'utilisateur n'a pas effectué de bon de commandes");
@@ -88,8 +89,9 @@ export const apiUserService: UserService = {
     },
     getTransactions: async (id: string): Promise<TransactionsResponse> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/protected/users/${id}/transactions`,
-            { cache: "default" }
+            `${process.env.NEXT_PUBLIC_API_URL}/users/${id}/transactions`, {
+                method: "GET"
+            }
         );
 
         if (!res.ok) throw new Error("L'utilisateur n'a pas effectué de transaction de stocks");

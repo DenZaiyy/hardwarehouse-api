@@ -14,18 +14,25 @@ export interface ProductService {
 export const apiProductService: ProductService = {
     getProducts: async (): Promise<ProductsWithCategoryAndBrand[]> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/protected/products`,
-            { cache: 'default'}
+            `${process.env.NEXT_PUBLIC_API_URL}/products`,
+            {
+                method: "GET"
+            }
         );
 
-        console.trace(res);
+        if (!res.ok) {
+            const error = await res.json();
+            console.log(error);
+            throw new Error(error.error || 'Failed to fetch products');
+        }
 
         return res.json();
     },
     getProduct: async (id: string): Promise<ProductsWithCategoryAndBrand> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
-            { cache: 'default'}
+            `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
+                method: "GET"
+            }
         );
 
         if (!res.ok) throw new Error("Failed to fetch product");
@@ -81,8 +88,9 @@ export const apiProductService: ProductService = {
     },
     getProductStock: async (id: string): Promise<ProductsWithStocks> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/stats/product/${id}`,
-            { cache: "default" }
+            `${process.env.NEXT_PUBLIC_API_URL}/stats/product/${id}`, {
+                method: "GET"
+            }
         )
 
         if (!res.ok) throw new Error("Failed to fetch product stocks")
