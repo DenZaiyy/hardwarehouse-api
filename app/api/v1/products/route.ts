@@ -1,20 +1,11 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
-import {auth} from "@clerk/nextjs/server";
 
 export async function GET(req: NextRequest) {
     try {
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
-        const { userId, sessionClaims } = await auth();
-
-        if (!userId) {
-            return NextResponse.json(
-                { error: "Unauthorized" },
-                { status: 401 }
-            );
-        }
 
         if (!success) {
             return NextResponse.json(

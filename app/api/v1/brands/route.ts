@@ -3,9 +3,8 @@ import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
-    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-
     try {
+        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
 
         if (!success) {

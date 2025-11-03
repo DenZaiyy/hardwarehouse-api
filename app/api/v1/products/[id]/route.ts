@@ -11,11 +11,10 @@ interface UpdateProductData {
     categoryId?: string;
 }
 
-export async function GET(req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
-    const { id } = await ctx.params;
-    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-
+export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/protected/products/[id]'>) {
     try {
+        const { id } = await ctx.params;
+        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
 
         if (!success) {
@@ -55,7 +54,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/products/[id
     }
 }
 
-export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/products/[id]'>) {
+export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/protected/products/[id]'>) {
     try {
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { id } = await ctx.params;

@@ -2,7 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {clerkClient} from "@clerk/nextjs/server";
 import {db} from "@/lib/db";
 
-export async function GET(req: NextRequest, ctx: RouteContext<'/api/users/[id]/transactions'>) {
+export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/protected/users/[id]/transactions'>) {
     try {
         const { id } = await ctx.params;
         const client = await clerkClient()

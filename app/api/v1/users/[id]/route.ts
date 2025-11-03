@@ -12,7 +12,7 @@ interface UpdateUserData {
     locked?: boolean;
 }
 
-export async function GET(req: NextRequest, ctx: RouteContext<'/api/users/[id]'>) {
+export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]'>) {
     try {
         const { id } = await ctx.params;
         const client = await clerkClient()
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/users/[id]'>
     }
 }
 
-export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/users/[id]'>) {
+export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]'>) {
     try {
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { id } = await ctx.params;
@@ -100,7 +100,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/users/[id]
     }
 }
 
-export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/users/[id]'>) {
+export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]'>) {
     try {
         const { id } = await ctx.params;
         const client = await clerkClient()
