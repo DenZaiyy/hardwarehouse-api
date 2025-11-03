@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
-import {auth, clerkClient} from "@clerk/nextjs/server";
+import {clerkClient} from "@clerk/nextjs/server";
 
 export async function GET() {
     try {
@@ -18,15 +18,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
     try {
         const { username, email, password, passwordConfirm, firstname, lastname } = await req.json()
-        const { userId, sessionClaims } = await auth()
-        const client = await clerkClient();
-
-        if (userId && sessionClaims) {
-            const { publicMetadata } = sessionClaims;
-            const role = publicMetadata?.role ?? null;
-
-            if (role !== "admin") return NextResponse.json({ status: 403 });
-        }
+        const client = await clerkClient()
 
         if (!username && !email && !password && !passwordConfirm && !firstname && !lastname) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
 
