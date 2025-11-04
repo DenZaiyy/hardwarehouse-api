@@ -45,15 +45,20 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
         const { quantity, productId } = await req.json();
-        const { userId } = await auth()
         const user = await currentUser()
 
         let userFullName = "Undefined User"
 
         if (user && user.fullName) userFullName = user.fullName
 
-        if (!quantity && !productId && !userId || userId === null) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
+        if (!quantity && !productId) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
 
         const existingProduct = await db.products.findUnique({
             where: {

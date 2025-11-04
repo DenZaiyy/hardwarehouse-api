@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
+import {auth} from "@clerk/nextjs/server";
 
 interface UpdateCategoryData {
     name?: string;
@@ -8,7 +9,7 @@ interface UpdateCategoryData {
     logo?: string;
 }
 
-export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/protected/categories/[id]'>) {
+export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/categories/[id]'>) {
     const { id } = await ctx.params;
     const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
 
@@ -49,16 +50,22 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/protecte
     }
 }
 
-export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/protected/categories/[id]'>) {
-    const { id } = await ctx.params;
-    const { name, logo } = await _req.json();
-
-    // Vérifier qu'au moins un champ est fourni
-    if (!name && !logo) {
-        return NextResponse.json({ error: "Au moins un champ est obligatoire." }, { status: 400 });
-    }
-
+export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/categories/[id]'>) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
+        const { id } = await ctx.params;
+        const { name, logo } = await _req.json();
+
+        // Vérifier qu'au moins un champ est fourni
+        if (!name && !logo) {
+            return NextResponse.json({ error: "Au moins un champ est obligatoire." }, { status: 400 });
+        }
+
         // Construire l'objet de données dynamiquement
         const updateData: UpdateCategoryData = {};
         const category = await db.categories.findUnique({
@@ -97,7 +104,13 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/protec
     }
 }
 
-export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/protected/categories/[id]'>) {
+export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/categories/[id]'>) {
+    const { userId } = await auth();
+
+    if (!userId) {
+        return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+    }
+
     const { id } = await ctx.params;
 
     try {

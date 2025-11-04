@@ -8,7 +8,7 @@ type TStockItems = {
     updatedAt: Date;
 }
 
-export async function GET(req: NextRequest, ctx: RouteContext<'/api/stats/product/[id]'>) {
+export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/stats/product/[id]'>) {
     try {
         const { id } = await ctx.params;
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';

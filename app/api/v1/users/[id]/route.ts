@@ -14,6 +14,12 @@ interface UpdateUserData {
 
 export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]'>) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
         const { id } = await ctx.params;
         const client = await clerkClient()
 
@@ -37,6 +43,12 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id
 
 export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]'>) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { id } = await ctx.params;
         const { username, emailAddress, firstName, lastName, password, locked } = await req.json();
@@ -102,9 +114,14 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/users/[
 
 export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]'>) {
     try {
+        const { userId, isAuthenticated } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
         const { id } = await ctx.params;
         const client = await clerkClient()
-        const { isAuthenticated } = await auth()
 
         // Protect the route by checking if the user is signed in
         if (!isAuthenticated) {

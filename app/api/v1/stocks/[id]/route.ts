@@ -1,17 +1,17 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter} from "@/lib/utils";
+import {auth} from "@clerk/nextjs/server";
 
 interface UpdateStockData {
     quantity?: number;
     productId?: string;
 }
 
-export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/protected/stocks/[id]'>) {
-    const { id } = await ctx.params;
-    const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
-
+export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[id]'>) {
     try {
+        const { id } = await ctx.params;
+        const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
 
         if (!success) {
@@ -45,16 +45,21 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/protecte
     }
 }
 
-export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/protected/stocks/[id]'>) {
-    const { id } = await ctx.params;
-    const { quantity, productId } = await _req.json();
-
-    // Vérifier qu'au moins un champ est fourni
-    if (!quantity && !productId) {
-        return new NextResponse("At least one field is required", { status: 400 });
-    }
-
+export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[id]'>) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
+        const { id } = await ctx.params;
+        const { quantity, productId } = await _req.json();
+
+        // Vérifier qu'au moins un champ est fourni
+        if (!quantity && !productId) {
+            return new NextResponse("At least one field is required", { status: 400 });
+        }
         // Construire l'objet de données dynamiquement
         const updateData: UpdateStockData = {};
         const stock = await db.stocks.findUnique({
@@ -84,10 +89,15 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/protec
     }
 }
 
-export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/protected/stocks/[id]'>) {
-    const { id } = await ctx.params;
-
+export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[id]'>) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
+        const { id } = await ctx.params;
         const stock = await db.stocks.findUnique({
             where: {
                 id

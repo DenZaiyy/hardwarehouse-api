@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
+import {auth} from "@clerk/nextjs/server";
 
 export async function GET(req: NextRequest) {
     try {
@@ -42,6 +43,12 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+    const { userId } = await auth();
+
+    if (!userId) {
+        return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+    }
+
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
     const { success } = await rateLimiter.limit(ip);
 

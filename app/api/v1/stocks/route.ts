@@ -1,11 +1,11 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter} from "@/lib/utils";
+import {auth} from "@clerk/nextjs/server";
 
 export async function GET(req: NextRequest) {
-    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-
     try {
+        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
 
         if (!success) {
@@ -38,25 +38,31 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const { minQuantity, quantity, productId } = await req.json();
+    try {
+        const { userId } = await auth();
 
-    if (!minQuantity && !quantity && !productId) return new NextResponse("Missing required fields", { status: 400});
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
 
-    const existingProduct = await db.products.findUnique({
-        where: { id: productId }
-    })
+        const { minQuantity, quantity, productId } = await req.json();
 
-    if (existingProduct) {
-        const existingStock = await db.stocks.findFirst({
-            where: { productId: existingProduct.id }
+        if (!minQuantity && !quantity && !productId) return new NextResponse("Missing required fields", { status: 400});
+
+        const existingProduct = await db.products.findUnique({
+            where: { id: productId }
         })
 
-        if (existingStock) {
-            return new NextResponse("Le produit est déjà en stock, veuillez mettre à jour les stocks.", { status: 400 });
-        }
-    }
+        if (existingProduct) {
+            const existingStock = await db.stocks.findFirst({
+                where: { productId: existingProduct.id }
+            })
 
-    try {
+            if (existingStock) {
+                return new NextResponse("Le produit est déjà en stock, veuillez mettre à jour les stocks.", { status: 400 });
+            }
+        }
+
         const stock = await db.stocks.create({
             include: {
                 product: true

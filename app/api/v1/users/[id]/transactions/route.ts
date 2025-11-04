@@ -1,9 +1,15 @@
 import {NextRequest, NextResponse} from "next/server";
-import {clerkClient} from "@clerk/nextjs/server";
+import {auth, clerkClient} from "@clerk/nextjs/server";
 import {db} from "@/lib/db";
 
-export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/protected/users/[id]/transactions'>) {
+export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]/transactions'>) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
         const { id } = await ctx.params;
         const client = await clerkClient()
 

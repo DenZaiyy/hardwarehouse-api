@@ -1,8 +1,9 @@
 import {NextRequest, NextResponse} from "next/server";
 import {rateLimiter} from "@/lib/utils";
 import {db} from "@/lib/db";
+import {auth} from "@clerk/nextjs/server";
 
-export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/protected/transactions/[id]'>) {
+export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/transactions/[id]'>) {
     try {
         const { id } = await ctx.params;
         const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
@@ -39,8 +40,14 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/protecte
     }
 }
 
-export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/protected/transactions/[id]'>) {
+export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/transactions/[id]'>) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
         const { id } = await ctx.params;
         const transaction = await db.transactions.findUnique({
             where: {

@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
+import {auth} from "@clerk/nextjs/server";
 
 export async function GET(req: NextRequest) {
     try {
@@ -37,6 +38,12 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+    const { userId } = await auth();
+
+    if (!userId) {
+        return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+    }
+
     const { name } = await req.json();
 
     if (!name) return new NextResponse("Missing required fields", { status: 400});

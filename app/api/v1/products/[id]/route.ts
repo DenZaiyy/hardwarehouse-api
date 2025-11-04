@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
+import {auth} from "@clerk/nextjs/server";
 
 interface UpdateProductData {
     name?: string;
@@ -11,7 +12,7 @@ interface UpdateProductData {
     categoryId?: string;
 }
 
-export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/protected/products/[id]'>) {
+export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/[id]'>) {
     try {
         const { id } = await ctx.params;
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
@@ -54,8 +55,14 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/protected
     }
 }
 
-export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/protected/products/[id]'>) {
+export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/products/[id]'>) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { id } = await ctx.params;
         const { name, price, active, image, categoryId } = await req.json();
