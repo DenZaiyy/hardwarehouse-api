@@ -5,6 +5,12 @@ import {rateLimiter} from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
     try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
 

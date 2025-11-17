@@ -128,3 +128,39 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
         }
     }
 }
+
+export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/products/[id]'>) {
+    try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", statusCode: 401 });
+        }
+
+        const { id } = await ctx.params;
+
+        const product = await db.products.findUnique({
+            where: { id }
+        })
+
+        if (!product) {
+            return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
+        }
+
+        await db.products.delete({
+            where: {
+                id
+            }
+        });
+
+        return new NextResponse(`Product with id ${id} deleted`, { status: 200 });
+    } catch(error) {
+        if (error instanceof Error) {
+            console.error('[PRODUCT DELETE] ', error.message)
+            return NextResponse.json(
+                { error: `[PRODUCT DELETE] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
+                { status: 500 }
+            )
+        }
+    }
+}

@@ -3,10 +3,16 @@ import {auth, clerkClient} from "@clerk/nextjs/server";
 
 export async function GET() {
     try {
-        const { userId } = await auth();
+        const { userId, sessionClaims } = await auth();
 
         if (!userId) {
             return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
+        // Check if user has admin role
+        const userRole = sessionClaims?.publicMetadata?.role;
+        if (userRole !== "admin") {
+            return NextResponse.json({ error: "Forbidden - Admin access required", statusCode: 403 }, { status: 403 });
         }
 
         const client = await clerkClient();
@@ -23,10 +29,16 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
-        const { userId } = await auth();
+        const { userId, sessionClaims } = await auth();
 
         if (!userId) {
             return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+        }
+
+        // Check if user has admin role
+        const userRole = sessionClaims?.publicMetadata?.role;
+        if (userRole !== "admin") {
+            return NextResponse.json({ error: "Forbidden - Admin access required", statusCode: 403 }, { status: 403 });
         }
 
         const { username, email, password, passwordConfirm, firstname, lastname } = await req.json()
