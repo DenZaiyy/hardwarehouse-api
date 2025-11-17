@@ -24,6 +24,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {DataTablePagination} from "@/components/data-table-pagination";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -31,9 +32,10 @@ interface DataTableProps<TData, TValue> {
     searchHolder?: string
     searchColumn?: string
     inputSearch?: boolean
+    isLoading?: boolean
 }
 
-export function DataTable<TData, TValue>({ columns, data, searchHolder, searchColumn, inputSearch = true }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, searchHolder, searchColumn, inputSearch = true, isLoading = false }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -66,12 +68,13 @@ export function DataTable<TData, TValue>({ columns, data, searchHolder, searchCo
                             table.getColumn(searchColumn ?? "name")?.setFilterValue(event.target.value)
                         }
                         className="md:max-w-sm"
+                        disabled={isLoading}
                     />
                 )}
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="md:ml-auto">
+                        <Button variant="outline" className="md:ml-auto" disabled={isLoading}>
                             Colonnes
                         </Button>
                     </DropdownMenuTrigger>
@@ -119,7 +122,17 @@ export function DataTable<TData, TValue>({ columns, data, searchHolder, searchCo
                         ))}
                     </TableHeader>
                     <TableBody>
-                        {table.getRowModel().rows?.length ? (
+                        {isLoading ? (
+                            Array.from({ length: 5 }).map((_, index) => (
+                                <TableRow key={index}>
+                                    {columns.map((_, cellIndex) => (
+                                        <TableCell key={cellIndex}>
+                                            <Skeleton className="h-4 w-full" />
+                                        </TableCell>
+                                    ))}
+                                </TableRow>
+                            ))
+                        ) : table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <TableRow
                                     key={row.id}
@@ -135,7 +148,7 @@ export function DataTable<TData, TValue>({ columns, data, searchHolder, searchCo
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                    Aucun résultat.
                                 </TableCell>
                             </TableRow>
                         )}

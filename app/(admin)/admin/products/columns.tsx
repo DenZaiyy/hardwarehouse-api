@@ -10,10 +10,19 @@ import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui
 import toast from "react-hot-toast";
 import {ProductActions} from "@/components/admin/products/actions";
 import {apiProductService} from "@/services/productService";
+import Link from "next/link";
 
 async function handleConfirm(productId: string) {
-    await apiProductService.deleteProduct(productId)
-    toast.success("Produit supprimée avec succès")
+    const product = await apiProductService.getProduct(productId);
+    const data = {
+        "name": product.name,
+        "image": product.image,
+        "price": product.price,
+        "categoryId": product.categoryId,
+        "active": !product.active
+    }
+    await apiProductService.updateProduct(productId, data)
+    toast.success(`Produit ${product.active ? "désactiver" : "activer"} avec succès`)
     setTimeout(() => window.location.reload(), 1500)
 }
 
@@ -58,7 +67,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
     {
         accessorKey: "price",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Prix" />
+            <DataTableColumnHeader column={column} title="Prix HT" />
         ),
         cell: ({ row }) => {
             const price = parseFloat(row.getValue('price'));
@@ -77,7 +86,12 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
         ),
         cell: ({ row }) => {
             const brand: Brands = row.getValue('brand');
-            return <div>{brand ? brand.name : 'N/A'}</div>
+
+            if (!brand) {
+                return <div>N/A</div>
+            }
+
+            return <div><Link href={`/admin/brands/${brand.id}`} className="underline underline-offset-5">{brand.name}</Link></div>
         }
     },
     {
@@ -87,7 +101,23 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
         ),
         cell: ({ row }) => {
             const category: Categories = row.getValue('category');
-            return <div>{category ? category.name : 'N/A'}</div>
+
+            if (!category) {
+                return <div>N/A</div>
+            }
+
+            return <div><Link href={`/admin/categories/${category.id}`} className="underline underline-offset-5">{category.name}</Link></div>
+        }
+    },
+    {
+        accessorKey: "active",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Actif" />
+        ),
+        cell: ({ row }) => {
+            const active = row.getValue('active');
+
+            return <div className={`font-medium ${active ? 'text-green-500' : 'text-red-500'}`}>{active ? "Oui" : "Non"}</div>
         }
     },
     {
@@ -119,7 +149,8 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                 <ProductActions
                     productId={product.id}
                     productName={product.name}
-                    onDelete={(id) => handleConfirm(id)}
+                    onDisable={(id) => handleConfirm(id)}
+                    productActive={product.active}
                 />
             )
         }

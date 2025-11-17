@@ -1,0 +1,13 @@
+model Transactions {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId    String   @db.ObjectId
+  type         Boolean
+  oldQtt       Int
+  newQtt       Int
+  createdAt    DateTime @default(now())
+  product      Products @relation(fields: [productId], references: [id])
+  userId       String?
+  userFullName String?
+
+  @@index([productId])
+}

@@ -12,7 +12,7 @@ export const apiStockService: StockService = {
     getStocks: async (): Promise<StocksWithProduct[]> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/stocks`,
-            { cache: 'default'}
+            { method: "GET" }
         );
 
         if (!res.ok) throw new Error("Failed to fetch stocks");
@@ -22,7 +22,7 @@ export const apiStockService: StockService = {
     getStock: async (id: string): Promise<StocksWithProduct> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/stocks/${id}`,
-            { cache: 'default'}
+            { method: "GET" }
         );
 
         if (!res.ok) throw new Error("Failed to fetch stock");

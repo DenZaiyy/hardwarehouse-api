@@ -5,7 +5,6 @@ interface StockParams {
     params: Promise<{ id: string }>;
 }
 
-
 const StockDetails = async ({ params }: StockParams) => {
     const { id } = await params;
     const stock = await apiStockService.getStock(id);

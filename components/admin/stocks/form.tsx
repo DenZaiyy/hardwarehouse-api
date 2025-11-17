@@ -20,7 +20,8 @@ type StockFormProps = {
 }
 
 const formSchema = z.object({
-    quantity: z.coerce.number<number>().min(0, "Le prix doit être un nombre positif"),
+    minQuantity: z.coerce.number<number>().min(0, "La quantité minimale dois être positive"),
+    quantity: z.coerce.number<number>().min(0, "La quantité ne peux pas être négative"),
     productId: z.string().nonempty(),
 })
 
@@ -28,6 +29,7 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            minQuantity: stock?.minQuantity ?? 0,
             quantity: stock?.quantity ?? 0,
             productId: stock?.productId ?? "",
         }
@@ -43,13 +45,7 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
             }
 
             toast.success("Stock créé avec succès.")
-            if(result.redirect) {
-                form.reset()
-                setTimeout(() => {
-                    window.location = result.redirect
-                }, 3000)
-            }
-
+            form.reset()
         } else {
             const result = await apiStockService.updateStock(stock.id, values)
 
@@ -69,6 +65,27 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
                 <div className="md:flex md:gap-4">
                     <FormField
                         control={form.control}
+                        name="minQuantity"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Quantité minimale</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        type="number"
+                                        step="1"
+                                        value={field.value ?? ""}
+                                        onChange={(e) => field.onChange(e.target.value === "" ? "" : parseFloat(e.target.value))}
+                                    />
+                                </FormControl>
+                                <FormDescription>
+                                    La quantité minimale en stock doit être un nombre positif.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="quantity"
                         render={({ field }) => (
                             <FormItem className="w-full">
@@ -77,13 +94,12 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
                                     <Input
                                         type="number"
                                         step="1"
-                                        placeholder="12"
                                         value={field.value ?? ""}
                                         onChange={(e) => field.onChange(e.target.value === "" ? "" : parseFloat(e.target.value))}
                                     />
                                 </FormControl>
                                 <FormDescription>
-                                    La quantité doit être un nombre positif.
+                                    La quantité du stock doit être un nombre positif.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>

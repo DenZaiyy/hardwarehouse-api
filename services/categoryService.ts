@@ -1,5 +1,4 @@
 import {Categories} from "@/app/generated/prisma/client";
-import toast from "react-hot-toast";
 
 export interface CategoryService {
     getCategories: () => Promise<Categories[]>;
@@ -11,19 +10,20 @@ export interface CategoryService {
 
 export const apiCategoryService: CategoryService = {
     getCategories: async (): Promise<Categories[]> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, { cache: 'default'});
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+            method: "GET"
+        });
 
-        if (!res.ok) toast.error("Échec de la récupération des catégories");
+        if (!res.ok) throw new Error("Échec de la récupération des catégories");
 
         return res.json();
     },
     getCategory: async (id: string): Promise<Categories> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
-            { cache: 'default'}
-        );
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`, {
+            method: "GET"
+        });
 
-        if (!res.ok) toast.error("Échec de récupération de la catégorie");
+        if (!res.ok) throw new Error("Échec de récupération de la catégorie");
 
         return res.json();
     },
@@ -36,7 +36,7 @@ export const apiCategoryService: CategoryService = {
             body: JSON.stringify(data),
         });
 
-        if (!res.ok) toast.error("Échec de la création de la catégorie");
+        if (!res.ok) throw new Error("Échec de la création de la catégorie");
 
         return res.json();
     },
@@ -55,7 +55,7 @@ export const apiCategoryService: CategoryService = {
             }
         );
 
-        if (!res.ok) toast.error("Échec de la mise à jour de la catégorie");
+        if (!res.ok) throw new Error("Échec de la mise à jour de la catégorie");
 
         return res.json();
     },
@@ -67,6 +67,6 @@ export const apiCategoryService: CategoryService = {
             }
         );
 
-        if (!res.ok) toast.error("Échec de la suppression de la catégorie");
+        if (!res.ok) throw new Error("Échec de la suppression de la catégorie");
     },
 };

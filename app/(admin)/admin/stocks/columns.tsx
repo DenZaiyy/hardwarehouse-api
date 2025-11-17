@@ -36,12 +36,17 @@ export const columns: ColumnDef<StocksWithProduct>[] = [
         }
     },
     {
-        accessorKey: "quantity",
+        accessorKey: "minQuantity",
         header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Quantity" />
+            <DataTableColumnHeader column={column} title="Quantité minimale" />
         ),
     },
-
+    {
+        accessorKey: "quantity",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Quantité" />
+        ),
+    },
     {
         accessorKey: "createdAt",
         header: ({ column }) => (

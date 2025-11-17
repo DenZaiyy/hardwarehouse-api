@@ -4,7 +4,6 @@ interface BrandParams {
     params: Promise<{ id: string }>;
 }
 
-
 const BrandDetails = async ({ params }: BrandParams) => {
     const { id } = await params;
     const brand = await apiBrandService.getBrand(id);

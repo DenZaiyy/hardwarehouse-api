@@ -1,0 +1,11 @@
+model PurchaseOrder {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId    String   @db.ObjectId
+  quantity     Int
+  createdAt    DateTime @default(now())
+  product      Products @relation(fields: [productId], references: [id])
+  userId       String?
+  userFullName String?
+
+  @@index([productId])
+}

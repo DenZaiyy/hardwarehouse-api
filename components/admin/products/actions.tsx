@@ -27,10 +27,11 @@ import {
 type ProductActionsProps = {
     productId: string;
     productName: string;
-    onDelete: (id: string) => void;
+    productActive: boolean;
+    onDisable: (id: string) => void;
 }
 
-export function ProductActions({ productId, productName, onDelete }: ProductActionsProps) {
+export function ProductActions({ productId, productName, productActive, onDisable }: ProductActionsProps) {
     const [open, setOpen] = useState(false)
 
     return (
@@ -68,22 +69,27 @@ export function ProductActions({ productId, productName, onDelete }: ProductActi
                         variant="destructive"
                         onClick={() => setOpen(true)}
                     >
-                        Supprimer
+                        {productActive ? "Désactiver" : "Activer"}
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
             <AlertDialog open={open} onOpenChange={setOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Supprimer le produit ?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Cette action est irréversible. Le produit{" "}
-                            <strong>{productName}</strong> sera définitivement supprimée.
-                        </AlertDialogDescription>
+                        <AlertDialogTitle>{productActive ? "Désactiver" : "Activer"} le produit ?</AlertDialogTitle>
+                        {productActive ? (
+                            <AlertDialogDescription>
+                                La désactivation du produit : <strong>{productName}</strong> de la boutique entraîne l&#39;impossibilité d&#39;effectuer un achat.
+                            </AlertDialogDescription>
+                            ) : (
+                            <AlertDialogDescription>
+                                L’activation du produit : <strong>{productName}</strong> dans la boutique permet de le rendre à nouveau disponible à l’achat.
+                            </AlertDialogDescription>
+                        )}
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => onDelete(productId)}>
+                        <AlertDialogAction onClick={() => onDisable(productId)}>
                             Confirmer
                         </AlertDialogAction>
                     </AlertDialogFooter>

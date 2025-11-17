@@ -1,4 +1,4 @@
-import {ProductsWithCategoryAndBrand} from "@/types/types";
+import {ProductsWithCategoryAndBrand, ProductsWithStocks} from "@/types/types";
 import toast from "react-hot-toast";
 
 
@@ -8,23 +8,31 @@ export interface ProductService {
     createProduct: (data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
     updateProduct: (id: string, data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
     deleteProduct: (id: string) => Promise<void>;
+    getProductStock: (id: string) => Promise<ProductsWithStocks>
 }
 
 export const apiProductService: ProductService = {
     getProducts: async (): Promise<ProductsWithCategoryAndBrand[]> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/products`,
-            { cache: 'default'}
+            {
+                method: "GET"
+            }
         );
 
-        if (!res.ok) throw new Error("Failed to fetch products");
+        if (!res.ok) {
+            const error = await res.json();
+            console.log(error);
+            throw new Error(error.error || 'Failed to fetch products');
+        }
 
         return res.json();
     },
     getProduct: async (id: string): Promise<ProductsWithCategoryAndBrand> => {
         const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
-            { cache: 'default'}
+            `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
+                method: "GET"
+            }
         );
 
         if (!res.ok) throw new Error("Failed to fetch product");
@@ -78,4 +86,15 @@ export const apiProductService: ProductService = {
 
         toast.success('Product deleted successfully');
     },
+    getProductStock: async (id: string): Promise<ProductsWithStocks> => {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/stats/product/${id}`, {
+                method: "GET"
+            }
+        )
+
+        if (!res.ok) throw new Error("Failed to fetch product stocks")
+
+        return res.json();
+    }
 };

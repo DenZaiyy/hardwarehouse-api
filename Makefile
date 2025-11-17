@@ -30,6 +30,11 @@ studio: ## Open Prisma Studio
 	$(call banner,$(INFO),Opening Prisma Studio...)
 	npx prisma studio
 
+.PHONY: format
+format: ## Format prisma schemas
+	$(call banner,$(INFO),Format prisma schemas...)
+	npx prisma format
+
 .PHONY: reset
 reset: ## Reset database (drops all data)
 	$(call banner,$(INFO),Resetting Database and execute seed...)

@@ -1,4 +1,4 @@
-import {Boxes, FolderTree, Globe, LayoutDashboard, LogOutIcon, Package, Tags} from "lucide-react"
+import {Boxes, FolderTree, Globe, LayoutDashboard, LogOutIcon, Package, Tags, User} from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -23,26 +23,49 @@ const items = [
         title: "Tableau de bord",
         url: "/admin",
         icon: LayoutDashboard,
+        role: "employee"
+    },
+    {
+        title: "Utilisateurs",
+        url: "/admin/users",
+        icon: User,
+        role: "admin"
     },
     {
         title: "Produits",
         url: "/admin/products",
         icon: Package,
+        role: "employee"
     },
     {
         title: "Catégories",
         url: "/admin/categories",
         icon: FolderTree,
+        role: "employee"
     },
     {
         title: "Marques",
         url: "/admin/brands",
         icon: Tags,
+        role: "employee"
     },
     {
         title: "Stocks",
         url: "/admin/stocks",
         icon: Boxes,
+        role: "employee"
+    },
+    {
+        title: "Bon de commandes",
+        url: "/admin/purchase-orders",
+        icon: Globe,
+        role: "employee"
+    },
+    {
+        title: "Historique de mouvements",
+        url: "/admin/transactions",
+        icon: Boxes,
+        role: "admin",
     },
 ]
 
@@ -53,6 +76,7 @@ export async function AdminSidebar({ ...props }: React.ComponentProps<typeof Sid
     }
 
     const user = await currentUser()
+    const userRole = user?.publicMetadata.role
 
     return (
         <Sidebar collapsible="icon" {...props}>
@@ -64,11 +88,11 @@ export async function AdminSidebar({ ...props }: React.ComponentProps<typeof Sid
                     <SidebarGroupLabel>HardWareHouse</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {items.map((item) => (
+                            {items.filter(item => userRole === "admin" || item.role === "employee" ).map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
-                                        <Link href={item.url}>
-                                            <item.icon />
+                                        <Link href={item.url} prefetch={false}>
+                                            <item.icon/>
                                             <span>{item.title}</span>
                                         </Link>
                                     </SidebarMenuButton>
@@ -82,7 +106,7 @@ export async function AdminSidebar({ ...props }: React.ComponentProps<typeof Sid
                 <SidebarMenu>
                     <SignedIn>
                         <SidebarMenuItem>
-                            <SidebarMenuButton asChild>
+                            <SidebarMenuButton asChild className="cursor-pointer">
                                 <SignOutButton>
                                     <span>
                                         <LogOutIcon /> Se déconnecter ({user?.username})
