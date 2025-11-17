@@ -65,13 +65,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
             }
 
             toast.success("Produit créé avec succès.")
-            if(result.redirect) {
-                form.reset()
-                setTimeout(() => {
-                    window.location = result.redirect
-                }, 3000)
-            }
-
+            form.reset()
         } else {
             const result = await apiProductService.updateProduct(product.id, values)
 

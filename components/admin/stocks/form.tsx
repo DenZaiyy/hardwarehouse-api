@@ -46,11 +46,6 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
 
             toast.success("Stock créé avec succès.")
             form.reset()
-            if(result.redirect) {
-                setTimeout(() => {
-                    window.location = result.redirect
-                }, 3000)
-            }
         } else {
             const result = await apiStockService.updateStock(stock.id, values)
 
