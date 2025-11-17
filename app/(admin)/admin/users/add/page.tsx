@@ -26,7 +26,6 @@ const UserAddPage = async () => {
             </section>
         </div>
     );
-
 }
 
 export default UserAddPage;

@@ -3,7 +3,7 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {DataTable} from "@/components/admin/data-table";
 import {Suspense} from "react";
-import {apiUserService} from "@/services/userService";
+import {getUsers} from "@/services/userService";
 import {columns} from "@/app/(admin)/admin/users/columns";
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 async function UsersTable() {
-    const data = await apiUserService.getUsers();
+    const data = await getUsers();
     return <DataTable columns={columns} data={data} searchHolder="Filtrer les employés..." searchColumn="username" />;
 }
 

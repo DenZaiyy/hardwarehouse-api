@@ -1,10 +1,10 @@
 import type {Metadata} from "next";
-import {apiCategoryService} from "@/services/categoryService";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {DataTable} from "@/components/admin/data-table";
 import {columns} from "@/app/(admin)/admin/categories/columns";
 import {Suspense} from "react";
+import {getCategories} from "@/services/categoryService";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Categories",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 async function CategoriesTable() {
-    const data = await apiCategoryService.getCategories();
+    const data = await getCategories();
     return <DataTable columns={columns} data={data} searchHolder="Filtrer les catégories..." />;
 }
 

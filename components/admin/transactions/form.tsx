@@ -10,8 +10,8 @@ import toast from "react-hot-toast";
 import React, {useEffect} from "react";
 import {StocksWithProduct} from "@/types/types";
 import {Switch} from "@/components/ui/switch";
-import {apiTransactionService} from "@/services/transactionService";
 import {Input} from "@/components/ui/input";
+import {createTransaction} from "@/services/transactionService";
 
 type TransactionFormProps = {
     stocks: StocksWithProduct[]
@@ -59,7 +59,7 @@ const TransactionForm = ({ stocks, method }: TransactionFormProps) => {
         }
 
         const payload = { ...values, finalQuantity }
-        const result = await apiTransactionService.createTransaction(payload)
+        const result = await createTransaction(payload)
 
         if (!result) {
             toast.error("Une erreur est survenue lors de la création de la transaction.")

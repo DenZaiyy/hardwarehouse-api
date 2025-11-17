@@ -1,100 +1,122 @@
+"use server";
+
 import {ProductsWithCategoryAndBrand, ProductsWithStocks} from "@/types/types";
+import {cookies} from "next/headers";
 import toast from "react-hot-toast";
 
+export async function getProducts(): Promise<ProductsWithCategoryAndBrand[]> {
+    const cookieHeader = await cookies();
 
-export interface ProductService {
-    getProducts: () => Promise<ProductsWithCategoryAndBrand[]>;
-    getProduct: (id: string) => Promise<ProductsWithCategoryAndBrand>;
-    createProduct: (data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
-    updateProduct: (id: string, data: Partial<ProductsWithCategoryAndBrand>) => Promise<ProductsWithCategoryAndBrand>;
-    deleteProduct: (id: string) => Promise<void>;
-    getProductStock: (id: string) => Promise<ProductsWithStocks>
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/products`,
+        {
+            method: "GET",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
+
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to fetch products');
+    }
+
+    return res.json();
 }
 
-export const apiProductService: ProductService = {
-    getProducts: async (): Promise<ProductsWithCategoryAndBrand[]> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/products`,
-            {
-                method: "GET"
-            }
-        );
+export async function getProduct(id: string): Promise<ProductsWithCategoryAndBrand> {
+    const cookieHeader = await cookies();
 
-        if (!res.ok) {
-            const error = await res.json();
-            console.log(error);
-            throw new Error(error.error || 'Failed to fetch products');
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
+            method: "GET",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
         }
+    );
 
-        return res.json();
-    },
-    getProduct: async (id: string): Promise<ProductsWithCategoryAndBrand> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
-                method: "GET"
-            }
-        );
+    if (!res.ok) throw new Error("Failed to fetch product");
 
-        if (!res.ok) throw new Error("Failed to fetch product");
+    return res.json();
+}
 
-        return res.json();
-    },
-    createProduct: async (data: Partial<ProductsWithCategoryAndBrand>): Promise<ProductsWithCategoryAndBrand> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
-            method: "POST",
+export async function createProduct(data: Partial<ProductsWithCategoryAndBrand>): Promise<ProductsWithCategoryAndBrand> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Cookie: cookieHeader.toString()
+        },
+        body: JSON.stringify(data),
+        cache: "no-store"
+    });
+
+    if (!res.ok) throw new Error("Failed to create product");
+
+    return res.json();
+}
+
+export async function updateProduct(id: string, data: Partial<ProductsWithCategoryAndBrand>): Promise<ProductsWithCategoryAndBrand> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
+        {
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
+                Cookie: cookieHeader.toString()
             },
             body: JSON.stringify(data),
-        });
-
-        if (!res.ok) throw new Error("Failed to create product");
-
-        return res.json();
-    },
-    updateProduct: async (
-        id: string,
-        data: Partial<ProductsWithCategoryAndBrand>
-    ): Promise<ProductsWithCategoryAndBrand> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
-            {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            }
-        );
-
-        if (!res.ok) throw new Error("Failed to update product");
-
-        return res.json();
-    },
-    deleteProduct: async (id: string): Promise<void> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
-            {
-                method: "DELETE",
-            }
-        );
-
-        if (!res.ok) {
-            toast.error('Failed to delete product');
-            throw new Error("Failed to delete product");
+            cache: "no-store"
         }
+    );
 
-        toast.success('Product deleted successfully');
-    },
-    getProductStock: async (id: string): Promise<ProductsWithStocks> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/stats/product/${id}`, {
-                method: "GET"
-            }
-        )
+    if (!res.ok) throw new Error("Failed to update product");
 
-        if (!res.ok) throw new Error("Failed to fetch product stocks")
+    return res.json();
+}
 
-        return res.json();
+export async function deleteProduct(id: string): Promise<void> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
+
+    if (!res.ok) {
+        toast.error('Failed to delete product');
+        throw new Error("Failed to delete product");
     }
-};
+}
+
+export async function getProductStock(id: string): Promise<ProductsWithStocks> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stats/product/${id}`, {
+            method: "GET",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    )
+
+    if (!res.ok) throw new Error("Failed to fetch product stocks")
+
+    return res.json();
+}

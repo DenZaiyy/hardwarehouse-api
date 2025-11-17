@@ -1,72 +1,92 @@
-import {Categories} from "@/app/generated/prisma/client";
+"use server"
 
-export interface CategoryService {
-    getCategories: () => Promise<Categories[]>;
-    getCategory: (id: string) => Promise<Categories>;
-    createCategory: (data: Partial<Categories>) => Promise<Categories>;
-    updateCategory: (id: string, data: Partial<Categories>) => Promise<Categories>;
-    deleteCategory: (id: string) => Promise<void>;
+import {Categories} from "@/app/generated/prisma/client";
+import {cookies} from "next/headers";
+
+export async function getCategories(): Promise<Categories[]> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+        method: "GET",
+        headers: {
+            Cookie: cookieHeader.toString()
+        },
+        cache: "no-store"
+    });
+
+    if (!res.ok) throw new Error("Échec de la récupération des catégories");
+
+    return res.json();
 }
 
-export const apiCategoryService: CategoryService = {
-    getCategories: async (): Promise<Categories[]> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
-            method: "GET"
-        });
+export async function getCategory(id: string): Promise<Categories> {
+    const cookieHeader = await cookies();
 
-        if (!res.ok) throw new Error("Échec de la récupération des catégories");
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`, {
+        method: "GET",
+        headers: {
+            Cookie: cookieHeader.toString()
+        },
+        cache: "no-store"
+    });
 
-        return res.json();
-    },
-    getCategory: async (id: string): Promise<Categories> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`, {
-            method: "GET"
-        });
+    if (!res.ok) throw new Error("Échec de récupération de la catégorie");
 
-        if (!res.ok) throw new Error("Échec de récupération de la catégorie");
+    return res.json();
+}
 
-        return res.json();
-    },
-    createCategory: async (data: Partial<Categories>): Promise<Categories> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
-            method: "POST",
+export async function createCategory(data: Partial<Categories>): Promise<Categories> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Cookie: cookieHeader.toString()
+        },
+        body: JSON.stringify(data),
+        cache: "no-store"
+    });
+
+    if (!res.ok) throw new Error("Échec de la création de la catégorie");
+
+    return res.json();
+}
+
+export async function updateCategory(id: string, data: Partial<Categories>): Promise<Categories> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
+        {
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
+                Cookie: cookieHeader.toString()
             },
             body: JSON.stringify(data),
-        });
+            cache: "no-store"
+        }
+    );
 
-        if (!res.ok) throw new Error("Échec de la création de la catégorie");
+    if (!res.ok) throw new Error("Échec de la mise à jour de la catégorie");
 
-        return res.json();
-    },
-    updateCategory: async (
-        id: string,
-        data: Partial<Categories>
-    ): Promise<Categories> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
-            {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            }
-        );
+    return res.json();
+}
 
-        if (!res.ok) throw new Error("Échec de la mise à jour de la catégorie");
+export async function deleteCategory(id: string): Promise<void> {
+    const cookieHeader = await cookies();
 
-        return res.json();
-    },
-    deleteCategory: async (id: string): Promise<void> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
-            {
-                method: "DELETE",
-            }
-        );
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
 
-        if (!res.ok) throw new Error("Échec de la suppression de la catégorie");
-    },
-};
+    if (!res.ok) throw new Error("Échec de la suppression de la catégorie");
+}

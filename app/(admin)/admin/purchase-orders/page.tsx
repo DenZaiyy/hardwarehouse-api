@@ -3,8 +3,8 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/admin/data-table";
 import {Suspense} from "react";
-import {apiPurchaseOrdersService} from "@/services/purchaseOrderService";
 import {columns} from "@/app/(admin)/admin/purchase-orders/column";
+import {getPurchases} from "@/services/purchaseOrderService";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Transactions de stocks",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 async function PurchaseOrdersTable() {
-    const data = await apiPurchaseOrdersService.getPurchases();
+    const data = await getPurchases();
     return <DataTable columns={columns} data={data} inputSearch={false} />;
 }
 

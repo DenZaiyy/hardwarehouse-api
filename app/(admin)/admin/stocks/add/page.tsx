@@ -1,8 +1,8 @@
 import type {Metadata} from "next";
 import React from "react";
 import {Card, CardContent} from "@/components/ui/card";
-import {apiProductService} from "@/services/productService";
 import StockForm from "@/components/admin/stocks/form";
+import {getProducts} from "@/services/productService";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Products - Add",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 const StockAddPage = async () => {
-    const products = await apiProductService.getProducts();
+    const products = await getProducts();
 
     return (
         <div className="flex flex-col">

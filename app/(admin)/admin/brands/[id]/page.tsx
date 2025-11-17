@@ -1,4 +1,4 @@
-import {apiBrandService} from "@/services/brandService";
+import {getBrand} from "@/services/brandService";
 
 interface BrandParams {
     params: Promise<{ id: string }>;
@@ -6,7 +6,7 @@ interface BrandParams {
 
 const BrandDetails = async ({ params }: BrandParams) => {
     const { id } = await params;
-    const brand = await apiBrandService.getBrand(id);
+    const brand = await getBrand(id);
 
     return (
         <>

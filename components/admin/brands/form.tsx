@@ -12,7 +12,7 @@ import {Label} from "@/components/ui/label";
 import {Brands} from "@/app/generated/prisma/client";
 import toast from "react-hot-toast";
 import React from "react";
-import {apiBrandService} from "@/services/brandService";
+import {createBrand, updateBrand} from "@/services/brandService";
 
 type BrandFormProps = {
     brand?: Brands
@@ -37,7 +37,7 @@ const BrandForm = ({ brand, method }: BrandFormProps) => {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (!brand) {
-            const result = await apiBrandService.createBrand(values)
+            const result = await createBrand(values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la création de la marque.")
@@ -47,7 +47,7 @@ const BrandForm = ({ brand, method }: BrandFormProps) => {
             toast.success("Marque créé avec succès.")
             form.reset()
         } else {
-            const result = await apiBrandService.updateBrand(brand.id, values)
+            const result = await updateBrand(brand.id, values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour de la marque.")

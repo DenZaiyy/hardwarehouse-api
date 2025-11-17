@@ -16,12 +16,12 @@ import {
 } from "@/components/ui/input-group";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Brands, Categories} from "@/app/generated/prisma/client";
-import {apiProductService} from "@/services/productService";
 import toast from "react-hot-toast";
 import React from "react";
 import {Label} from "@/components/ui/label";
 import Image from "next/image";
 import {Switch} from "@/components/ui/switch";
+import {createProduct, updateProduct} from "@/services/productService";
 
 type ProductFormProps = {
     product?: ProductsWithCategoryAndBrand
@@ -55,7 +55,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (!product) {
             console.table(values);
-            const result = await apiProductService.createProduct(values)
+            const result = await createProduct(values)
 
             console.table(result)
 
@@ -67,7 +67,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
             toast.success("Produit créé avec succès.")
             form.reset()
         } else {
-            const result = await apiProductService.updateProduct(product.id, values)
+            const result = await updateProduct(product.id, values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour du produit.")

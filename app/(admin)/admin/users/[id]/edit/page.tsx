@@ -1,5 +1,5 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {apiUserService} from "@/services/userService";
+import {getUser} from "@/services/userService";
 import UserForm from "@/components/admin/users/form";
 import type {Metadata} from "next";
 
@@ -18,7 +18,7 @@ interface UserParams {
 
 const UserEditPage = async ({ params }: UserParams) => {
     const { id } = await params;
-    const user = await apiUserService.getUser(id);
+    const user = await getUser(id);
 
     if(!user) {
         return <div>User not found</div>;

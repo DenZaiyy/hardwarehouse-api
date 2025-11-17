@@ -1,4 +1,4 @@
-import {apiCategoryService} from "@/services/categoryService";
+import {getCategory} from "@/services/categoryService";
 
 interface CategoryParams {
     params: Promise<{ id: string }>;
@@ -6,7 +6,7 @@ interface CategoryParams {
 
 const CategoryDetails = async ({ params }: CategoryParams) => {
     const { id } = await params;
-    const category = await apiCategoryService.getCategory(id);
+    const category = await getCategory(id);
 
     return (
         <>

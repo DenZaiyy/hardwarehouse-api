@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import React from "react";
 import {StocksWithProduct} from "@/types/types";
 import {Input} from "@/components/ui/input";
-import {apiPurchaseOrdersService} from "@/services/purchaseOrderService";
+import {createPurchase} from "@/services/purchaseOrderService";
 
 type PurchaseOrderFormProps = {
     stocks: StocksWithProduct[]
@@ -39,7 +39,7 @@ const PurchaseOrderForm = ({ stocks, method }: PurchaseOrderFormProps) => {
             return
         }
 
-        const result = await apiPurchaseOrdersService.createPurchase(values)
+        const result = await createPurchase(values)
 
         if (!result) {
             toast.error("Une erreur est survenue lors de la création du bon de commande.")

@@ -1,54 +1,77 @@
-import {TransactionsWithProduct} from "@/types/types";
+"use server"
 
-export interface TransactionService {
-    getTransactions: () => Promise<TransactionsWithProduct[]>;
-    getTransaction: (id: string) => Promise<TransactionsWithProduct>;
-    createTransaction: (data: Partial<TransactionsWithProduct>) => Promise<TransactionsWithProduct>;
-    deleteTransaction: (id: string) => Promise<void>;
+import {TransactionsWithProduct} from "@/types/types";
+import {cookies} from "next/headers";
+
+export async function getTransactions(): Promise<TransactionsWithProduct[]>  {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/transactions`,
+        {
+            method: "GET",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
+
+    if (!res.ok) throw new Error("Failed to fetch transactions");
+
+    return res.json();
 }
 
-export const apiTransactionService: TransactionService = {
-    getTransactions: async (): Promise<TransactionsWithProduct[]> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/transactions`,
-            { method: "GET" }
-        );
+export async function getTransaction(id: string): Promise<TransactionsWithProduct> {
+    const cookieHeader = await cookies();
 
-        if (!res.ok) throw new Error("Failed to fetch transactions");
-
-        return res.json();
-    },
-    getTransaction: async (id: string): Promise<TransactionsWithProduct> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`,
-            { method: "GET" }
-        );
-
-        if (!res.ok) throw new Error("Failed to fetch transaction");
-
-        return res.json();
-    },
-    createTransaction: async (data: Partial<TransactionsWithProduct>): Promise<TransactionsWithProduct> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions`, {
-            method: "POST",
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`,
+        {
+            method: "GET",
             headers: {
-                "Content-Type": "application/json",
+                Cookie: cookieHeader.toString()
             },
-            body: JSON.stringify(data),
-        });
+            cache: "no-store"
+        }
+    );
 
-        if (!res.ok) throw new Error("Failed to create transaction");
+    if (!res.ok) throw new Error("Failed to fetch transaction");
 
-        return res.json();
-    },
-    deleteTransaction: async (id: string): Promise<void> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`,
-            {
-                method: "DELETE",
-            }
-        );
+    return res.json();
+}
 
-        if (!res.ok) throw new Error("Failed to delete transaction");
-    },
-};
+export async function createTransaction(data: Partial<TransactionsWithProduct>): Promise<TransactionsWithProduct> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Cookie: cookieHeader.toString()
+        },
+        body: JSON.stringify(data),
+        cache: "no-store"
+    });
+
+    if (!res.ok) throw new Error("Failed to create transaction");
+
+    return res.json();
+}
+
+export async function deleteTransaction(id: string): Promise<void> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
+
+    if (!res.ok) throw new Error("Failed to delete transaction");
+}

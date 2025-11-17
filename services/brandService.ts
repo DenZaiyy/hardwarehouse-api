@@ -1,78 +1,98 @@
-import {Brands} from "@/app/generated/prisma/client";
+"use server";
 
-export interface BrandService {
-    getBrands: () => Promise<Brands[]>;
-    getBrand: (id: string) => Promise<Brands>;
-    createBrand: (data: Partial<Brands>) => Promise<Brands>;
-    updateBrand: (id: string, data: Partial<Brands>) => Promise<Brands>;
-    deleteBrand: (id: string) => Promise<void>;
+import {Brands} from "@/app/generated/prisma/client";
+import {cookies} from "next/headers";
+
+export async function getBrands(): Promise<Brands[]> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/brands`,
+        {
+            method: "GET",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
+
+    if (!res.ok) throw new Error("Échec de la récupération des marques");
+
+    return res.json();
 }
 
-export const apiBrandService: BrandService = {
-    getBrands: async (): Promise<Brands[]> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/brands`,
-            {
-                method: "GET"
-            }
-        );
+export async function getBrand(id: string): Promise<Brands> {
+    const cookieHeader = await cookies();
 
-        if (!res.ok) throw new Error("Échec de la récupération des marques");
-
-        return res.json();
-    },
-    getBrand: async (id: string): Promise<Brands> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
-            {
-                method: "GET"
-            }
-        );
-
-        if (!res.ok) throw new Error("Échec de récupération de la marque");
-
-        return res.json();
-    },
-    createBrand: async (data: Partial<Brands>): Promise<Brands> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brands`, {
-            method: "POST",
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
+        {
+            method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
+
+    if (!res.ok) throw new Error("Échec de récupération de la marque");
+
+    return res.json();
+}
+
+export async function createBrand(data: Partial<Brands>): Promise<Brands> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brands`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Cookie: cookieHeader.toString()
+        },
+        body: JSON.stringify(data),
+        cache: "no-store"
+    });
+
+    if (!res.ok) throw new Error("Échec de la création de la marque");
+
+    return res.json();
+}
+
+export async function updateBrand(id: string, data: Partial<Brands>): Promise<Brands> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
+        {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: cookieHeader.toString()
             },
             body: JSON.stringify(data),
-        });
+            cache: "no-store"
+        }
+    );
 
-        if (!res.ok) throw new Error("Échec de la création de la marque");
+    if (!res.ok) throw new Error("Échec de la mise à jour de la marque");
 
-        return res.json();
-    },
-    updateBrand: async (
-        id: string,
-        data: Partial<Brands>
-    ): Promise<Brands> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
-            {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            }
-        );
+    return res.json();
+}
 
-        if (!res.ok) throw new Error("Échec de la mise à jour de la marque");
+export async function deleteBrand(id: string): Promise<void> {
+    const cookieHeader = await cookies();
 
-        return res.json();
-    },
-    deleteBrand: async (id: string): Promise<void> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
-            {
-                method: "DELETE",
-            }
-        );
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
 
-        if (!res.ok) throw new Error("Échec de la suppression de la marque");
-    },
-};
+    if (!res.ok) throw new Error("Échec de la suppression de la marque");
+}

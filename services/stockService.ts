@@ -1,74 +1,98 @@
-import {StocksWithProduct} from "@/types/types";
+"use server";
 
-export interface StockService {
-    getStocks: () => Promise<StocksWithProduct[]>;
-    getStock: (id: string) => Promise<StocksWithProduct>;
-    createStock: (data: Partial<StocksWithProduct>) => Promise<StocksWithProduct>;
-    updateStock: (id: string, data: Partial<StocksWithProduct>) => Promise<StocksWithProduct>;
-    deleteStock: (id: string) => Promise<void>;
+import {StocksWithProduct} from "@/types/types";
+import {cookies} from "next/headers";
+
+export async function getStocks(): Promise<StocksWithProduct[]> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stocks`,
+        {
+            method: "GET",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
+
+    if (!res.ok) throw new Error("Failed to fetch stocks");
+
+    return res.json();
 }
 
-export const apiStockService: StockService = {
-    getStocks: async (): Promise<StocksWithProduct[]> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/stocks`,
-            { method: "GET" }
-        );
+export async function getStock(id: string): Promise<StocksWithProduct> {
+    const cookieHeader = await cookies();
 
-        if (!res.ok) throw new Error("Failed to fetch stocks");
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stocks/${id}`,
+        {
+            method: "GET",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
 
-        return res.json();
-    },
-    getStock: async (id: string): Promise<StocksWithProduct> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/stocks/${id}`,
-            { method: "GET" }
-        );
+    if (!res.ok) throw new Error("Failed to fetch stock");
 
-        if (!res.ok) throw new Error("Failed to fetch stock");
+    return res.json();
+}
 
-        return res.json();
-    },
-    createStock: async (data: Partial<StocksWithProduct>): Promise<StocksWithProduct> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stocks`, {
-            method: "POST",
+export async function createStock(data: Partial<StocksWithProduct>): Promise<StocksWithProduct> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/stocks`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Cookie: cookieHeader.toString()
+        },
+        body: JSON.stringify(data),
+        cache: "no-store"
+    });
+
+    if (!res.ok) throw new Error("Failed to create stock");
+
+    return res.json();
+}
+
+export async function updateStock(id: string, data: Partial<StocksWithProduct>): Promise<StocksWithProduct> {
+    const cookieHeader = await cookies();
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stocks/${id}`,
+        {
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
+                Cookie: cookieHeader.toString()
             },
             body: JSON.stringify(data),
-        });
+            cache: "no-store"
+        }
+    );
 
-        if (!res.ok) throw new Error("Failed to create stock");
+    if (!res.ok) throw new Error("Failed to update stock");
 
-        return res.json();
-    },
-    updateStock: async (
-        id: string,
-        data: Partial<StocksWithProduct>
-    ): Promise<StocksWithProduct> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/stocks/${id}`,
-            {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            }
-        );
+    return res.json();
+}
 
-        if (!res.ok) throw new Error("Failed to update stock");
+export async function deleteStock(id: string): Promise<void> {
+    const cookieHeader = await cookies();
 
-        return res.json();
-    },
-    deleteStock: async (id: string): Promise<void> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/stocks/${id}`,
-            {
-                method: "DELETE",
-            }
-        );
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/stocks/${id}`,
+        {
+            method: "DELETE",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            cache: "no-store"
+        }
+    );
 
-        if (!res.ok) throw new Error("Failed to delete stock");
-    },
-};
+    if (!res.ok) throw new Error("Failed to delete stock");
+}

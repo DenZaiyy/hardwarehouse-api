@@ -9,11 +9,11 @@ import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import toast from "react-hot-toast";
 import {ProductActions} from "@/components/admin/products/actions";
-import {apiProductService} from "@/services/productService";
 import Link from "next/link";
+import {getProduct, updateProduct} from "@/services/productService";
 
 async function handleConfirm(productId: string) {
-    const product = await apiProductService.getProduct(productId);
+    const product = await getProduct(productId);
     const data = {
         "name": product.name,
         "image": product.image,
@@ -21,7 +21,7 @@ async function handleConfirm(productId: string) {
         "categoryId": product.categoryId,
         "active": !product.active
     }
-    await apiProductService.updateProduct(productId, data)
+    await updateProduct(productId, data)
     toast.success(`Produit ${product.active ? "désactiver" : "activer"} avec succès`)
     setTimeout(() => window.location.reload(), 1500)
 }

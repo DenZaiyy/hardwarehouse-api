@@ -1,10 +1,10 @@
 import type {Metadata} from "next";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
-import {apiStockService} from "@/services/stockService";
 import {DataTable} from "@/components/admin/data-table";
 import {columns} from "@/app/(admin)/admin/stocks/columns";
 import {Suspense} from "react";
+import {getStocks} from "@/services/stockService";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Produits",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 async function StocksTable() {
-    const data = await apiStockService.getStocks();
+    const data = await getStocks();
     return <DataTable columns={columns} data={data} inputSearch={false} />;
 }
 
