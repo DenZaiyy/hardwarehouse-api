@@ -7,11 +7,11 @@ import Image from "next/image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import toast from "react-hot-toast";
-import {apiCategoryService} from "@/services/categoryService";
 import {CategoryActions} from "@/components/admin/categories/actions";
+import {deleteCategory} from "@/services/categoryService";
 
 async function handleConfirm(categoryId: string) {
-    await apiCategoryService.deleteCategory(categoryId)
+    await deleteCategory(categoryId)
     toast.success("Catégorie supprimée avec succès")
     setTimeout(() => window.location.reload(), 1500)
 }

@@ -1,5 +1,5 @@
-import {apiStockService} from "@/services/stockService";
 import Link from "next/link";
+import {getStock} from "@/services/stockService";
 
 interface StockParams {
     params: Promise<{ id: string }>;
@@ -7,7 +7,7 @@ interface StockParams {
 
 const StockDetails = async ({ params }: StockParams) => {
     const { id } = await params;
-    const stock = await apiStockService.getStock(id);
+    const stock = await getStock(id);
 
     return (
         <>

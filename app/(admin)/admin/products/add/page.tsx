@@ -1,9 +1,9 @@
 import type {Metadata} from "next";
-import {apiCategoryService} from "@/services/categoryService";
-import {apiBrandService} from "@/services/brandService";
 import React from "react";
 import {Card, CardContent} from "@/components/ui/card";
 import ProductForm from "@/components/admin/products/form";
+import {getCategories} from "@/services/categoryService";
+import {getBrands} from "@/services/brandService";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Products - Add",
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
 }
 
 const ProductAddPage = async () => {
-    const categories = await apiCategoryService.getCategories();
-    const brands = await apiBrandService.getBrands();
+    const categories = await getCategories();
+    const brands = await getBrands();
 
 
     return (

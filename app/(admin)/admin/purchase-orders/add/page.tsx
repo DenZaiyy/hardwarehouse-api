@@ -1,10 +1,10 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import React from "react";
-import {apiStockService} from "@/services/stockService";
 import PurchaseOrderForm from "@/components/admin/purchase-orders/form";
+import {getStocks} from "@/services/stockService";
 
 const PurchaseOrderAddPage = async () => {
-    const stocks = await apiStockService.getStocks();
+    const stocks = await getStocks();
 
     return (
         <div className="flex flex-col">

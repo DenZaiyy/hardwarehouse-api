@@ -8,10 +8,10 @@ import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import toast from "react-hot-toast";
 import React from "react";
-import {apiStockService} from "@/services/stockService";
 import {ProductsWithCategoryAndBrand} from "@/types/types";
 import {Stocks} from "@/app/generated/prisma/client";
 import {Input} from "@/components/ui/input";
+import {createStock, updateStock} from "@/services/stockService";
 
 type StockFormProps = {
     stock?: Stocks
@@ -37,7 +37,7 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (!stock) {
-            const result = await apiStockService.createStock(values)
+            const result = await createStock(values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la création du stock.")
@@ -47,7 +47,7 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
             toast.success("Stock créé avec succès.")
             form.reset()
         } else {
-            const result = await apiStockService.updateStock(stock.id, values)
+            const result = await updateStock(stock.id, values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour du stock.")

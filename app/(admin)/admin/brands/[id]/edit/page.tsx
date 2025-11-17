@@ -1,6 +1,6 @@
-import {apiBrandService} from "@/services/brandService";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import BrandForm from "@/components/admin/brands/form";
+import {getBrand} from "@/services/brandService";
 
 interface BrandParams {
     params: Promise<{ id: string }>;
@@ -8,7 +8,7 @@ interface BrandParams {
 
 const BrandEditPage = async ({ params }: BrandParams) => {
     const { id } = await params;
-    const brand = await apiBrandService.getBrand(id);
+    const brand = await getBrand(id);
 
     if(!brand) {
         return <div>Brand not found</div>;

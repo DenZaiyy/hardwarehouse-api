@@ -5,12 +5,12 @@ import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import Link from "next/link";
 import {ProductsWithCategoryAndBrand, StocksWithProduct} from "@/types/types";
 import toast from "react-hot-toast";
-import {apiStockService} from "@/services/stockService";
 import {StockActions} from "@/components/admin/stocks/actions";
 import {formatDate} from "@/lib/utils";
+import {deleteStock} from "@/services/stockService";
 
 async function handleConfirm(stockId: string) {
-    await apiStockService.deleteStock(stockId)
+    await deleteStock(stockId)
     toast.success("Stock supprimée avec succès")
     setTimeout(() => window.location.reload(), 1500)
 }

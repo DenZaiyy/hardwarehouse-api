@@ -1,10 +1,10 @@
-import {apiProductService} from "@/services/productService";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import Link from "next/link";
 import {Separator} from "@/components/ui/separator";
 import {formatDate} from "@/lib/utils";
 import {BarChartCard} from "@/components/admin/bar-chart-card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {getProduct} from "@/services/productService";
 
 interface ProductParams {
     params: Promise<{ id: string }>;
@@ -112,7 +112,7 @@ const config = {
 
 const ProductDetails = async ({ params }: ProductParams) => {
     const { id } = await params;
-    const product = await apiProductService.getProduct(id);
+    const product = await getProduct(id);
 
     return (
         <>

@@ -1,4 +1,4 @@
-import {apiUserService} from "@/services/userService";
+import {getPurchaseOrders, getTransactions, getUser} from "@/services/userService";
 import type {Metadata} from "next";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
@@ -50,12 +50,12 @@ async function Table<T extends TableType>({
         // Sinon, les charger (fallback)
         switch (type) {
             case "orders": {
-                const response = await apiUserService.getPurchaseOrders(id)
+                const response = await getPurchaseOrders(id)
                 data = response.data as DataMap[T][]
                 break
             }
             case "transactions": {
-                const response = await apiUserService.getTransactions(id)
+                const response = await getTransactions(id)
                 data = response.data as DataMap[T][]
                 break
             }
@@ -86,11 +86,11 @@ function TransactionsTableSkeleton() {
 
 const UserDetails = async ({ params }: UserParams) => {
     const { id } = await params;
-    const user = await apiUserService.getUser(id);
+    const user = await getUser(id);
 
     const [ordersResponse, transactionsResponse] = await Promise.all([
-        apiUserService.getPurchaseOrders(id),
-        apiUserService.getTransactions(id)
+        getPurchaseOrders(id),
+        getTransactions(id)
     ]);
 
     const hasOrders = ordersResponse.count > 0;

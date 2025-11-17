@@ -3,8 +3,8 @@ import Link from "next/link";
 import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/admin/data-table";
 import {Suspense} from "react";
-import {apiTransactionService} from "@/services/transactionService";
 import {columns} from "@/app/(admin)/admin/transactions/column";
+import {getTransactions} from "@/services/transactionService";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Transactions de stocks",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 async function TransactionsTable() {
-    const data = await apiTransactionService.getTransactions();
+    const data = await getTransactions();
     return <DataTable columns={columns} data={data} inputSearch={false} />;
 }
 

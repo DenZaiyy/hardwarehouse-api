@@ -6,16 +6,16 @@ import {DataTableColumnHeader} from "@/components/data-table-column-header"
 import toast from "react-hot-toast"
 import {User} from "@clerk/backend";
 import UserActions from "@/components/admin/users/actions";
-import {apiUserService} from "@/services/userService";
+import {deleteUser, updateUser} from "@/services/userService";
 
 async function handleConfirm(userId: string) {
-    await apiUserService.deleteUser(userId)
+    await deleteUser(userId)
     toast.success("Utilisateur supprimée avec succès")
     setTimeout(() => window.location.reload(), 1500)
 }
 
 async function handleBlock(userId: string, lock: boolean) {
-    await apiUserService.updateUser(userId, {
+    await updateUser(userId, {
         locked: lock
     })
     toast.success(lock ? "Utilisateur débloqué avec succès" : "Utilisateur bloqué avec succès")

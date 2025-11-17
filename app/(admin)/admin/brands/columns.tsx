@@ -7,11 +7,11 @@ import Image from "next/image"
 import {DataTableColumnHeader} from "@/components/data-table-column-header"
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog"
 import toast from "react-hot-toast"
-import {apiBrandService} from "@/services/brandService"
 import {BrandActions} from "@/components/admin/brands/actions";
+import {deleteBrand} from "@/services/brandService";
 
 async function handleConfirm(brandId: string) {
-    await apiBrandService.deleteBrand(brandId)
+    await deleteBrand(brandId)
     toast.success("Marque supprimée avec succès")
     setTimeout(() => window.location.reload(), 1500)
 }

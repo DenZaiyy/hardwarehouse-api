@@ -9,7 +9,7 @@ import {Button} from "@/components/ui/button";
 import toast from "react-hot-toast";
 import React from "react";
 import {User} from "@clerk/backend";
-import {apiUserService} from "@/services/userService";
+import {createUser, updateUser} from "@/services/userService";
 
 type UserFormProps = {
     user?: User
@@ -44,7 +44,7 @@ const UserForm = ({ user, method }: UserFormProps) => {
             const confirmPassword = values['passwordConfirm'];
 
             if (password === confirmPassword) {
-                const result = await apiUserService.createUser(values)
+                const result = await createUser(values)
 
                 if (!result) {
                     toast.error("Une erreur est survenue lors de la création de l'utilisateur.")
@@ -57,7 +57,7 @@ const UserForm = ({ user, method }: UserFormProps) => {
                 toast.error('Mot de passe différent')
             }
         } else {
-            const result = await apiUserService.updateUser(user.id, values)
+            const result = await updateUser(user.id, values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour de l'utilisateur.")

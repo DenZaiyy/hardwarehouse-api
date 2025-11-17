@@ -12,7 +12,7 @@ import {Label} from "@/components/ui/label";
 import {Categories} from "@/app/generated/prisma/client";
 import toast from "react-hot-toast";
 import React from "react";
-import {apiCategoryService} from "@/services/categoryService";
+import {createCategory, updateCategory} from "@/services/categoryService";
 
 type CategoryFormProps = {
     category?: Categories
@@ -37,7 +37,7 @@ const CategoryForm = ({ category, method }: CategoryFormProps) => {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (!category) {
-            const result = await apiCategoryService.createCategory(values)
+            const result = await createCategory(values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la création de la catégorie.")
@@ -47,7 +47,7 @@ const CategoryForm = ({ category, method }: CategoryFormProps) => {
             toast.success("Catégorie créé avec succès.")
             form.reset()
         } else {
-            const result = await apiCategoryService.updateCategory(category.id, values)
+            const result = await updateCategory(category.id, values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour de la catégorie.")

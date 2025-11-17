@@ -1,6 +1,6 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {apiCategoryService} from "@/services/categoryService";
 import CategoryForm from "@/components/admin/categories/form";
+import {getCategory} from "@/services/categoryService";
 
 interface CategoryParams {
     params: Promise<{ id: string }>;
@@ -8,7 +8,7 @@ interface CategoryParams {
 
 const CategoryEditPage = async ({ params }: CategoryParams) => {
     const { id } = await params;
-    const category = await apiCategoryService.getCategory(id);
+    const category = await getCategory(id);
 
     if(!category) {
         return <div>Category not found</div>;

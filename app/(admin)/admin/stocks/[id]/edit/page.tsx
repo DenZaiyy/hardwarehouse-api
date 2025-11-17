@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {apiStockService} from "@/services/stockService";
 import StockForm from "@/components/admin/stocks/form";
-import {apiProductService} from "@/services/productService";
+import {getStock} from "@/services/stockService";
+import {getProducts} from "@/services/productService";
 
 interface StockParams {
     params: Promise<{ id: string }>;
@@ -9,8 +9,8 @@ interface StockParams {
 
 const StockEditPage = async ({ params }: StockParams) => {
     const { id } = await params;
-    const stock = await apiStockService.getStock(id);
-    const products = await apiProductService.getProducts();
+    const stock = await getStock(id);
+    const products = await getProducts();
 
     if(!stock) {
         return <div>Stock not found</div>;

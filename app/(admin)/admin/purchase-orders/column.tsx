@@ -6,11 +6,11 @@ import Link from "next/link";
 import {ProductsWithCategoryAndBrand, PurchaseOrdersWithProduct} from "@/types/types";
 import toast from "react-hot-toast";
 import {formatDate} from "@/lib/utils";
-import {apiTransactionService} from "@/services/transactionService";
 import {PurchaseOrderActions} from "@/components/admin/purchase-orders/actions";
+import {deleteTransaction} from "@/services/transactionService";
 
 async function handleConfirm(transactionId: string) {
-    await apiTransactionService.deleteTransaction(transactionId)
+    await deleteTransaction(transactionId)
     toast.success("Transaction supprimée avec succès")
     setTimeout(() => window.location.reload(), 1500)
 }

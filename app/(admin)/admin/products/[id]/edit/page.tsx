@@ -1,8 +1,8 @@
-import {apiProductService} from "@/services/productService";
 import ProductForm from "@/components/admin/products/form";
-import {apiBrandService} from "@/services/brandService";
-import {apiCategoryService} from "@/services/categoryService";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {getProduct} from "@/services/productService";
+import {getCategories} from "@/services/categoryService";
+import {getBrands} from "@/services/brandService";
 
 interface ProductParams {
     params: Promise<{ id: string }>;
@@ -10,9 +10,9 @@ interface ProductParams {
 
 const ProductEditPage = async ({ params }: ProductParams) => {
     const { id } = await params;
-    const product = await apiProductService.getProduct(id);
-    const brands = await apiBrandService.getBrands();
-    const categories = await apiCategoryService.getCategories();
+    const product = await getProduct(id);
+    const brands = await getBrands();
+    const categories = await getCategories();
 
     if(!product) {
         return <div>Product not found</div>;
