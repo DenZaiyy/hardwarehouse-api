@@ -13,10 +13,7 @@ export const apiBrandService: BrandService = {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/brands`,
             {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_URL}`
-                }
+                method: "GET"
             }
         );
 
@@ -28,10 +25,7 @@ export const apiBrandService: BrandService = {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
             {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_URL}`
-                }
+                method: "GET"
             }
         );
 
@@ -43,8 +37,7 @@ export const apiBrandService: BrandService = {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/brands`, {
             method: "POST",
             headers: {
-                "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_URL}`,
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
             body: JSON.stringify(data),
         });

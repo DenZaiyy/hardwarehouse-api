@@ -11,7 +11,7 @@ export const apiPurchaseOrdersService: PurchaseOrderService = {
     getPurchases: async (): Promise<PurchaseOrdersWithProduct[]> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/purchase-orders`,
-            { cache: 'default'}
+            { method: "GET" }
         );
 
         if (!res.ok) throw new Error("Failed to fetch purchase orders");
@@ -21,7 +21,7 @@ export const apiPurchaseOrdersService: PurchaseOrderService = {
     getPurchase: async (id: string): Promise<PurchaseOrdersWithProduct> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/purchase-orders/${id}`,
-            { cache: 'default'}
+            { method: "GET" }
         );
 
         if (!res.ok) throw new Error("Failed to fetch purchase order");

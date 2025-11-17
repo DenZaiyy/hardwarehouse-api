@@ -10,17 +10,18 @@ export interface CategoryService {
 
 export const apiCategoryService: CategoryService = {
     getCategories: async (): Promise<Categories[]> => {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, { cache: 'default'});
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+            method: "GET"
+        });
 
         if (!res.ok) throw new Error("Échec de la récupération des catégories");
 
         return res.json();
     },
     getCategory: async (id: string): Promise<Categories> => {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
-            { cache: 'default'}
-        );
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`, {
+            method: "GET"
+        });
 
         if (!res.ok) throw new Error("Échec de récupération de la catégorie");
 

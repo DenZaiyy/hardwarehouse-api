@@ -19,6 +19,8 @@ export const apiUserService: UserService = {
             }
         );
 
+        console.table([res, res.status, res.statusText]);
+
         if (!res.ok) throw new Error("Échec de la récupération des utilisateurs");
 
         return res.json();

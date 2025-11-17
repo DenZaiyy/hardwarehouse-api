@@ -11,7 +11,7 @@ export const apiTransactionService: TransactionService = {
     getTransactions: async (): Promise<TransactionsWithProduct[]> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/transactions`,
-            { cache: 'default'}
+            { method: "GET" }
         );
 
         if (!res.ok) throw new Error("Failed to fetch transactions");
@@ -21,7 +21,7 @@ export const apiTransactionService: TransactionService = {
     getTransaction: async (id: string): Promise<TransactionsWithProduct> => {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/transactions/${id}`,
-            { cache: 'default'}
+            { method: "GET" }
         );
 
         if (!res.ok) throw new Error("Failed to fetch transaction");
