@@ -4,9 +4,15 @@ import {NextResponse} from "next/server";
 // Routes
 const isProtectedRoute = createRouteMatcher(["/admin(.*)"]);
 const isAdminRoute = createRouteMatcher(["/admin/users(.*)", "/admin/transactions(.*)"]);
+const isApiRoute = createRouteMatcher(["/api(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
     const { userId, sessionClaims } = await auth();
+
+    // Skip middleware checks for API routes - let them handle their own auth
+    if (isApiRoute(req)) {
+        return NextResponse.next();
+    }
 
     // Require login for all protected routes
     if (isProtectedRoute(req)) {
@@ -19,7 +25,7 @@ export default clerkMiddleware(async (auth, req) => {
 
         const userRole = sessionClaims?.publicMetadata?.role;
         if (userRole !== "admin") {
-            return new Response("Unauthorized", { status: 401 });
+            return NextResponse.json("Unauthorized", { status: 401 });
         }
     }
 
