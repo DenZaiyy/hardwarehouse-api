@@ -72,9 +72,7 @@ export const columns: ColumnDef<User>[] = [
             const user = row.original
             const role = user.publicMetadata["role"]
 
-            if (!role) return "Employé"
-
-            return role
+            return role === "admin" ? "Admin" : "Employé"
         }
     },
     {
