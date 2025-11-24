@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import React from "react";
 import {User} from "@clerk/backend";
 import {createUser, updateUser} from "@/services/userService";
+import {Checkbox} from "@/components/ui/checkbox";
 
 type UserFormProps = {
     user?: User
@@ -23,6 +24,7 @@ const formSchema = z.object({
     email: z.string().nonempty(),
     password: z.string().nonempty(),
     passwordConfirm: z.string().nonempty(),
+    isAdmin: z.boolean()
 })
 
 const UserForm = ({ user, method }: UserFormProps) => {
@@ -34,7 +36,8 @@ const UserForm = ({ user, method }: UserFormProps) => {
             username: user?.username ?? "",
             email: user?.emailAddresses[0].emailAddress ?? "",
             password: "",
-            passwordConfirm: ""
+            passwordConfirm: "",
+            isAdmin: false
         }
     })
 
@@ -184,6 +187,26 @@ const UserForm = ({ user, method }: UserFormProps) => {
                         )}
                     />
                 </div>
+                <FormField
+                    control={form.control}
+                    name="isAdmin"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                                <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel>
+                                    Utilisateur avec droits administrateur
+                                </FormLabel>
+                                <FormMessage />
+                            </div>
+                        </FormItem>
+                    )}
+                />
                 <Button type="submit">Envoyer</Button>
             </form>
         </Form>
