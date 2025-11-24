@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Forbidden - Admin access required", statusCode: 403 }, { status: 403 });
         }
 
-        const { username, email, password, passwordConfirm, firstname, lastname } = await req.json()
+        const { username, email, password, passwordConfirm, firstname, lastname, isAdmin } = await req.json()
         const client = await clerkClient()
 
         if (!username && !email && !password && !passwordConfirm && !firstname && !lastname) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
@@ -52,6 +52,9 @@ export async function POST(req: NextRequest) {
             username: username,
             emailAddress: [email],
             password: password,
+            publicMetadata: {
+                'role': isAdmin ? 'admin' : 'employee'
+            }
         })
 
         if (!createdUser) {
