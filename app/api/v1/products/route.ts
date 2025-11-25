@@ -56,9 +56,9 @@ export async function POST(req: NextRequest) {
         return new NextResponse('Too Many Requests', { status: 429 });
     }
 
-    const { name, price, active, categoryId, brandId } = await req.json();
+    const { name, image, price, active, categoryId, brandId } = await req.json();
 
-    if (!name || !price || !categoryId || !brandId) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
+    if (!name || !image || !price || !categoryId || !brandId) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
 
     const slug = slugifyName(name)
 
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
                 slug: slug,
                 price: price,
                 active: active,
-                image: "",
+                image: image,
                 category: {
                     connect: { id: categoryId }
                 },
