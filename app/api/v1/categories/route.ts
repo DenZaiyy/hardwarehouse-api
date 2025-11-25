@@ -45,9 +45,9 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
     }
 
-    const { name } = await req.json();
+    const { name, logo } = await req.json();
 
-    if (!name) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
+    if (!name && !logo) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
 
     const slug = slugifyName(name);
 
@@ -63,7 +63,8 @@ export async function POST(req: NextRequest) {
         const category = await db.categories.create({
             data: {
                 name: name,
-                slug: slug
+                slug: slug,
+                logo: logo
             }
         })
 

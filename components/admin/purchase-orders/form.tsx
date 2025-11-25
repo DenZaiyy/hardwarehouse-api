@@ -11,27 +11,23 @@ import React from "react";
 import {StocksWithProduct} from "@/types/types";
 import {Input} from "@/components/ui/input";
 import {createPurchase} from "@/services/purchaseOrderService";
+import {purchaseOrderSchema} from "@/lib/validators/purchaseOrderSchema";
 
 type PurchaseOrderFormProps = {
     stocks: StocksWithProduct[]
     method: "POST"
 }
 
-const formSchema = z.object({
-    quantity: z.coerce.number<number>().min(0, "La quantité doit être positive"),
-    productId: z.string().nonempty(),
-})
-
 const PurchaseOrderForm = ({ stocks, method }: PurchaseOrderFormProps) => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof purchaseOrderSchema>>({
+        resolver: zodResolver(purchaseOrderSchema),
         defaultValues: {
             quantity: undefined,
             productId: undefined,
         }
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof purchaseOrderSchema>) {
         if (!values.quantity) return
 
         if (values.quantity < 0) {

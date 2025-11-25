@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
     }
 
-    const { name } = await req.json();
+    const { name, logo } = await req.json();
 
     if (!name) return new NextResponse("Missing required fields", { status: 400});
 
@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
         const brand = await db.brands.create({
             data: {
                 name: name,
+                logo: logo,
                 slug: slug
             }
         })
