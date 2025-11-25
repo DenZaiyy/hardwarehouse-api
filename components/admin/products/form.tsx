@@ -22,6 +22,7 @@ import {Label} from "@/components/ui/label";
 import Image from "next/image";
 import {Switch} from "@/components/ui/switch";
 import {createProduct, updateProduct} from "@/services/productService";
+import {productSchema} from "@/lib/validators/productSchema";
 
 type ProductFormProps = {
     product?: ProductsWithCategoryAndBrand
@@ -30,18 +31,9 @@ type ProductFormProps = {
     method: "POST" | "PATCH"
 }
 
-const formSchema = z.object({
-    name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
-    price: z.coerce.number<number>().min(0, "Le prix doit être un nombre positif"),
-    active: z.boolean(),
-    image: z.string().url("L'URL de l'image doit être valide").optional().or(z.literal("")),
-    brandId: z.string().nonempty(),
-    categoryId: z.string().nonempty(),
-})
-
 const ProductForm = ({ product, brands, categories, method }: ProductFormProps) => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof productSchema>>({
+        resolver: zodResolver(productSchema),
         defaultValues: {
             name: product?.name ?? "",
             price: product?.price ?? 0,
@@ -52,7 +44,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
         }
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof productSchema>) {
         if (!product) {
             console.table(values);
             const result = await createProduct(values)

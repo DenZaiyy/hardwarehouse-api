@@ -13,29 +13,25 @@ import {Categories} from "@/app/generated/prisma/client";
 import toast from "react-hot-toast";
 import React from "react";
 import {createCategory, updateCategory} from "@/services/categoryService";
+import {categorySchema} from "@/lib/validators/categorySchema";
 
 type CategoryFormProps = {
     category?: Categories
     method: "POST" | "PATCH"
 }
 
-const formSchema = z.object({
-    name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
-    logo: z.string().url("L'URL du logo doit être valide").optional().or(z.literal("")),
-})
-
 const CategoryForm = ({ category, method }: CategoryFormProps) => {
     const [previewImageUrl, setPreviewImageUrl] = React.useState<string | undefined>(undefined);
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof categorySchema>>({
+        resolver: zodResolver(categorySchema),
         defaultValues: {
             name: category?.name ?? "",
             logo: category?.logo ?? "",
         }
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof categorySchema>) {
         if (!category) {
             const result = await createCategory(values)
 
@@ -57,10 +53,6 @@ const CategoryForm = ({ category, method }: CategoryFormProps) => {
             form.reset()
             toast.success("Catégorie mis à jour avec succès.")
         }
-    }
-
-    function handlePreviewImage() {
-        form.setValue("logo", previewImageUrl);
     }
 
     return (
@@ -91,9 +83,23 @@ const CategoryForm = ({ category, method }: CategoryFormProps) => {
                                 <FormLabel>Logo</FormLabel>
                                 <FormControl>
                                     <InputGroup>
-                                        <InputGroupInput onChange={() => { setPreviewImageUrl(field.value) }} placeholder="URL du logo..." />
+                                        <InputGroupInput
+                                            placeholder="URL du logo..."
+                                            value={field.value ?? ""}
+                                            onChange={(e) => { field.onChange(e.target.value) }}
+                                        />
                                         <InputGroupAddon align="inline-end">
-                                            <InputGroupButton variant="secondary" onClick={() => handlePreviewImage()}>Aperçu</InputGroupButton>
+                                            <InputGroupButton
+                                                variant="ghost"
+                                                onClick={() => {
+                                                    if (field.value) {
+                                                        form.trigger("logo") // Valide le champ image
+                                                        setPreviewImageUrl(field.value) // Met à jour l'aperçu de l'image
+                                                    }
+                                                }}
+                                            >
+                                                Aperçu
+                                            </InputGroupButton>
                                         </InputGroupAddon>
                                     </InputGroup>
                                 </FormControl>

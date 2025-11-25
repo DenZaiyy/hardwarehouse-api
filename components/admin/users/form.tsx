@@ -11,28 +11,19 @@ import React from "react";
 import {User} from "@clerk/backend";
 import {createUser, updateUser} from "@/services/userService";
 import {Checkbox} from "@/components/ui/checkbox";
+import {userSchema} from "@/lib/validators/userSchema";
 
 type UserFormProps = {
     user?: User
     method: "POST" | "PATCH"
 }
 
-const formSchema = z.object({
-    firstname: z.string().nonempty(),
-    lastname: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
-    username: z.string().nonempty(),
-    email: z.string().nonempty(),
-    password: z.string().nonempty(),
-    passwordConfirm: z.string().nonempty(),
-    isAdmin: z.boolean()
-})
-
 const UserForm = ({ user, method }: UserFormProps) => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof userSchema>>({
+        resolver: zodResolver(userSchema),
         defaultValues: {
-            firstname: user?.firstName ?? "",
-            lastname: user?.lastName ?? "",
+            firstName: user?.firstName ?? "",
+            lastName: user?.lastName ?? "",
             username: user?.username ?? "",
             email: user?.emailAddresses[0].emailAddress ?? "",
             password: "",
@@ -41,7 +32,7 @@ const UserForm = ({ user, method }: UserFormProps) => {
         }
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof userSchema>) {
         if (!user) {
             const password = values['password'];
             const confirmPassword = values['passwordConfirm'];
@@ -105,6 +96,7 @@ const UserForm = ({ user, method }: UserFormProps) => {
                                 <FormDescription>
                                     L&#39;adresse email dois être renseigné
                                 </FormDescription>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -112,7 +104,7 @@ const UserForm = ({ user, method }: UserFormProps) => {
                 <div className="flex flex-col md:flex-row gap-2">
                     <FormField
                         control={form.control}
-                        name="lastname"
+                        name="lastName"
                         render={({ field }) => (
                             <FormItem className="w-full">
                                 <FormLabel>Nom de famille</FormLabel>
@@ -131,7 +123,7 @@ const UserForm = ({ user, method }: UserFormProps) => {
                     />
                     <FormField
                         control={form.control}
-                        name="firstname"
+                        name="firstName"
                         render={({ field }) => (
                             <FormItem className="w-full">
                                 <FormLabel>Prénom</FormLabel>
@@ -144,6 +136,7 @@ const UserForm = ({ user, method }: UserFormProps) => {
                                 <FormDescription>
                                     Le prénom doit être renseigné
                                 </FormDescription>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -183,6 +176,7 @@ const UserForm = ({ user, method }: UserFormProps) => {
                                 <FormDescription>
                                     Pour confirmer, veuillez renseigner à nouveau le mot de passe.
                                 </FormDescription>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />

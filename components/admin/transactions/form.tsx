@@ -12,22 +12,16 @@ import {StocksWithProduct} from "@/types/types";
 import {Switch} from "@/components/ui/switch";
 import {Input} from "@/components/ui/input";
 import {createTransaction} from "@/services/transactionService";
+import {transactionSchema} from "@/lib/validators/transactionSchema";
 
 type TransactionFormProps = {
     stocks: StocksWithProduct[]
     method: "POST"
 }
 
-const formSchema = z.object({
-    type: z.boolean(),
-    oldQtt: z.coerce.number<number>().min(0, "La quantité doit être positive"),
-    newQtt: z.coerce.number<number>().min(0, "La quantité doit être positive"),
-    productId: z.string().nonempty(),
-})
-
 const TransactionForm = ({ stocks, method }: TransactionFormProps) => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof transactionSchema>>({
+        resolver: zodResolver(transactionSchema),
         defaultValues: {
             type: true,
             oldQtt: undefined,
@@ -48,7 +42,7 @@ const TransactionForm = ({ stocks, method }: TransactionFormProps) => {
         }
     }, [selectedProductId, stocks, form])
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof transactionSchema>) {
         const finalQuantity = values.type
             ? values.oldQtt + values.newQtt
             : values.oldQtt - values.newQtt

@@ -12,6 +12,7 @@ import {ProductsWithCategoryAndBrand} from "@/types/types";
 import {Stocks} from "@/app/generated/prisma/client";
 import {Input} from "@/components/ui/input";
 import {createStock, updateStock} from "@/services/stockService";
+import {stockSchema} from "@/lib/validators/stockSchema";
 
 type StockFormProps = {
     stock?: Stocks
@@ -19,15 +20,9 @@ type StockFormProps = {
     method: "POST" | "PATCH"
 }
 
-const formSchema = z.object({
-    minQuantity: z.coerce.number<number>().min(0, "La quantité minimale dois être positive"),
-    quantity: z.coerce.number<number>().min(0, "La quantité ne peux pas être négative"),
-    productId: z.string().nonempty(),
-})
-
 const StockForm = ({ stock, products, method }: StockFormProps) => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof stockSchema>>({
+        resolver: zodResolver(stockSchema),
         defaultValues: {
             minQuantity: stock?.minQuantity ?? 0,
             quantity: stock?.quantity ?? 0,
@@ -35,7 +30,7 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
         }
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof stockSchema>) {
         if (!stock) {
             const result = await createStock(values)
 
