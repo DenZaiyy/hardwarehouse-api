@@ -116,6 +116,10 @@ jobs:
     steps:
       - checkout
       - npm-ci
+      # Run NextJS types generation
+      - run:
+          name: Run Next Typegen to generate types helper
+          command: npx next typegen
       # Run TypeScript type checking
       - run:
           name: Run TypeScript check
