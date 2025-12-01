@@ -1,31 +1,287 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/reference/configuration-reference
 version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#jobs-overview & https://circleci.com/docs/reference/configuration-reference/#jobs
-jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/guides/execution-managed/executor-intro/ & https://circleci.com/docs/reference/configuration-reference/#executor-job
-    docker:
-      # Specify the version you desire here
-      # See: https://circleci.com/developer/images/image/cimg/base
-      - image: cimg/base:current
-
-    # Add steps to the job
-    # See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#steps-overview & https://circleci.com/docs/reference/configuration-reference/#steps
+commands:
+  # Command to use npm ci to install dependencies
+  npm-ci:
+    description: Install npm dependencies using npm ci
     steps:
-      # Checkout the code as the first step.
+      - node/install-packages:
+          pkg-manager: npm
+          cache-version: v1
+          override-ci-command: npm ci
+orbs:
+  node: circleci/node@7.1.0 # Node.js orb for CircleCI
+  lighthouse-check: foo-software/lighthouse-check@0.0.13
+jobs:
+  # Job to run tests with jest-junit and store results to /test-results
+  test-node:
+    # Install node dependencies and run tests
+    executor: node/default
+    environment:
+      JEST_JUNIT_OUTPUT_DIR: ./test-results/
+    # Define the steps to run in this job
+    steps:
       - checkout
+      - npm-ci
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Create test-results directory
+          command: mkdir -p ./test-results
+        # Run the tests using npm and generate test results
+      - run:
+          name: Run tests
+          command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit
+      # Store the test results in the specified directory
+      - store_test_results:
+          path: ./test-results/
 
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/guides/orchestrate/workflows/ & https://circleci.com/docs/reference/configuration-reference/#workflows
+  # Job to audit the node project
+  audit-node:
+    executor: node/default
+    # Define the steps to run in this job
+    steps:
+      - checkout
+      - npm-ci
+      # Install JQ for audit
+      - run:
+          name: Install jq
+          command: sudo apt-get update && sudo apt-get install -y jq
+      # Run npm audit to check for vulnerabilities
+      - run:
+          name: Run npm audit
+          command: npm audit --audit-level=high --json | jq -e '.metadata.vulnerabilities.high == 0 and .metadata.vulnerabilities.critical == 0'
+
+  # Job to lint the node project
+  lint-node:
+    executor: node/default
+    # Define the steps to run in this job
+    steps:
+      - checkout
+      - npm-ci
+      # Run npm lint to check for code style issues
+      - run:
+          name: Run npm lint
+          command: npm run lint
+
+  # Job to build the node project and store artifacts
+  build-node:
+    # Build node project
+    # Executor to use for the build job, using the same node image as the test job
+    executor: node/default
+    # Define the steps to run in this job
+    steps:
+      # Check out the code from the repository
+      - checkout
+      - npm-ci
+      # Restaurer le cache du build Next.js
+      - restore_cache:
+          keys:
+            - next-cache-v1-{{ .Branch }}-{{ .Revision }}
+            - next-cache-v1-{{ .Branch }}
+            - next-cache-v1
+      # Run the build command to generate the build artifacts
+      - run:
+          name: Build Next.js application
+          command: npm run build
+      # Save the cache for the Next.js build
+      - save_cache:
+          key: next-cache-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - .next/cache
+      # Copy output to artifacts dir
+      - run:
+          name: Copy necessary artifacts only
+          command: |
+            mkdir -p ~/artifacts
+            cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
+      # Store the artifacts in the specified directory
+      - store_artifacts:
+          path: ~/artifacts
+          destination: node-build
+
+  # Job to check lighthouse scores and store the report in artifacts
+  lighthouse-audit:
+    # Use the same node image as the test job
+    executor: lighthouse-check/default
+    # Define the steps to run in this job
+    steps:
+      - lighthouse-check/audit:
+          urls: $LIGHTHOUSE_CHECK_URLS
+      - lighthouse-check/validate-status:
+          minAccessibilityScore: '60'
+          minPerformanceScore: '90'
+          minSeoScore: '50'
+
+  # Job to check TypeScript types
+  typescript-check:
+    executor: node/default
+    steps:
+      - checkout
+      - npm-ci
+      # Run TypeScript type checking
+      - run:
+          name: Run TypeScript check and lint
+          command: npx tsc --noEmit && npm run lint
+
+  # Job to auto merge to the test branch
+  auto-merge-to-test:
+    # Use the same node image as the test job
+    executor: node/default
+    # Define the steps to run in this job
+    steps:
+      # Check out the code from the repository
+      - checkout
+      # Add SSH keys for authentication to GitHub
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:k3XuzNyv7ANUJUUCVb+Or4RQf7/2Cmto3vui9v0nRGM"
+      # Configure git user name and email
+      - run:
+          name: Git config
+          command: |
+            git config --global user.name "$GITHUB_USER"
+            git config --global user.email "$GITHUB_EMAIL"
+      - run:
+          name: Auto-merge dev into test
+          command: |
+            git fetch origin test
+            git checkout test
+            git reset --hard origin/test
+            git merge --no-ff -m "Auto-merge from dev to test" dev || echo "Nothing to merge"
+            git push origin test
+
+  # Job to create a pull request to the main branch if tests are successful
+  create-pr:
+    # Use the same node image as the test job
+    executor: node/default
+    # Define the steps to run in this job
+    steps:
+      # Check out the code from the repository
+      - checkout
+      # Install GitHub CLI
+      - run:
+          name: Install GitHub CLI
+          command: |
+            sudo apt update && sudo apt install -y gh
+      # Configure git user name and email
+      - run:
+          name: Git config
+          command: |
+            git config --global user.name "CircleCI Bot"
+            git config --global user.email "bot@circleci.com"
+      # Create a pull request to the main branch
+      - run:
+          name: Create PR to main
+          command: |
+            gh pr list --base main --head $(git rev-parse --abbrev-ref HEAD) | grep -q . || \
+            gh pr create --base main --head $(git rev-parse --abbrev-ref HEAD) --title "Auto-PR from CircleCI" --body "This PR is created automatically by CircleCI after running tests and successfully."
+
+  # Job to deploy the project on prod (vercel in this case)
+  main-deployment:
+    # Deploy the project using Vercel
+    executor: node/default
+    # Define the steps to run in this job
+    steps:
+      # Check out the code from the repository
+      - checkout
+      - npm-ci
+      # Génération explicite du client Prisma
+      - run:
+          name: Generate Prisma Client
+          command: npx prisma generate
+      # Restaurer le cache du build Next.js
+      - restore_cache:
+          keys:
+            - next-cache-v1-{{ .Branch }}-{{ .Revision }}
+            - next-cache-v1-{{ .Branch }}
+            - next-cache-v1
+      # Synchronisation du schéma avec MongoDB
+      - run:
+          name: Prisma db push
+          command: npx prisma db push
+      # Test de build localement
+      - run:
+          name: Build Next.js application
+          command: npm run build
+      # Save the cache for the Next.js build
+      - save_cache:
+          key: next-cache-v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - .next/cache
+      # Install Vercel CLI globally
+      - run:
+          name: Install Vercel CLI
+          command: npm install --save-dev vercel
+      # Deploy the project using Vercel CI
+      - run:
+          name: Deploy to Vercel
+          command: |
+            npx vercel deploy --token=$VERCEL_TOKEN --prod --yes --debug --name=$VERCEL_PROJECT_NAME --scope=$VERCEL_SCOPE
+
 workflows:
-  say-hello-workflow: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  ci-on-dev:
     jobs:
-      - say-hello
+      - typescript-check:
+          filters:
+            branches:
+              only: dev
+      - lint-node:
+          filters:
+            branches:
+              only: dev
+      - audit-node:
+          filters:
+            branches:
+              only: dev
+      - auto-merge-to-test:
+          requires:
+            - audit-node
+            - lint-node
+            - typescript-check
+          filters:
+            branches:
+              only: dev
+  ci-on-test:
+    jobs:
+      - audit-node:
+          filters:
+            branches:
+              only: test
+      - lint-node:
+          filters:
+            branches:
+              only: test
+      - typescript-check:
+          filters:
+            branches:
+              only: test
+      - build-node:
+          requires:
+            - audit-node
+            - lint-node
+            - typescript-check
+          filters:
+            branches:
+              only: test
+      - test-node:
+          requires:
+            - build-node
+          filters:
+            branches:
+              only: test
+      - lighthouse-audit:
+          requires:
+            - test-node
+          filters:
+            branches:
+              only: test
+      - create-pr:
+          requires:
+            - lighthouse-audit
+          filters:
+            branches:
+              only: test
+  ci-on-main:
+    jobs:
+      - main-deployment:
+          filters:
+            branches:
+              only: main
