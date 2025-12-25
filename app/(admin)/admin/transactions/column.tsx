@@ -3,7 +3,7 @@
 import {ColumnDef} from "@tanstack/react-table"
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import Link from "next/link";
-import {ProductsWithCategoryAndBrand, TransactionsWithProduct} from "@/types/types";
+import {ProductsWithCategoryAndBrandAndAttributes, TransactionsWithProduct} from "@/types/types";
 import toast from "react-hot-toast";
 import {formatDate} from "@/lib/utils";
 import {TransactionActions} from "@/components/admin/transactions/actions";
@@ -32,7 +32,7 @@ export const columns: ColumnDef<TransactionsWithProduct>[] = [
             <DataTableColumnHeader column={column} title="Produit"/>
         ),
         cell: ({row}) => {
-            const product: ProductsWithCategoryAndBrand = row.getValue('product');
+            const product: ProductsWithCategoryAndBrandAndAttributes = row.getValue('product');
 
             if (!product) {
                 return <div>N/A</div>

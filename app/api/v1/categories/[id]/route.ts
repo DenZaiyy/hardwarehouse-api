@@ -24,9 +24,18 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/categori
             );
         }
 
+        // 🚀 OPTIMIZATION #21: Selective field loading for individual category
         const category = await db.categories.findUnique({
             where: {
                 id: id
+            },
+            select: {
+                id: true,
+                name: true,
+                slug: true,
+                logo: true,
+                createdAt: true,
+                updatedAt: true
             }
         });
 

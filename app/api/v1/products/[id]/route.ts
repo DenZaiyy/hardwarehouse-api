@@ -25,13 +25,62 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/
             );
         }
 
+        // 🚀 OPTIMIZATION 6: Optimized select for product details
+        // Only select needed fields and use efficient ordering
         const product = await db.products.findUnique({
             where: {
                 id: id,
             },
-            include: {
-                brand: true,
-                category: true,
+            select: {
+                id: true,
+                name: true,
+                slug: true,
+                price: true,
+                active: true,
+                image: true,
+                createdAt: true,
+                updatedAt: true,
+                categoryId: true,
+                brandId: true,
+                brand: {
+                    select: {
+                        id: true,
+                        name: true,
+                        slug: true
+                    }
+                },
+                category: {
+                    select: {
+                        id: true,
+                        name: true,
+                        slug: true
+                    }
+                },
+                productAttributeValues: {
+                    select: {
+                        id: true,
+                        value: true,
+                        categoryAttribute: {
+                            select: {
+                                id: true,
+                                displayOrder: true,
+                                required: true,
+                                attribute: {
+                                    select: {
+                                        id: true,
+                                        name: true,
+                                        type: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    orderBy: {
+                        categoryAttribute: {
+                            displayOrder: 'asc'
+                        }
+                    }
+                }
             }
         });
 
@@ -65,7 +114,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
 
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { id } = await ctx.params;
-        const { name, price, active, image, categoryId } = await req.json();
+        const { name, price, active, image, categoryId, attributes } = await req.json();
 
         // Vérifier qu'au moins un champ est fourni
         if (!name && !price && !image && !categoryId && !active) {
@@ -106,11 +155,88 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
         // Mettre à jour la categoryId seulement si elle change
         if (categoryId) updateData.categoryId = categoryId;
 
-        const updatedProduct = await db.products.update({
-            where: {
-                id: id
-            },
-            data: updateData
+        // 🚀 OPTIMIZATION 7: Use transaction for product updates with attributes
+        const updatedProduct = await db.$transaction(async (tx) => {
+            // Update product
+            const product = await tx.products.update({
+                where: { id: id },
+                data: updateData,
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    price: true,
+                    active: true,
+                    image: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    categoryId: true,
+                    brandId: true,
+                    category: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true
+                        }
+                    },
+                    brand: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true
+                        }
+                    },
+                    productAttributeValues: {
+                        select: {
+                            id: true,
+                            value: true,
+                            categoryAttribute: {
+                                select: {
+                                    id: true,
+                                    displayOrder: true,
+                                    required: true,
+                                    attribute: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            type: true
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        orderBy: {
+                            categoryAttribute: {
+                                displayOrder: 'asc'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update attribute values if provided
+            if (attributes) {
+                // Delete and recreate in same transaction
+                await tx.productAttributeValues.deleteMany({
+                    where: { productId: id }
+                });
+
+                const attributeValueData = Object.entries(attributes)
+                    .filter(([, value]) => value && String(value).trim() !== '')
+                    .map(([categoryAttributeId, value]) => ({
+                        productId: id,
+                        categoryAttributeId: categoryAttributeId,
+                        value: String(value)
+                    }));
+
+                if (attributeValueData.length > 0) {
+                    await tx.productAttributeValues.createMany({
+                        data: attributeValueData
+                    });
+                }
+            }
+
+            return product;
         });
 
         const res = NextResponse.json(updatedProduct, { status: 200 })

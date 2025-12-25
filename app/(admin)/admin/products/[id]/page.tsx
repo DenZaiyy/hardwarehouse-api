@@ -5,6 +5,7 @@ import {formatDate} from "@/lib/utils";
 import {BarChartCard} from "@/components/admin/bar-chart-card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {getProduct} from "@/services/productService";
+import Characteristics from "@/components/admin/products/characteristics";
 
 interface ProductParams {
     params: Promise<{ id: string }>;
@@ -149,11 +150,15 @@ const ProductDetails = async ({ params }: ProductParams) => {
                 </CardFooter>
             </Card>
 
-            <Tabs defaultValue="statistics" className="mt-4">
+            <Tabs defaultValue="characteristics" className="mt-4">
                 <TabsList>
+                    <TabsTrigger value="characteristics">Caractéristiques</TabsTrigger>
                     <TabsTrigger value="statistics">Statistiques</TabsTrigger>
                     <TabsTrigger value="transactions">Transactions</TabsTrigger>
                 </TabsList>
+                <TabsContent value="characteristics" className="space-y-4">
+                    <Characteristics attributes={product.productAttributeValues || []} />
+                </TabsContent>
                 <TabsContent value="statistics" className="space-y-4">
                     <BarChartCard title="Evolution du stock" description="Showing total visitors for the last 3 months" data={data} config={config} defaultKey="stocks" />
                     <BarChartCard title="Evolution du stock" description="" data={data} config={config} defaultKey="stocks" />

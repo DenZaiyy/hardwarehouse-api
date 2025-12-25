@@ -1,10 +1,10 @@
 "use server";
 
-import {ProductsWithCategoryAndBrand, ProductsWithStocks} from "@/types/types";
+import {ProductsWithCategoryAndBrandAndAttributes, ProductsWithStocks} from "@/types/types";
 import {cookies} from "next/headers";
 import toast from "react-hot-toast";
 
-export async function getProducts(): Promise<ProductsWithCategoryAndBrand[]> {
+export async function getProducts(): Promise<ProductsWithCategoryAndBrandAndAttributes[]> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
@@ -26,7 +26,7 @@ export async function getProducts(): Promise<ProductsWithCategoryAndBrand[]> {
     return res.json();
 }
 
-export async function getProduct(id: string): Promise<ProductsWithCategoryAndBrand> {
+export async function getProduct(id: string): Promise<ProductsWithCategoryAndBrandAndAttributes> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
@@ -44,7 +44,7 @@ export async function getProduct(id: string): Promise<ProductsWithCategoryAndBra
     return res.json();
 }
 
-export async function createProduct(data: Partial<ProductsWithCategoryAndBrand>): Promise<ProductsWithCategoryAndBrand> {
+export async function createProduct(data: Partial<ProductsWithCategoryAndBrandAndAttributes>): Promise<ProductsWithCategoryAndBrandAndAttributes> {
     const cookieHeader = await cookies();
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
@@ -62,7 +62,7 @@ export async function createProduct(data: Partial<ProductsWithCategoryAndBrand>)
     return res.json();
 }
 
-export async function updateProduct(id: string, data: Partial<ProductsWithCategoryAndBrand>): Promise<ProductsWithCategoryAndBrand> {
+export async function updateProduct(id: string, data: Partial<ProductsWithCategoryAndBrandAndAttributes>): Promise<ProductsWithCategoryAndBrandAndAttributes> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
