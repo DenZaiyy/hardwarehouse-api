@@ -7,4 +7,5 @@ export const productSchema = z.object({
     image: z.url("L'URL de l'image doit être valide").optional().or(z.literal("")),
     brandId: z.string().nonempty(),
     categoryId: z.string().nonempty(),
+    attributes: z.record(z.string(), z.string()).optional(), // Record of attributeId -> value
 })
