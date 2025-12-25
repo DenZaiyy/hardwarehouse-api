@@ -1,7 +1,7 @@
 "use client"
 
 import {ColumnDef} from "@tanstack/react-table"
-import {ProductsWithCategoryAndBrand} from "@/types/types";
+import {ProductsWithCategoryAndBrandAndAttributes} from "@/types/types";
 import {Brands, Categories} from "@/app/generated/prisma/client";
 import {formatDate} from "@/lib/utils";
 import Image from "next/image";
@@ -26,7 +26,7 @@ async function handleConfirm(productId: string) {
     setTimeout(() => window.location.reload(), 1500)
 }
 
-export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
+export const columns: ColumnDef<ProductsWithCategoryAndBrandAndAttributes>[] = [
     {
         accessorKey: "id",
         header: "ID",
