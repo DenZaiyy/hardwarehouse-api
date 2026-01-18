@@ -5,17 +5,6 @@ import {auth} from "@clerk/nextjs/server";
 
 export async function GET(req: NextRequest) {
     try {
-        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-        const { success, remaining, reset } = await rateLimiter.limit(ip);
-
-        if (!success) {
-            return NextResponse.json(
-                { error: "Trop de demandes" },
-                { status: 429 }
-            );
-        }
-
-        // 🚀 OPTIMIZATION #13: Selective field loading for brands list
         const brands = await db.brands.findMany({
             select: {
                 id: true,
@@ -30,11 +19,7 @@ export async function GET(req: NextRequest) {
             }
         });
 
-        const res = NextResponse.json(brands, { status: 200 });
-        res.headers.set('X-RateLimit-Remaining', remaining.toString());
-        res.headers.set('X-RateLimit-Reset', reset.toString());
-
-        return res;
+        return NextResponse.json(brands, {status: 200});
     } catch (error) {
         if (error instanceof Error) {
             console.error('[BRANDS] ', error.message)
@@ -53,7 +38,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
     }
 
-    // 🚀 OPTIMIZATION #14: Add rate limiting to brands POST
     const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
     const { success } = await rateLimiter.limit(ip);
 
@@ -68,7 +52,6 @@ export async function POST(req: NextRequest) {
     const slug = slugifyName(name);
 
     try {
-        // 🚀 OPTIMIZATION #15: Use transaction for validation + creation
         const brand = await db.$transaction(async (tx) => {
             // Check if brand exists
             const existingBrand = await tx.brands.findUnique({
