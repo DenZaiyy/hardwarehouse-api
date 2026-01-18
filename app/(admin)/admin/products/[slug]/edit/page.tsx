@@ -5,12 +5,12 @@ import {getCategories} from "@/services/categoryService";
 import {getBrands} from "@/services/brandService";
 
 interface ProductParams {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }
 
 const ProductEditPage = async ({ params }: ProductParams) => {
-    const { id } = await params;
-    const product = await getProduct(id);
+    const { slug } = await params;
+    const product = await getProduct(slug);
     const brands = await getBrands();
     const categories = await getCategories();
 

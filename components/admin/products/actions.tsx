@@ -26,12 +26,13 @@ import {
 
 type ProductActionsProps = {
     productId: string;
+    productSlug: string;
     productName: string;
     productActive: boolean;
     onDisable: (id: string) => void;
 }
 
-export function ProductActions({ productId, productName, productActive, onDisable }: ProductActionsProps) {
+export function ProductActions({ productId, productSlug, productName, productActive, onDisable }: ProductActionsProps) {
     const [open, setOpen] = useState(false)
 
     return (
@@ -59,10 +60,10 @@ export function ProductActions({ productId, productName, productActive, onDisabl
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                        <Link href={`/admin/products/${productId}`}>Voir</Link>
+                        <Link href={`/admin/products/${productSlug}`}>Voir</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link href={`/admin/products/${productId}/edit`}>Modifier</Link>
+                        <Link href={`/admin/products/${productSlug}/edit`}>Modifier</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
