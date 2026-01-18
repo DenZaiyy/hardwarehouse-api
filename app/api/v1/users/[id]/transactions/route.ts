@@ -22,8 +22,31 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id
             )
         }
 
+        // 🚀 OPTIMIZATION 8: Selective fields in transaction query (FIXED)
+        // Use select instead of include to reduce data transfer
         const [transactions, totalTransactions] = await db.$transaction([
-            db.transactions.findMany({ where: { userId: id }, include: { product: true } }),
+            db.transactions.findMany({
+                where: { userId: id },
+                select: {
+                    id: true,
+                    type: true,        // Boolean field
+                    oldQtt: true,      // Correct field name
+                    newQtt: true,      // Correct field name
+                    userFullName: true,
+                    createdAt: true,   // Only field that exists, no updatedAt
+                    product: {
+                        select: {
+                            id: true,
+                            name: true,
+                            price: true,
+                            image: true
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            }),
             db.transactions.count({ where: { userId: id } }),
         ])
 

@@ -43,7 +43,7 @@ const BrandForm = ({ brand, method }: BrandFormProps) => {
             toast.success("Marque créé avec succès.")
             form.reset()
         } else {
-            const result = await updateBrand(brand.id, values)
+            const result = await updateBrand(brand.slug, values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour de la marque.")

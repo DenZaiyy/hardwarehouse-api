@@ -1,0 +1,47 @@
+model Attributes {
+  id                 String               @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  type               AttributeType        @default(TEXT) // Type de valeur attendue
+  categoryAttributes CategoryAttributes[]
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+}
+
+enum AttributeType {
+  TEXT
+  NUMBER
+  BOOLEAN
+  SELECT
+}
+
+// Table associative : quels attributs sont disponibles pour quelle catégorie
+model CategoryAttributes {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  categoryId   String     @db.ObjectId
+  category     Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  attributeId  String     @db.ObjectId
+  attribute    Attributes @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+  required     Boolean    @default(false)
+  displayOrder Int        @default(0) // Ordre d'affichage
+
+  // Valeurs des produits pour cet attribut de catégorie
+  productAttributeValues ProductAttributeValues[]
+
+  @@unique([categoryId, attributeId]) // Un attribut ne peut être lié qu'une fois par catégorie
+  @@index([categoryId])
+  @@index([attributeId])
+}
+
+// Valeurs des attributs pour chaque produit
+model ProductAttributeValues {
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  productId           String             @db.ObjectId
+  product             Products           @relation(fields: [productId], references: [id], onDelete: Cascade)
+  categoryAttributeId String             @db.ObjectId
+  categoryAttribute   CategoryAttributes @relation(fields: [categoryAttributeId], references: [id], onDelete: Cascade)
+  value               String
+
+  @@unique([productId, categoryAttributeId])
+  @@index([productId])
+  @@index([categoryAttributeId])
+}

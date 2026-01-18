@@ -59,3 +59,8 @@ install: ## Install dependencies
 lint: ## Lint the codebase
 	$(call banner,$(INFO),Linting the Codebase...)
 	npm run lint
+
+.PHONY: test
+test: ## Run tests using jest
+	$(call banner,$(INFO),Running tests...)
+	npm run test

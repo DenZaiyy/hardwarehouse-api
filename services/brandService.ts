@@ -22,11 +22,11 @@ export async function getBrands(): Promise<Brands[]> {
     return res.json();
 }
 
-export async function getBrand(id: string): Promise<Brands> {
+export async function getBrand(slug: string): Promise<Brands> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/brands/${slug}`,
         {
             method: "GET",
             headers: {
@@ -59,11 +59,11 @@ export async function createBrand(data: Partial<Brands>): Promise<Brands> {
     return res.json();
 }
 
-export async function updateBrand(id: string, data: Partial<Brands>): Promise<Brands> {
+export async function updateBrand(slug: string, data: Partial<Brands>): Promise<Brands> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/brands/${slug}`,
         {
             method: "PATCH",
             headers: {
@@ -80,11 +80,11 @@ export async function updateBrand(id: string, data: Partial<Brands>): Promise<Br
     return res.json();
 }
 
-export async function deleteBrand(id: string): Promise<void> {
+export async function deleteBrand(slug: string): Promise<void> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/brands/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/brands/${slug}`,
         {
             method: "DELETE",
             headers: {

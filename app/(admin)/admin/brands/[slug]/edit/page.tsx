@@ -3,12 +3,12 @@ import BrandForm from "@/components/admin/brands/form";
 import {getBrand} from "@/services/brandService";
 
 interface BrandParams {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }
 
 const BrandEditPage = async ({ params }: BrandParams) => {
-    const { id } = await params;
-    const brand = await getBrand(id);
+    const { slug } = await params;
+    const brand = await getBrand(slug);
 
     if(!brand) {
         return <div>Brand not found</div>;

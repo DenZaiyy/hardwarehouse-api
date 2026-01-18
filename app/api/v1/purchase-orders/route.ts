@@ -1,20 +1,10 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {auth, currentUser} from "@clerk/nextjs/server";
-import {rateLimiter} from "@/lib/utils";
 
-export async function GET(req: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_req: NextRequest) {
     try {
-        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-        const { success, remaining, reset } = await rateLimiter.limit(ip);
-
-        if (!success) {
-            return NextResponse.json(
-                { error: "Trop de demandes" },
-                { status: 429 }
-            );
-        }
-
         const purchases = await db.purchaseOrder.findMany({
             include: {
                 product: {
@@ -30,11 +20,7 @@ export async function GET(req: NextRequest) {
             }
         });
 
-        const res = NextResponse.json(purchases, { status: 200 });
-        res.headers.set('X-RateLimit-Remaining', remaining.toString());
-        res.headers.set('X-RateLimit-Reset', reset.toString());
-
-        return res;
+        return NextResponse.json(purchases, {status: 200});
     } catch (error) {
         if (error instanceof Error) {
             console.error('[TRANSACTIONS] ', error.message)

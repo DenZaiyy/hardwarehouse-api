@@ -8,7 +8,7 @@ import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import toast from "react-hot-toast";
 import React from "react";
-import {ProductsWithCategoryAndBrand} from "@/types/types";
+import {ProductsWithCategoryAndBrandAndAttributes} from "@/types/types";
 import {Stocks} from "@/app/generated/prisma/client";
 import {Input} from "@/components/ui/input";
 import {createStock, updateStock} from "@/services/stockService";
@@ -16,7 +16,7 @@ import {stockSchema} from "@/lib/validators/stockSchema";
 
 type StockFormProps = {
     stock?: Stocks
-    products: ProductsWithCategoryAndBrand[]
+    products: ProductsWithCategoryAndBrandAndAttributes[]
     method: "POST" | "PATCH"
 }
 

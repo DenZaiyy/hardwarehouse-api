@@ -10,8 +10,8 @@ import toast from "react-hot-toast";
 import {CategoryActions} from "@/components/admin/categories/actions";
 import {deleteCategory} from "@/services/categoryService";
 
-async function handleConfirm(categoryId: string) {
-    await deleteCategory(categoryId)
+async function handleConfirm(categorySlug: string) {
+    await deleteCategory(categorySlug)
     toast.success("Catégorie supprimée avec succès")
     setTimeout(() => window.location.reload(), 1500)
 }
@@ -80,8 +80,9 @@ export const columns: ColumnDef<Categories>[] = [
             return (
                 <CategoryActions
                     categoryId={category.id}
+                    categorySlug={category.slug}
                     categoryName={category.name}
-                    onDelete={(id) => handleConfirm(id)}
+                    onDelete={(slug) => handleConfirm(slug)}
                 />
             )
         }

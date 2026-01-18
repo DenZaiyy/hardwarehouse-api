@@ -4,8 +4,8 @@ import StocksGetPayload = Prisma.StocksGetPayload;
 import TransactionsGetPayload = Prisma.TransactionsGetPayload;
 import PurchaseOrdersGetPayload = Prisma.PurchaseOrderGetPayload;
 
-export type ProductsWithCategoryAndBrand = ProductsGetPayload<{ include: { category: true; brand: true } }>
-export type ProductsWithStocks = ProductsGetPayload<{ include: { stocks: true }}>
+export type ProductsWithCategoryAndBrandAndAttributes = ProductsGetPayload<{ include: { category: true; brand: true; productAttributeValues: { include: { categoryAttribute: { include: { attribute: true } } } } } }>
+export type ProductsWithStocks = ProductsGetPayload<{ include: { stock: true }}>
 
 export type StocksWithProduct = StocksGetPayload<{ include: { product: true } }>
 

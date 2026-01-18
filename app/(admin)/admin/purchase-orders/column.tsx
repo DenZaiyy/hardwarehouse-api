@@ -3,7 +3,7 @@
 import {ColumnDef} from "@tanstack/react-table"
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import Link from "next/link";
-import {ProductsWithCategoryAndBrand, PurchaseOrdersWithProduct} from "@/types/types";
+import {ProductsWithCategoryAndBrandAndAttributes, PurchaseOrdersWithProduct} from "@/types/types";
 import toast from "react-hot-toast";
 import {formatDate} from "@/lib/utils";
 import {PurchaseOrderActions} from "@/components/admin/purchase-orders/actions";
@@ -26,7 +26,7 @@ export const columns: ColumnDef<PurchaseOrdersWithProduct>[] = [
             <DataTableColumnHeader column={column} title="Produit"/>
         ),
         cell: ({row}) => {
-            const product: ProductsWithCategoryAndBrand = row.getValue('product');
+            const product: ProductsWithCategoryAndBrandAndAttributes = row.getValue('product');
 
             if (!product) {
                 return <div>N/A</div>

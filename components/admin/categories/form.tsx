@@ -43,7 +43,7 @@ const CategoryForm = ({ category, method }: CategoryFormProps) => {
             toast.success("Catégorie créé avec succès.")
             form.reset()
         } else {
-            const result = await updateCategory(category.id, values)
+            const result = await updateCategory(category.slug, values)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour de la catégorie.")

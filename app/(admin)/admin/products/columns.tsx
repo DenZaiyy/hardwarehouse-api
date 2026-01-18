@@ -1,7 +1,7 @@
 "use client"
 
 import {ColumnDef} from "@tanstack/react-table"
-import {ProductsWithCategoryAndBrand} from "@/types/types";
+import {ProductsWithCategoryAndBrandAndAttributes} from "@/types/types";
 import {Brands, Categories} from "@/app/generated/prisma/client";
 import {formatDate} from "@/lib/utils";
 import Image from "next/image";
@@ -12,8 +12,8 @@ import {ProductActions} from "@/components/admin/products/actions";
 import Link from "next/link";
 import {getProduct, updateProduct} from "@/services/productService";
 
-async function handleConfirm(productId: string) {
-    const product = await getProduct(productId);
+async function handleConfirm(productSlug: string) {
+    const product = await getProduct(productSlug);
     const data = {
         "name": product.name,
         "image": product.image,
@@ -21,12 +21,12 @@ async function handleConfirm(productId: string) {
         "categoryId": product.categoryId,
         "active": !product.active
     }
-    await updateProduct(productId, data)
+    await updateProduct(productSlug, data)
     toast.success(`Produit ${product.active ? "désactiver" : "activer"} avec succès`)
     setTimeout(() => window.location.reload(), 1500)
 }
 
-export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
+export const columns: ColumnDef<ProductsWithCategoryAndBrandAndAttributes>[] = [
     {
         accessorKey: "id",
         header: "ID",
@@ -148,8 +148,9 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
             return (
                 <ProductActions
                     productId={product.id}
+                    productSlug={product.slug}
                     productName={product.name}
-                    onDisable={(id) => handleConfirm(id)}
+                    onDisable={(slug) => handleConfirm(slug)}
                     productActive={product.active}
                 />
             )

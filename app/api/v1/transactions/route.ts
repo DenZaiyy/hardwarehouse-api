@@ -21,13 +21,22 @@ export async function GET(req: NextRequest) {
             );
         }
 
+        // 🚀 OPTIMIZATION #20: Selective field loading for transactions (FIXED)
         const transactions = await db.transactions.findMany({
-            include: {
+            select: {
+                id: true,
+                type: true,        // Boolean field
+                oldQtt: true,      // Correct field name
+                newQtt: true,      // Correct field name
+                userId: true,
+                userFullName: true,
+                createdAt: true,   // Only field that exists, no updatedAt
                 product: {
                     select: {
                         id: true,
                         name: true,
-                        price: true
+                        price: true,
+                        image: true
                     }
                 }
             },

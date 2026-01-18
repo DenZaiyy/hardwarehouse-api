@@ -19,10 +19,10 @@ export async function getCategories(): Promise<Categories[]> {
     return res.json();
 }
 
-export async function getCategory(id: string): Promise<Categories> {
+export async function getCategory(slug: string): Promise<Categories> {
     const cookieHeader = await cookies();
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${slug}`, {
         method: "GET",
         headers: {
             Cookie: cookieHeader.toString()
@@ -53,11 +53,11 @@ export async function createCategory(data: Partial<Categories>): Promise<Categor
     return res.json();
 }
 
-export async function updateCategory(id: string, data: Partial<Categories>): Promise<Categories> {
+export async function updateCategory(slug: string, data: Partial<Categories>): Promise<Categories> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/${slug}`,
         {
             method: "PATCH",
             headers: {
@@ -74,11 +74,11 @@ export async function updateCategory(id: string, data: Partial<Categories>): Pro
     return res.json();
 }
 
-export async function deleteCategory(id: string): Promise<void> {
+export async function deleteCategory(slug: string): Promise<void> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/categories/${slug}`,
         {
             method: "DELETE",
             headers: {
