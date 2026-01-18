@@ -3,19 +3,9 @@ import {db} from "@/lib/db";
 import {rateLimiter} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
 
-export async function GET(req: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_req: NextRequest) {
     try {
-        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-        const { success, remaining, reset } = await rateLimiter.limit(ip);
-
-        if (!success) {
-            return NextResponse.json(
-                { error: "Trop de demandes" },
-                { status: 429 }
-            );
-        }
-
-        // 🚀 OPTIMIZATION #16: Selective field loading for stocks with product info
         const stocks = await db.stocks.findMany({
             select: {
                 id: true,
@@ -38,11 +28,7 @@ export async function GET(req: NextRequest) {
             }
         });
 
-        const res = NextResponse.json(stocks, { status: 200 });
-        res.headers.set('X-RateLimit-Remaining', remaining.toString());
-        res.headers.set('X-RateLimit-Reset', reset.toString());
-
-        return res;
+        return NextResponse.json(stocks, {status: 200});
     } catch (error) {
         if (error instanceof Error) {
             console.error('[STOCKS] ', error.message)

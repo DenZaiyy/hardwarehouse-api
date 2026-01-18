@@ -8,7 +8,7 @@ import {getProduct} from "@/services/productService";
 import Characteristics from "@/components/admin/products/characteristics";
 
 interface ProductParams {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }
 
 const data = [
@@ -112,8 +112,8 @@ const config = {
 } as const
 
 const ProductDetails = async ({ params }: ProductParams) => {
-    const { id } = await params;
-    const product = await getProduct(id);
+    const { slug } = await params;
+    const product = await getProduct(slug);
 
     return (
         <>

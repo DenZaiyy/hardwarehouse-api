@@ -26,11 +26,11 @@ export async function getProducts(): Promise<ProductsWithCategoryAndBrandAndAttr
     return res.json();
 }
 
-export async function getProduct(id: string): Promise<ProductsWithCategoryAndBrandAndAttributes> {
+export async function getProduct(slug: string): Promise<ProductsWithCategoryAndBrandAndAttributes> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
+        `${process.env.NEXT_PUBLIC_API_URL}/products/${slug}`, {
             method: "GET",
             headers: {
                 Cookie: cookieHeader.toString()
@@ -62,11 +62,11 @@ export async function createProduct(data: Partial<ProductsWithCategoryAndBrandAn
     return res.json();
 }
 
-export async function updateProduct(id: string, data: Partial<ProductsWithCategoryAndBrandAndAttributes>): Promise<ProductsWithCategoryAndBrandAndAttributes> {
+export async function updateProduct(slug: string, data: Partial<ProductsWithCategoryAndBrandAndAttributes>): Promise<ProductsWithCategoryAndBrandAndAttributes> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/products/${slug}`,
         {
             method: "PATCH",
             headers: {
@@ -83,11 +83,11 @@ export async function updateProduct(id: string, data: Partial<ProductsWithCatego
     return res.json();
 }
 
-export async function deleteProduct(id: string): Promise<void> {
+export async function deleteProduct(slug: string): Promise<void> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/products/${slug}`,
         {
             method: "DELETE",
             headers: {

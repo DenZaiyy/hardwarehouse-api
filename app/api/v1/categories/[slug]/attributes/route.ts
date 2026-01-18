@@ -1,11 +1,11 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter} from "@/lib/utils";
-import { auth } from "@clerk/nextjs/server";
+import {auth} from "@clerk/nextjs/server";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ slug: string }> }
 ) {
     try {
         // Rate limiting
@@ -28,12 +28,26 @@ export async function GET(
             );
         }
 
-        const { id: categoryId } = await params;
+        const { slug } = await params;
+
+        // Récupération de la catégorie pour vérifier son existence
+        const category = await db.categories.findUnique({
+            where: {
+                slug
+            }
+        });
+
+        if (!category) {
+            return NextResponse.json(
+                { error: "Catégorie non trouvée", data: null },
+                { status: 404 }
+            );
+        }
 
         // Récupération des attributs de la catégorie avec leur type et ordre
         const categoryAttributes = await db.categoryAttributes.findMany({
             where: {
-                categoryId: categoryId
+                categoryId: category.id
             },
             include: {
                 attribute: true

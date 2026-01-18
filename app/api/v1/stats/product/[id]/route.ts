@@ -26,7 +26,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/stats/pro
                 id
             },
             include: {
-                stocks: true
+                stock: true
             }
         })
 
@@ -34,23 +34,21 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/stats/pro
             error: "Le produit n'a pas été trouvé"
         }, { status: 404 })
 
-        const stocks = product.stocks
-        const stockItems: TStockItems[] = []
+        const stock: TStockItems = {
+            quantity: product.stock?.quantity || 0,
+            createdAt: product.stock?.createdAt || new Date(),
+            updatedAt: product.stock?.updatedAt || new Date()
+        }
 
-        const totalProductStock = stocks.reduce((acc, s) => acc + s.quantity, 0)
+        if (!stock) return NextResponse.json({
+            error: "Le stock du produit n'a pas été trouvé"
+        }, { status: 404 })
 
-        stocks.forEach((stock) => {
-            stockItems.push({
-                quantity: stock.quantity,
-                createdAt: stock.createdAt,
-                updatedAt: stock.updatedAt
-            })
-        })
 
         const res = NextResponse.json(
             {
-                totalProductInStock: totalProductStock,
-                items: stockItems
+                quantityInStock: stock.quantity,
+                stock
             }, { status: 200 }
         )
         res.headers.set('X-RateLimit-Remaining', remaining.toString());

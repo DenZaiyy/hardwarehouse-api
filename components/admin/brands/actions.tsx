@@ -26,11 +26,12 @@ import {
 
 type BrandActionsProps = {
     brandId: string;
+    brandSlug: string;
     brandName: string;
-    onDelete: (id: string) => void;
+    onDelete: (slug: string) => void;
 }
 
-export function BrandActions({ brandId, brandName, onDelete }: BrandActionsProps) {
+export function BrandActions({ brandId, brandSlug, brandName, onDelete }: BrandActionsProps) {
     const [open, setOpen] = useState(false)
 
     return (
@@ -58,10 +59,10 @@ export function BrandActions({ brandId, brandName, onDelete }: BrandActionsProps
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                        <Link href={`/admin/brands/${brandId}`}>Voir</Link>
+                        <Link href={`/admin/brands/${brandSlug}`}>Voir</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link href={`/admin/brands/${brandId}/edit`}>Modifier</Link>
+                        <Link href={`/admin/brands/${brandSlug}/edit`}>Modifier</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -83,7 +84,7 @@ export function BrandActions({ brandId, brandName, onDelete }: BrandActionsProps
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => onDelete(brandId)}>
+                        <AlertDialogAction onClick={() => onDelete(brandSlug)}>
                             Confirmer
                         </AlertDialogAction>
                     </AlertDialogFooter>

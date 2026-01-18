@@ -10,8 +10,8 @@ import toast from "react-hot-toast"
 import {BrandActions} from "@/components/admin/brands/actions";
 import {deleteBrand} from "@/services/brandService";
 
-async function handleConfirm(brandId: string) {
-    await deleteBrand(brandId)
+async function handleConfirm(brandSlug: string) {
+    await deleteBrand(brandSlug)
     toast.success("Marque supprimée avec succès")
     setTimeout(() => window.location.reload(), 1500)
 }
@@ -90,8 +90,9 @@ export const columns: ColumnDef<Brands>[] = [
             return (
                 <BrandActions
                     brandId={brand.id}
+                    brandSlug={brand.slug}
                     brandName={brand.name}
-                    onDelete={(id) => handleConfirm(id)}
+                    onDelete={(slug) => handleConfirm(slug)}
                 />
             )
         },

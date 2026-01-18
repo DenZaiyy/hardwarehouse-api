@@ -121,7 +121,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
             form.reset()
             setAttributeValues({})
         } else {
-            const result = await updateProduct(product.id, submitData)
+            const result = await updateProduct(product.slug, submitData)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour du produit.")

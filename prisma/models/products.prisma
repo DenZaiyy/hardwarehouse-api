@@ -7,7 +7,7 @@ model Products {
   active                 Boolean
   categoryId             String                   @db.ObjectId
   category               Categories               @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  stocks                 Stocks[]
+  stock                  Stocks?
   brand                  Brands                   @relation(fields: [brandId], references: [id], onDelete: Cascade)
   brandId                String                   @db.ObjectId
   createdAt              DateTime                 @default(now())

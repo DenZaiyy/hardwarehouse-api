@@ -1,12 +1,12 @@
 import {getCategory} from "@/services/categoryService";
 
 interface CategoryParams {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }
 
 const CategoryDetails = async ({ params }: CategoryParams) => {
-    const { id } = await params;
-    const category = await getCategory(id);
+    const { slug } = await params;
+    const category = await getCategory(slug);
 
     return (
         <>

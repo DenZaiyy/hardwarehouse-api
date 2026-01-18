@@ -41,7 +41,7 @@ const Characteristics = ({ attributes }: CharacteristicsProps) => {
                 <CardDescription>Spécifications techniques du produit</CardDescription>
             </CardHeader>
             <CardContent>
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="flex flex-col gap-2">
                     {sortedAttributes.map((attr, index) => (
                         <div key={index} className="space-y-2">
                             <div className="flex justify-between items-center border-b pb-2">

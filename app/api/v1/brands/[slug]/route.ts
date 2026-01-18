@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {rateLimiter, slugifyName} from "@/lib/utils";
+import {slugifyName} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
 
 interface UpdateBrandData {
@@ -9,22 +9,13 @@ interface UpdateBrandData {
     logo?: string;
 }
 
-export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/brands/[id]'>) {
+export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/brands/[slug]'>) {
     try {
-        const { id } = await ctx.params;
-        const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
-        const { success, remaining, reset } = await rateLimiter.limit(ip);
-
-        if (!success) {
-            return NextResponse.json(
-                { error: "Trop de demandes" },
-                { status: 429 }
-            );
-        }
+        const { slug } = await ctx.params;
 
         const brand = await db.brands.findUnique({
             where: {
-                id: id
+                slug
             }
         });
 
@@ -35,11 +26,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/brands/[
             );
         }
 
-        const res = NextResponse.json(brand, { status: 200 });
-        res.headers.set('X-RateLimit-Remaining', remaining.toString());
-        res.headers.set('X-RateLimit-Reset', reset.toString());
-
-        return res;
+        return NextResponse.json(brand, {status: 200});
     } catch (error) {
         if (error instanceof Error) {
             console.error('[BRAND] ', error.message)
@@ -51,7 +38,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/brands/[
     }
 }
 
-export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/brands/[id]'>) {
+export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/brands/[slug]'>) {
     try {
         const { userId } = await auth();
 
@@ -59,7 +46,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/brands/
             return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
         }
 
-        const { id } = await ctx.params;
+        const { slug } = await ctx.params;
         const { name, logo } = await req.json();
 
         // Vérifier qu'au moins un champ est fourni
@@ -70,7 +57,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/brands/
         // Construire l'objet de données dynamiquement
         const updateData: UpdateBrandData = {};
         const brand = await db.brands.findUnique({
-            where: { id }
+            where: { slug }
         })
 
         if (!brand) {
@@ -88,7 +75,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/brands/
 
         const updatedBrand = await db.brands.update({
             where: {
-                id: id
+                slug
             },
             data: updateData
         });
@@ -105,7 +92,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/brands/
     }
 }
 
-export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/brands/[id]'>) {
+export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/brands/[slug]'>) {
     try {
         const { userId } = await auth();
 
@@ -113,10 +100,10 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/brand
             return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
         }
 
-        const { id } = await ctx.params;
+        const { slug } = await ctx.params;
         const brand = await db.brands.findUnique({
             where: {
-                id
+                slug
             }
         });
 
@@ -124,13 +111,15 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/brand
             return NextResponse.json({ error: 'Marque introuvable' }, { status: 404 });
         }
 
+        const brandId = brand.id
+
         await db.brands.delete({
             where: {
-                id
+                slug
             }
         });
 
-        return new NextResponse(`Brand with id ${id} deleted`, { status: 200 });
+        return new NextResponse(`Brand with id ${brandId} deleted`, { status: 200 });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[BRAND DELETE] ', error.message)

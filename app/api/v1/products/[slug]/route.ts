@@ -12,24 +12,14 @@ interface UpdateProductData {
     categoryId?: string;
 }
 
-export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/[id]'>) {
+export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/[slug]'>) {
     try {
-        const { id } = await ctx.params;
-        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-        const { success, remaining, reset } = await rateLimiter.limit(ip);
+        const { slug } = await ctx.params;
 
-        if (!success) {
-            return NextResponse.json(
-                {error: "Trop de demandes"},
-                { status: 429 }
-            );
-        }
-
-        // 🚀 OPTIMIZATION 6: Optimized select for product details
         // Only select needed fields and use efficient ordering
         const product = await db.products.findUnique({
             where: {
-                id: id,
+                slug,
             },
             select: {
                 id: true,
@@ -88,11 +78,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/
             return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
         }
 
-        const res = NextResponse.json(product, { status: 200 })
-        res.headers.set('X-RateLimit-Remaining', remaining.toString());
-        res.headers.set('X-RateLimit-Reset', reset.toString());
-
-        return res;
+        return NextResponse.json(product, {status: 200});
     } catch (error) {
         if (error instanceof Error) {
             console.error('[PRODUCT] ', error.message)
@@ -104,7 +90,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/
     }
 }
 
-export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/products/[id]'>) {
+export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/products/[slug]'>) {
     try {
         const { userId } = await auth();
 
@@ -113,7 +99,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
         }
 
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-        const { id } = await ctx.params;
+        const { slug } = await ctx.params;
         const { name, price, active, image, categoryId, attributes } = await req.json();
 
         // Vérifier qu'au moins un champ est fourni
@@ -133,12 +119,14 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
         // Construire l'objet de données dynamiquement
         const updateData: UpdateProductData = {};
         const product = await db.products.findUnique({
-            where: { id }
+            where: { slug }
         })
 
         if (!product) {
             return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
         }
+
+        const productId = product.id;
 
         // Mettre à jour le slug seulement si le nom change
         if (name !== product.name) {
@@ -155,11 +143,10 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
         // Mettre à jour la categoryId seulement si elle change
         if (categoryId) updateData.categoryId = categoryId;
 
-        // 🚀 OPTIMIZATION 7: Use transaction for product updates with attributes
         const updatedProduct = await db.$transaction(async (tx) => {
             // Update product
             const product = await tx.products.update({
-                where: { id: id },
+                where: { slug },
                 data: updateData,
                 select: {
                     id: true,
@@ -218,13 +205,13 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
             if (attributes) {
                 // Delete and recreate in same transaction
                 await tx.productAttributeValues.deleteMany({
-                    where: { productId: id }
+                    where: { productId }
                 });
 
                 const attributeValueData = Object.entries(attributes)
                     .filter(([, value]) => value && String(value).trim() !== '')
                     .map(([categoryAttributeId, value]) => ({
-                        productId: id,
+                        productId,
                         categoryAttributeId: categoryAttributeId,
                         value: String(value)
                     }));
@@ -255,7 +242,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
     }
 }
 
-export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/products/[id]'>) {
+export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/products/[slug]'>) {
     try {
         const { userId } = await auth();
 
@@ -263,23 +250,25 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/produ
             return NextResponse.json({ error: "Unauthorized", statusCode: 401 });
         }
 
-        const { id } = await ctx.params;
+        const { slug } = await ctx.params;
 
         const product = await db.products.findUnique({
-            where: { id }
+            where: { slug }
         })
 
         if (!product) {
             return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
         }
 
+        const productId = product.id;
+
         await db.products.delete({
             where: {
-                id
+                slug
             }
         });
 
-        return new NextResponse(`Product with id ${id} deleted`, { status: 200 });
+        return new NextResponse(`Product with id ${productId} deleted`, { status: 200 });
     } catch(error) {
         if (error instanceof Error) {
             console.error('[PRODUCT DELETE] ', error.message)
