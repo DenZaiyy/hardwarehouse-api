@@ -26,11 +26,12 @@ import {
 
 type CategoryActionsProps = {
     categoryId: string;
+    categorySlug: string;
     categoryName: string;
-    onDelete: (id: string) => void;
+    onDelete: (slug: string) => void;
 }
 
-export function CategoryActions({ categoryId, categoryName, onDelete }: CategoryActionsProps) {
+export function CategoryActions({ categoryId, categorySlug, categoryName, onDelete }: CategoryActionsProps) {
     const [open, setOpen] = useState(false)
 
     return (
@@ -58,10 +59,10 @@ export function CategoryActions({ categoryId, categoryName, onDelete }: Category
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                        <Link href={`/admin/categories/${categoryId}`}>Voir</Link>
+                        <Link href={`/admin/categories/${categorySlug}`}>Voir</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link href={`/admin/categories/${categoryId}/edit`}>Modifier</Link>
+                        <Link href={`/admin/categories/${categorySlug}/edit`}>Modifier</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -83,7 +84,7 @@ export function CategoryActions({ categoryId, categoryName, onDelete }: Category
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => onDelete(categoryId)}>
+                        <AlertDialogAction onClick={() => onDelete(categorySlug)}>
                             Confirmer
                         </AlertDialogAction>
                     </AlertDialogFooter>

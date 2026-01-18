@@ -3,12 +3,12 @@ import CategoryForm from "@/components/admin/categories/form";
 import {getCategory} from "@/services/categoryService";
 
 interface CategoryParams {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
 }
 
 const CategoryEditPage = async ({ params }: CategoryParams) => {
-    const { id } = await params;
-    const category = await getCategory(id);
+    const { slug } = await params;
+    const category = await getCategory(slug);
 
     if(!category) {
         return <div>Category not found</div>;
