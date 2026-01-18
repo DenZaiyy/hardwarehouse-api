@@ -3,7 +3,8 @@ import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
 
-export async function GET(req: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_req: NextRequest) {
     try {
         const categories = await db.categories.findMany({
             select: {

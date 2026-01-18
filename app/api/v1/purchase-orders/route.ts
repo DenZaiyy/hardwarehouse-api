@@ -2,7 +2,8 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {auth, currentUser} from "@clerk/nextjs/server";
 
-export async function GET(req: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function GET(_req: NextRequest) {
     try {
         const purchases = await db.purchaseOrder.findMany({
             include: {

@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
                 active: true
             },
             include: {
-                stocks: {
+                stock: {
                     select: {
                         quantity: true,
                         createdAt: true,
