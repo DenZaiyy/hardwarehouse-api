@@ -7,13 +7,7 @@ import {ProductsWithCategoryAndBrandAndAttributes} from "@/types/types";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupButton,
-    InputGroupInput,
-    InputGroupText
-} from "@/components/ui/input-group";
+import {InputGroup, InputGroupAddon, InputGroupInput, InputGroupText} from "@/components/ui/input-group";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {AttributeType, Brands, Categories} from "@/app/generated/prisma/client";
 import toast from "react-hot-toast";
@@ -23,6 +17,7 @@ import Image from "next/image";
 import {Switch} from "@/components/ui/switch";
 import {createProduct, updateProduct} from "@/services/productService";
 import {productSchema} from "@/lib/validators/productSchema";
+import {Textarea} from "@/components/ui/textarea";
 
 type CategoryAttribute = {
     id: string;
@@ -50,11 +45,14 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
         defaultValues: {
             name: product?.name ?? "",
             price: product?.price ?? 0,
+            description: product?.description ?? "",
+            shortDescription: product?.shortDescription ?? "",
+            thumbnail: product?.thumbnail ?? "",
+            images: product?.images ?? [],
+            attributes: {},
             active: product?.active,
-            image: product?.image ?? "",
             brandId: product?.brand.id ?? "",
             categoryId: product?.category.id ?? "",
-            attributes: {},
         }
     })
 
@@ -135,6 +133,9 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
     }
 
     const [previewImageUrl, setPreviewImageUrl] = React.useState<string | null>(null)
+    const shortDescription = form.watch("shortDescription") || "";
+    const shortDescriptionMaxLength = 255;
+    const description = form.watch("description") || "";
 
     return (
         <Form {...form}>
@@ -272,15 +273,44 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                         )}
                     />
                 </div>
+                <div className="space-y-4 md:space-y-0 md:flex md:gap-4">
+                    <FormField control={form.control} name="description" render={({ field }) => (
+                        <FormItem className="w-full">
+                            <FormLabel>Description ({description.length} caractères)</FormLabel>
+                            <FormControl>
+                                <Textarea cols={10} rows={10} {...field} />
+                            </FormControl>
+                            <FormDescription>
+                                La description détaillée du produit.
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField control={form.control} name="shortDescription" render={({ field }) => (
+                        <FormItem className="w-full">
+                            <FormLabel>Description courte ({shortDescription.length}/{shortDescriptionMaxLength} caractères)</FormLabel>
+                            <FormControl>
+                                <Textarea className="resize-none" maxLength={shortDescriptionMaxLength} {...field} />
+                            </FormControl>
+                            <FormDescription>
+                                La description courte du produit (max 255 caractères).
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                </div>
                 <div>
                     <FormField
                         control={form.control}
-                        name="image"
+                        name="thumbnail"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Image</FormLabel>
+                                <FormLabel>Thumbnail</FormLabel>
                                 <FormControl>
-                                    <InputGroup>
+                                    <Input id="thumbnail" type="file" accept='image/png, image/jpeg, image/webp, image/jpg' {...field} />
+                                    {/*<InputGroup>
                                         <InputGroupInput
                                             placeholder="URL de l'image..."
                                             value={field.value ?? ""}
@@ -291,7 +321,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                                                 variant="ghost"
                                                 onClick={() => {
                                                     if (field.value) {
-                                                        form.trigger("image") // Valide le champ image
+                                                        form.trigger("thumbnail") // Valide le champ image
                                                         setPreviewImageUrl(field.value) // Met à jour l'aperçu de l'image
                                                     }
                                                 }}
@@ -299,7 +329,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                                                 Aperçu
                                             </InputGroupButton>
                                         </InputGroupAddon>
-                                    </InputGroup>
+                                    </InputGroup>*/}
                                 </FormControl>
                                 <FormDescription>
                                     L&#39;URL de l&#39;image doit être valide.
@@ -318,6 +348,25 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                             </div>
                         </div>
                     )}
+                </div>
+
+                <div>
+                    <FormField
+                        control={form.control}
+                        name="images"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Images</FormLabel>
+                                <FormControl>
+                                    <Input id="images" type="file" multiple accept='image/png, image/jpeg, image/webp, image/jpg' {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    Liste des URL des images du produit.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </div>
 
                 {/* Attributs dynamiques par catégorie */}

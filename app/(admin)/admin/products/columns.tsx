@@ -16,7 +16,7 @@ async function handleConfirm(productSlug: string) {
     const product = await getProduct(productSlug);
     const data = {
         "name": product.name,
-        "image": product.image,
+        "thumbnail": product.thumbnail,
         "price": product.price,
         "categoryId": product.categoryId,
         "active": !product.active
@@ -38,10 +38,10 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrandAndAttributes>[] = [
         ),
     },
     {
-        accessorKey: "image",
+        accessorKey: "thumbnail",
         header: "Image",
         cell: ({ row }) => {
-            const image: string = row.getValue('image');
+            const image: string = row.getValue('thumbnail');
             const product = row.original
             return (
                 <div className="w-20 h-20 relative">
