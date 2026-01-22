@@ -29,8 +29,10 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/categori
                         id: true,
                         name: true,
                         slug: true,
+                        shortDescription: true,
+                        active: true,
                         price: true,
-                        image: true,
+                        thumbnail: true,
                         brand: {
                             select: {
                                 id: true,
