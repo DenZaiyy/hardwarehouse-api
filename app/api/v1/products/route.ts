@@ -13,10 +13,11 @@ export async function GET(_req: NextRequest) {
                 name: true,
                 slug: true,
                 price: true,
-                active: true,
-                image: true,
+                thumbnail: true,
+                shortDescription: true,
                 createdAt: true,
                 updatedAt: true,
+                active: true,
                 category: {
                     select: {
                         id: true,
@@ -31,26 +32,6 @@ export async function GET(_req: NextRequest) {
                         slug: true
                     }
                 },
-                productAttributeValues: {
-                    select: {
-                        id: true,
-                        value: true,
-                        categoryAttribute: {
-                            select: {
-                                id: true,
-                                required: true,
-                                displayOrder: true,
-                                attribute: {
-                                    select: {
-                                        id: true,
-                                        name: true,
-                                        type: true
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             },
             orderBy: {
                 createdAt: 'desc'
@@ -84,9 +65,9 @@ export async function POST(req: NextRequest) {
         return new NextResponse('Too Many Requests', { status: 429 });
     }
 
-    const { name, image, price, active, categoryId, brandId, attributes } = await req.json();
+    const { name, description, shortDescription, thumbnail, images, price, active, categoryId, brandId, attributes } = await req.json();
 
-    console.log('[PRODUCTS POST] Request data:', { name, image, price, active, categoryId, brandId, attributes });
+    console.log('[PRODUCTS POST] Request data:', { name, description, shortDescription, thumbnail, images, price, active, categoryId, brandId, attributes });
 
     if (!name || price === undefined || price === null || !categoryId || !brandId) {
         return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
@@ -95,16 +76,13 @@ export async function POST(req: NextRequest) {
     const slug = slugifyName(name)
 
     try {
-        // 🚀 OPTIMIZATION 1: Use transaction with parallel validation
-        // This ensures atomicity and parallel execution of validation queries
         const result = await db.$transaction(async (tx) => {
-            // Parallel validation queries (much faster than sequential)
             const [existingProduct, existingCategory, existingBrand] = await Promise.all([
                 tx.products.findUnique({
                     where: { slug },
                     select: { id: true } // Only select ID for existence check
                 }),
-                tx.categories.findUnique({  // 🚀 OPTIMIZATION 2: Use findUnique instead of findMany
+                tx.categories.findUnique({
                     where: { id: categoryId },
                     select: { id: true }
                 }),
@@ -143,10 +121,13 @@ export async function POST(req: NextRequest) {
                 data: {
                     name: name,
                     slug: slug,
+                    description: description,
+                    shortDescription: shortDescription,
                     price: price,
                     active: active,
-                    image: image,
-                    categoryId: categoryId,  // 🚀 OPTIMIZATION 3: Direct assignment instead of connect
+                    thumbnail: thumbnail,
+                    images: images,
+                    categoryId: categoryId,
                     brandId: brandId
                 }
             });
@@ -174,7 +155,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
             {
                 product: result,
-                redirect: `/admin/products/${result.id}`
+                redirect: `/admin/products/${result.slug}`
             },
             { status: 201 }
         );
