@@ -2,7 +2,10 @@ model Products {
   id                     String                   @id @default(auto()) @map("_id") @db.ObjectId
   name                   String
   slug                   String                   @unique
-  image                  String?
+  thumbnail              String?
+  images                 String[]
+  shortDescription       String?
+  description            String?
   price                  Float
   active                 Boolean
   categoryId             String                   @db.ObjectId

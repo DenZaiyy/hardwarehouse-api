@@ -6,9 +6,12 @@ import {auth} from "@clerk/nextjs/server";
 interface UpdateProductData {
     name?: string;
     slug?: string;
+    description?: string;
+    shortDescription?: string;
     price?: number;
     active?: boolean;
-    image?: string;
+    thumbnail?: string;
+    images?: string[];
     categoryId?: string;
 }
 
@@ -27,11 +30,12 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/
                 slug: true,
                 price: true,
                 active: true,
-                image: true,
+                thumbnail: true,
+                images: true,
+                shortDescription: true,
+                description: true,
                 createdAt: true,
                 updatedAt: true,
-                categoryId: true,
-                brandId: true,
                 brand: {
                     select: {
                         id: true,
@@ -100,10 +104,10 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
 
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { slug } = await ctx.params;
-        const { name, price, active, image, categoryId, attributes } = await req.json();
+        const { name, price, description, shortDescription, active, thumbnail, images, categoryId, attributes } = await req.json();
 
         // Vérifier qu'au moins un champ est fourni
-        if (!name && !price && !image && !categoryId && !active) {
+        if (!name && !price && !description && !shortDescription && !images && !thumbnail && !categoryId && !active) {
             return NextResponse.json("Au moins un champ est obligatoire.", { status: 400 });
         }
 
@@ -133,13 +137,18 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
             updateData.name = name;
             updateData.slug = slugifyName(name);
         }
-
+        // Mettre à jour la description seulement si elle change
+        if (description !== product.description) updateData.description = description;
+        // Mettre à jour la shortDescription seulement si elle change
+        if (shortDescription !== product.shortDescription) updateData.shortDescription = shortDescription;
+        // Mettre à jour les images seulement si elles changent
+        if (images && JSON.stringify(images) !== JSON.stringify(product.images)) updateData.images = images;
         // Mettre à jour le prix seulement s'il change
         if (price !== product.price) updateData.price = price;
         // Mettre à jour le status actif seulement s'il change
         if (active !== product.active) updateData.active = active;
         // Mettre à jour l'image seulement si elle change
-        if (image !== product.image) updateData.image = image;
+        if (thumbnail !== product.thumbnail) updateData.thumbnail = thumbnail;
         // Mettre à jour la categoryId seulement si elle change
         if (categoryId) updateData.categoryId = categoryId;
 
@@ -152,13 +161,14 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
                     id: true,
                     name: true,
                     slug: true,
+                    shortDescription: true,
+                    description: true,
                     price: true,
                     active: true,
-                    image: true,
+                    thumbnail: true,
+                    images: true,
                     createdAt: true,
                     updatedAt: true,
-                    categoryId: true,
-                    brandId: true,
                     category: {
                         select: {
                             id: true,

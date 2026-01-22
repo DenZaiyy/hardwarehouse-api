@@ -35,8 +35,9 @@ export async function GET(req: NextRequest) {
                     select: {
                         id: true,
                         name: true,
+                        slug: true,
                         price: true,
-                        image: true
+                        thumbnail: true
                     }
                 }
             },
@@ -70,9 +71,9 @@ export async function POST(req: NextRequest) {
         console.error(type)
         const user = await currentUser()
 
-        let userFullname = "Undefined User"
+        let userFullName = "Undefined User"
 
-        if (user && user.fullName) userFullname = user.fullName
+        if (user && user.fullName) userFullName = user.fullName
 
         if (!oldQtt && !newQtt && !productId) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
 
@@ -93,7 +94,7 @@ export async function POST(req: NextRequest) {
                 oldQtt,
                 newQtt: finalQuantity,
                 type,
-                userFullName: userFullname,
+                userFullName: userFullName,
                 product: {
                     connect: {
                         id: productId
