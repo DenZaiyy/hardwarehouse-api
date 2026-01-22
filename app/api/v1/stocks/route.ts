@@ -19,7 +19,7 @@ export async function GET(_req: NextRequest) {
                         name: true,
                         slug: true,
                         price: true,
-                        image: true
+                        thumbnail: true
                     }
                 }
             },
@@ -100,7 +100,7 @@ export async function POST(req: NextRequest) {
                             name: true,
                             slug: true,
                             price: true,
-                            image: true
+                            thumbnail: true
                         }
                     }
                 }

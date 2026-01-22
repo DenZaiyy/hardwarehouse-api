@@ -38,8 +38,9 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id
                         select: {
                             id: true,
                             name: true,
+                            slug: true,
                             price: true,
-                            image: true
+                            thumbnail: true
                         }
                     }
                 },
