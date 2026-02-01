@@ -50,6 +50,11 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/
                         slug: true
                     }
                 },
+                stock: {
+                    select: {
+                        quantity: true
+                    }
+                },
                 productAttributeValues: {
                     select: {
                         id: true,
