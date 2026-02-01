@@ -29,7 +29,7 @@ type ProductActionsProps = {
     productSlug: string;
     productName: string;
     productActive: boolean;
-    onDisable: (id: string) => void;
+    onDisable: (slug: string) => void;
 }
 
 export function ProductActions({ productId, productSlug, productName, productActive, onDisable }: ProductActionsProps) {
@@ -90,7 +90,7 @@ export function ProductActions({ productId, productSlug, productName, productAct
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => onDisable(productId)}>
+                        <AlertDialogAction onClick={() => onDisable(productSlug)}>
                             Confirmer
                         </AlertDialogAction>
                     </AlertDialogFooter>

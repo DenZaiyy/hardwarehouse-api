@@ -39,7 +39,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrandAndAttributes>[] = [
     },
     {
         accessorKey: "thumbnail",
-        header: "Image",
+        header: "Thumbnail",
         cell: ({ row }) => {
             const image: string = row.getValue('thumbnail');
             const product = row.original
