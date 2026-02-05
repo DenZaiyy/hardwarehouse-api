@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@clerk/localizations": "^3.25.1",
-    "@clerk/nextjs": "^6.33.7",
+    "@clerk/nextjs": "^6.36.7",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.16.2",
     "@radix-ui/react-alert-dialog": "^1.1.15",
