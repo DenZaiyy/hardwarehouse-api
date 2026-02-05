@@ -17,7 +17,7 @@
     "cypress:open": "cypress open"
   },
   "dependencies": {
-    "@clerk/localizations": "^3.25.1",
+    "@clerk/localizations": "^3.34.0",
     "@clerk/nextjs": "^6.33.7",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.16.2",
