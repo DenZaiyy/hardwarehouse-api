@@ -98,7 +98,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                             </Dialog>
                         ) : (
                             <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-md flex items-center justify-center">
-                                <span className="text-xs text-gray-400">Pas d'image</span>
+                                <span className="text-xs text-gray-400">Pas d&#39;image</span>
                             </div>
                         )}
                     </div>

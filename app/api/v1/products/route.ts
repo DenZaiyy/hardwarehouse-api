@@ -5,6 +5,11 @@ import {auth} from "@clerk/nextjs/server";
 import {ImageUploadService} from "@/services/image-upload.service";
 import {buildMeta, buildProductWhere, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
 
+interface uploadData {
+    thumbnail?: File;
+    images?: Map<number, File>;
+}
+
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = req.nextUrl;
@@ -179,7 +184,7 @@ export async function POST(req: NextRequest) {
             let imageUrls: string[] = [];
 
             // Prepare upload data in the format expected by ImageUploadService
-            const uploadData: any = {};
+            const uploadData: uploadData = {};
             
             if (thumbnailFile && thumbnailFile.size > 0) {
                 uploadData.thumbnail = thumbnailFile;
