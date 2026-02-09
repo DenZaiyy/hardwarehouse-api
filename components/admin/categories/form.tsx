@@ -6,14 +6,13 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput} from "@/components/ui/input-group";
-import Image from "next/image";
-import {Label} from "@/components/ui/label";
 import {Categories} from "@/app/generated/prisma/client";
 import toast from "react-hot-toast";
 import React from "react";
-import {createCategory, updateCategory} from "@/services/categoryService";
+import {createCategory, updateCategory} from "@/services/category.service";
 import {categorySchema} from "@/lib/validators/categorySchema";
+import ImageUpload from "../products/image-upload";
+import {Switch} from "@/components/ui/switch";
 
 type CategoryFormProps = {
     category?: Categories
@@ -21,37 +20,50 @@ type CategoryFormProps = {
 }
 
 const CategoryForm = ({ category, method }: CategoryFormProps) => {
-    const [previewImageUrl, setPreviewImageUrl] = React.useState<string | undefined>(undefined);
+    const [logoFile, setLogoFile] = React.useState<File | null>(null);
 
     const form = useForm<z.infer<typeof categorySchema>>({
         resolver: zodResolver(categorySchema),
         defaultValues: {
             name: category?.name ?? "",
-            logo: category?.logo ?? "",
+            active: category?.active ?? true,
         }
     })
 
     async function onSubmit(values: z.infer<typeof categorySchema>) {
+        // Create FormData for file upload
+        const formData = new FormData();
+
+        // Add text fields
+        formData.append('name', values.name);
+
+        // Add logo file if present
+        if (logoFile) {
+            formData.append('logo', logoFile);
+        }
+
         if (!category) {
-            const result = await createCategory(values)
+            const result = await createCategory(formData)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la création de la catégorie.")
                 return
             }
 
-            toast.success("Catégorie créé avec succès.")
+            toast.success("Catégorie créée avec succès.")
             form.reset()
+            setLogoFile(null)
         } else {
-            const result = await updateCategory(category.slug, values)
+            const result = await updateCategory(category.slug, formData)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour de la catégorie.")
                 return
             }
 
+            toast.success("Catégorie mise à jour avec succès.")
             form.reset()
-            toast.success("Catégorie mis à jour avec succès.")
+            setLogoFile(null)
         }
     }
 
@@ -74,50 +86,32 @@ const CategoryForm = ({ category, method }: CategoryFormProps) => {
                         </FormItem>
                     )}
                 />
-                <div>
-                    <FormField
-                        control={form.control}
-                        name="logo"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Logo</FormLabel>
-                                <FormControl>
-                                    <InputGroup>
-                                        <InputGroupInput
-                                            placeholder="URL du logo..."
-                                            value={field.value ?? ""}
-                                            onChange={(e) => { field.onChange(e.target.value) }}
-                                        />
-                                        <InputGroupAddon align="inline-end">
-                                            <InputGroupButton
-                                                variant="ghost"
-                                                onClick={() => {
-                                                    if (field.value) {
-                                                        form.trigger("logo") // Valide le champ image
-                                                        setPreviewImageUrl(field.value) // Met à jour l'aperçu de l'image
-                                                    }
-                                                }}
-                                            >
-                                                Aperçu
-                                            </InputGroupButton>
-                                        </InputGroupAddon>
-                                    </InputGroup>
-                                </FormControl>
-                                <FormDescription>
-                                    L&#39;URL du logo doit être valide.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    {previewImageUrl && (
-                        <div className="mt-4">
-                            <Label htmlFor="preview-img">Aperçu</Label>
-                            <div className="w-80 h-80 relative mt-2">
-                                <Image src={previewImageUrl} alt="Image du produit" id="preview-img" fill={true} className="object-cover" />
-                            </div>
-                        </div>
+                <FormField
+                    control={form.control}
+                    name="active"
+                    render={({ field }) => (
+                        <FormItem className="w-full">
+                            <FormLabel>Catégorie actif</FormLabel>
+                            <FormControl>
+                                <Switch
+                                    defaultChecked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <FormDescription>
+                                Définir si la catégorie est visible ou non.
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
                     )}
+                />
+
+                <div>
+                    <ImageUpload
+                        mode="logo"
+                        onLogoChange={setLogoFile}
+                        logoPreview={category?.logo}
+                    />
                 </div>
                 <Button type="submit">Envoyer</Button>
             </form>

@@ -8,7 +8,7 @@ import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import toast from "react-hot-toast";
 import {CategoryActions} from "@/components/admin/categories/actions";
-import {deleteCategory} from "@/services/categoryService";
+import {deleteCategory} from "@/services/category.service";
 
 async function handleConfirm(categorySlug: string) {
     await deleteCategory(categorySlug)
@@ -38,7 +38,7 @@ export const columns: ColumnDef<Categories>[] = [
                     {image ? (
                         <Dialog>
                             <DialogTrigger>
-                                <Image src={image} alt={`Logo of category : ${category.name}`} fill={true} className="cursor-pointer" />
+                                <Image src={image} alt={`Logo of category : ${category.name}`} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="absolute inset-0 cursor-pointer" />
                             </DialogTrigger>
                             <DialogContent className="w-full">
                                 <DialogTitle>{category.name}</DialogTitle>
@@ -52,6 +52,17 @@ export const columns: ColumnDef<Categories>[] = [
                     )}
                 </div>
             )
+        }
+    },
+    {
+        accessorKey: "active",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Actif" />
+        ),
+        cell: ({ row }) => {
+            const active = row.getValue('active');
+
+            return <div className={`font-medium ${active ? 'text-green-500' : 'text-red-500'}`}>{active ? "Oui" : "Non"}</div>
         }
     },
     {

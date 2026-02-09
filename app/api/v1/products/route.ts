@@ -2,43 +2,57 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
+import {ImageUploadService} from "@/services/image-upload.service";
+import {buildMeta, buildProductWhere, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
     try {
-        // Only load necessary fields for list performance
-        const products = await db.products.findMany({
-            select: {
-                id: true,
-                name: true,
-                slug: true,
-                price: true,
-                thumbnail: true,
-                shortDescription: true,
-                createdAt: true,
-                updatedAt: true,
-                active: true,
-                category: {
-                    select: {
-                        id: true,
-                        name: true,
-                        slug: true
-                    }
-                },
-                brand: {
-                    select: {
-                        id: true,
-                        name: true,
-                        slug: true
-                    }
-                },
-            },
-            orderBy: {
-                createdAt: 'desc'
-            }
-        });
+        const { searchParams } = req.nextUrl;
 
-        return NextResponse.json(products, {status: 200});
+        const pagination = parsePagination(searchParams);
+        const sort = parseSort(searchParams);
+        const filters = parseFilters(searchParams);
+        const where = buildProductWhere(filters);
+
+        const [products, total] = await Promise.all([
+            db.products.findMany({
+                where,
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    price: true,
+                    thumbnail: true,
+                    shortDescription: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    active: true,
+                    category: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true
+                        }
+                    },
+                    brand: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true
+                        }
+                    },
+                },
+                orderBy: { [sort.sortBy]: sort.order },
+                skip: pagination.skip,
+                take: pagination.limit
+            }),
+            db.products.count({ where })
+        ]);
+
+        return NextResponse.json({
+            data: products,
+            meta: buildMeta(total, pagination)
+        }, { status: 200 });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[PRODUCTS] ', error.message)
@@ -65,25 +79,61 @@ export async function POST(req: NextRequest) {
         return new NextResponse('Too Many Requests', { status: 429 });
     }
 
-    const { name, description, shortDescription, thumbnail, images, price, active, categoryId, brandId, attributes } = await req.json();
-
-    console.log('[PRODUCTS POST] Request data:', { name, description, shortDescription, thumbnail, images, price, active, categoryId, brandId, attributes });
-
-    if (!name || price === undefined || price === null || !categoryId || !brandId) {
-        return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
-    }
-
-    const slug = slugifyName(name)
-
     try {
+        const formData = await req.formData();
+        
+        // Extract form fields
+        const name = formData.get('name') as string;
+        const description = formData.get('description') as string;
+        const shortDescription = formData.get('shortDescription') as string;
+        const price = parseFloat(formData.get('price') as string);
+        const active = formData.get('active') === 'true';
+        const category = formData.get('category') as string;
+        const brandId = formData.get('brandId') as string;
+        const attributesJson = formData.get('attributes') as string;
+        
+        // Parse attributes if provided
+        let attributes = {};
+        if (attributesJson) {
+            try {
+                attributes = JSON.parse(attributesJson);
+            } catch (error) {
+                console.error('Error parsing attributes:', error);
+            }
+        }
+
+        // Extract files
+        const thumbnailFile = formData.get('thumbnail') as File | null;
+        const imageFiles = formData.getAll('images') as File[];
+
+        console.log('[PRODUCTS POST] Request data:', { 
+            name, 
+            description, 
+            shortDescription, 
+            price, 
+            active, 
+            category,
+            brandId, 
+            attributes,
+            hasThumbnail: !!thumbnailFile,
+            imageCount: imageFiles.length
+        });
+
+        if (!name || price === undefined || isNaN(price) || !category || !brandId) {
+            return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
+        }
+
+        const slug = slugifyName(name);
+
         const result = await db.$transaction(async (tx) => {
+            // Vérifications d'existence en parallèle
             const [existingProduct, existingCategory, existingBrand] = await Promise.all([
                 tx.products.findUnique({
                     where: { slug },
-                    select: { id: true } // Only select ID for existence check
+                    select: { id: true }
                 }),
                 tx.categories.findUnique({
-                    where: { id: categoryId },
+                    where: { slug: category },
                     select: { id: true }
                 }),
                 tx.brands.findUnique({
@@ -93,17 +143,11 @@ export async function POST(req: NextRequest) {
             ]);
 
             // Validation checks
-            if (existingProduct) {
-                throw new Error("PRODUCT_EXISTS");
-            }
-            if (!existingCategory) {
-                throw new Error("CATEGORY_NOT_FOUND");
-            }
-            if (!existingBrand) {
-                throw new Error("BRAND_NOT_FOUND");
-            }
+            if (existingProduct) throw new Error("PRODUCT_EXISTS");
+            if (!existingCategory) throw new Error("CATEGORY_NOT_FOUND");
+            if (!existingBrand) throw new Error("BRAND_NOT_FOUND");
 
-            // Create product
+            // Create product first with basic data
             const product = await tx.products.create({
                 include: {
                     category: true,
@@ -125,14 +169,76 @@ export async function POST(req: NextRequest) {
                     shortDescription: shortDescription,
                     price: price,
                     active: active,
-                    thumbnail: thumbnail,
-                    images: images,
-                    categoryId: categoryId,
-                    brandId: brandId
+                    categoryId: existingCategory.id,
+                    brandId: existingBrand.id
                 }
             });
 
-            // 🚀 OPTIMIZATION 4: Create attributes in same transaction
+            // Upload images using our WebP system
+            let thumbnailUrl = null;
+            let imageUrls: string[] = [];
+
+            // Prepare upload data in the format expected by ImageUploadService
+            const uploadData: any = {};
+            
+            if (thumbnailFile && thumbnailFile.size > 0) {
+                uploadData.thumbnail = thumbnailFile;
+            }
+            
+            if (imageFiles && imageFiles.length > 0) {
+                const validImageFiles = imageFiles.filter(file => file.size > 0);
+                if (validImageFiles.length > 0) {
+                    const imageMap = new Map<number, File>();
+                    validImageFiles.forEach((file, index) => {
+                        imageMap.set(index, file);
+                    });
+                    uploadData.images = imageMap;
+                }
+            }
+
+            // Upload all images at once if any are provided
+            if (uploadData.thumbnail || uploadData.images) {
+                try {
+                    console.log('[UPLOAD] Uploading images for product:', product.slug);
+                    const uploadResult = await ImageUploadService.uploadProductImages(product.slug, uploadData);
+                    
+                    if (uploadResult.success) {
+                        thumbnailUrl = uploadResult.thumbnail || null;
+                        imageUrls = uploadResult.images || [];
+                        console.log('[UPLOAD] Images uploaded successfully:', { thumbnailUrl, imageUrls });
+                    } else {
+                        console.error('[UPLOAD] Upload failed:', uploadResult.error);
+                        // Continue without images rather than failing completely
+                    }
+                } catch (uploadError) {
+                    console.error('[UPLOAD] Error uploading images:', uploadError);
+                    // Continue without images rather than failing completely
+                }
+            }
+
+            // Update product with uploaded image URLs
+            const updatedProduct = await tx.products.update({
+                where: { id: product.id },
+                data: {
+                    ...(thumbnailUrl && { thumbnail: thumbnailUrl }),
+                    ...(imageUrls.length > 0 && { images: imageUrls })
+                },
+                include: {
+                    category: true,
+                    brand: true,
+                    productAttributeValues: {
+                        include: {
+                            categoryAttribute: {
+                                include: {
+                                    attribute: true
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Create attributes in same transaction
             if (attributes && Object.keys(attributes).length > 0) {
                 const attributeValueData = Object.entries(attributes)
                     .filter(([, value]) => value && String(value).trim() !== '')
@@ -149,7 +255,7 @@ export async function POST(req: NextRequest) {
                 }
             }
 
-            return product;
+            return updatedProduct;
         });
 
         return NextResponse.json(
@@ -161,7 +267,7 @@ export async function POST(req: NextRequest) {
         );
     } catch (error) {
         if (error instanceof Error) {
-            console.error('[PRODUCTS] ', error.message)
+            console.error('[PRODUCTS POST]', error.message);
             
             // Handle specific validation errors
             switch (error.message) {
@@ -189,7 +295,7 @@ export async function POST(req: NextRequest) {
         }
 
         return NextResponse.json(
-            { error: "[PRODUCTS POST] Erreur inconnue" },
+            { error: "Erreur inconnue" },
             { status: 500 }
         );
     }

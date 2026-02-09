@@ -15,9 +15,13 @@ interface UpdateProductData {
     categoryId?: string;
 }
 
-export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/[slug]'>) {
+interface RouteParams {
+    params: Promise<{ slug: string }>;
+}
+
+export async function GET(_req: NextRequest, { params }: RouteParams) {
     try {
-        const { slug } = await ctx.params;
+        const { slug } = await params;
 
         // Only select needed fields and use efficient ordering
         const product = await db.products.findUnique({
@@ -99,7 +103,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/products/
     }
 }
 
-export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/products/[slug]'>) {
+export async function PATCH(req: NextRequest, { params }: RouteParams) {
     try {
         const { userId } = await auth();
 
@@ -108,7 +112,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
         }
 
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-        const { slug } = await ctx.params;
+        const { slug } = await params;
         const { name, price, description, shortDescription, active, thumbnail, images, categoryId, attributes } = await req.json();
 
         // Vérifier qu'au moins un champ est fourni
@@ -257,7 +261,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/product
     }
 }
 
-export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/products/[slug]'>) {
+export async function DELETE(_req: NextRequest, { params }: RouteParams) {
     try {
         const { userId } = await auth();
 
@@ -265,7 +269,7 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/produ
             return NextResponse.json({ error: "Unauthorized", statusCode: 401 });
         }
 
-        const { slug } = await ctx.params;
+        const { slug } = await params;
 
         const product = await db.products.findUnique({
             where: { slug }
