@@ -1,8 +1,8 @@
 import ProductForm from "@/components/admin/products/form";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {getProduct} from "@/services/productService";
-import {getCategories} from "@/services/categoryService";
-import {getBrands} from "@/services/brandService";
+import {getProduct} from "@/services/product.service";
+import {getCategories} from "@/services/category.service";
+import {getBrands} from "@/services/brand.service";
 
 interface ProductParams {
     params: Promise<{ slug: string }>;
@@ -27,7 +27,7 @@ const ProductEditPage = async ({ params }: ProductParams) => {
                     <CardTitle>{product.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <ProductForm product={product} brands={brands} categories={categories} method="PATCH" />
+                    <ProductForm product={product} brands={brands.data} categories={categories} method="PATCH" />
                 </CardContent>
             </Card>
         </div>

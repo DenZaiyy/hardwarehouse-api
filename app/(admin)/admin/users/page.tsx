@@ -3,7 +3,7 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {DataTable} from "@/components/admin/data-table";
 import {Suspense} from "react";
-import {getUsers} from "@/services/userService";
+import {getUsers} from "@/services/user.service";
 import {columns} from "@/app/(admin)/admin/users/columns";
 
 export const metadata: Metadata = {

@@ -1,5 +1,5 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {getUser} from "@/services/userService";
+import {getUser} from "@/services/user.service";
 import UserForm from "@/components/admin/users/form";
 import type {Metadata} from "next";
 

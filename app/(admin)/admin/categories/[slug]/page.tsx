@@ -1,4 +1,4 @@
-import {getCategory} from "@/services/categoryService";
+import {getCategory} from "@/services/category.service";
 
 interface CategoryParams {
     params: Promise<{ slug: string }>;

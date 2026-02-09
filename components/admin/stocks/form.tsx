@@ -11,7 +11,7 @@ import React from "react";
 import {ProductsWithCategoryAndBrandAndAttributes} from "@/types/types";
 import {Stocks} from "@/app/generated/prisma/client";
 import {Input} from "@/components/ui/input";
-import {createStock, updateStock} from "@/services/stockService";
+import {createStock, updateStock} from "@/services/stock.service";
 import {stockSchema} from "@/lib/validators/stockSchema";
 
 type StockFormProps = {

@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import React from "react";
 import PurchaseOrderForm from "@/components/admin/purchase-orders/form";
-import {getStocks} from "@/services/stockService";
+import {getStocks} from "@/services/stock.service";
 
 const PurchaseOrderAddPage = async () => {
     const stocks = await getStocks();

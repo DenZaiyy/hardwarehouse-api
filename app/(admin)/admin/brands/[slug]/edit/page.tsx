@@ -1,6 +1,6 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import BrandForm from "@/components/admin/brands/form";
-import {getBrand} from "@/services/brandService";
+import {getBrand} from "@/services/brand.service";
 
 interface BrandParams {
     params: Promise<{ slug: string }>;

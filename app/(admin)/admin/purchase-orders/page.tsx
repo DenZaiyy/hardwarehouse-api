@@ -4,7 +4,7 @@ import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/admin/data-table";
 import {Suspense} from "react";
 import {columns} from "@/app/(admin)/admin/purchase-orders/column";
-import {getPurchases} from "@/services/purchaseOrderService";
+import {getPurchases} from "@/services/purchase-order.service";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Transactions de stocks",

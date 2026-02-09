@@ -7,7 +7,7 @@ import {ProductsWithCategoryAndBrandAndAttributes, PurchaseOrdersWithProduct} fr
 import toast from "react-hot-toast";
 import {formatDate} from "@/lib/utils";
 import {PurchaseOrderActions} from "@/components/admin/purchase-orders/actions";
-import {deleteTransaction} from "@/services/transactionService";
+import {deleteTransaction} from "@/services/transaction.service";
 
 async function handleConfirm(transactionId: string) {
     await deleteTransaction(transactionId)

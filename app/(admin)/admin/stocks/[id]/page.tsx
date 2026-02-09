@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {getStock} from "@/services/stockService";
+import {getStock} from "@/services/stock.service";
 
 interface StockParams {
     params: Promise<{ id: string }>;
