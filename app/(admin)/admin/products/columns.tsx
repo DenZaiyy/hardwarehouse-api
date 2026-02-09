@@ -1,7 +1,7 @@
 "use client"
 
 import {ColumnDef} from "@tanstack/react-table"
-import {ProductsWithCategoryAndBrandAndAttributes} from "@/types/types";
+import {ProductsWithCategoryAndBrand} from "@/types/types";
 import {Brands, Categories} from "@/app/generated/prisma/client";
 import {formatDate} from "@/lib/utils";
 import Image from "next/image";
@@ -10,7 +10,7 @@ import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui
 import toast from "react-hot-toast";
 import {ProductActions} from "@/components/admin/products/actions";
 import Link from "next/link";
-import {getProduct, updateProduct} from "@/services/productService";
+import {getProduct, updateProduct} from "@/services/product.service";
 
 async function handleConfirm(productSlug: string) {
     const product = await getProduct(productSlug);
@@ -26,7 +26,7 @@ async function handleConfirm(productSlug: string) {
     setTimeout(() => window.location.reload(), 1500)
 }
 
-export const columns: ColumnDef<ProductsWithCategoryAndBrandAndAttributes>[] = [
+export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
     {
         accessorKey: "id",
         header: "ID",
@@ -39,25 +39,73 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrandAndAttributes>[] = [
     },
     {
         accessorKey: "thumbnail",
-        header: "Thumbnail",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Images" />
+        ),
         cell: ({ row }) => {
-            const image: string = row.getValue('thumbnail');
-            const product = row.original
+            const thumbnail: string = row.getValue('thumbnail');
+            const product = row.original;
+            const hasGallery = product.images && product.images.length > 0;
+            
             return (
-                <div className="w-20 h-20 relative">
-                    {image ? (
-                        <Dialog>
-                            <DialogTrigger>
-                                <Image src={image} alt="Image of product" fill={true} className="cursor-pointer" />
-                            </DialogTrigger>
-                            <DialogContent className="w-full">
-                                <DialogTitle>{product.name}</DialogTitle>
-                                <Image src={image} alt={`Image of product : ${product.name} `} width={500} height={500} />
-                            </DialogContent>
-                        </Dialog>
-                    ) : (
-                        <div className="w-20 h-20 bg-gray-200 flex items-center justify-center text-gray-500">
-                            No Image
+                <div className="flex items-center space-x-2">
+                    <div className="w-16 h-16 relative">
+                        {thumbnail ? (
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <div className="cursor-pointer relative w-16 h-16 rounded-md overflow-hidden border">
+                                        <Image 
+                                            src={thumbnail} 
+                                            alt={`Image de ${product.name}`} 
+                                            fill 
+                                            className="object-cover hover:scale-105 transition-transform" 
+                                        />
+                                    </div>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-2xl">
+                                    <DialogTitle>{product.name}</DialogTitle>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <h4 className="font-medium mb-2">Image principale</h4>
+                                            <div className="relative w-full h-64">
+                                                <Image 
+                                                    src={thumbnail} 
+                                                    alt={`Image de ${product.name}`} 
+                                                    fill 
+                                                    className="object-contain rounded" 
+                                                />
+                                            </div>
+                                        </div>
+                                        {hasGallery && (
+                                            <div>
+                                                <h4 className="font-medium mb-2">Galerie ({product.images.length} images)</h4>
+                                                <div className="grid grid-cols-3 gap-2">
+                                                    {product.images.map((img: string, index: number) => (
+                                                        <div key={index} className="relative w-full h-20">
+                                                            <Image 
+                                                                src={img} 
+                                                                alt={`Image ${index + 1} de ${product.name}`} 
+                                                                fill 
+                                                                className="object-cover rounded" 
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
+                        ) : (
+                            <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-md flex items-center justify-center">
+                                <span className="text-xs text-gray-400">Pas d'image</span>
+                            </div>
+                        )}
+                    </div>
+                    {hasGallery && (
+                        <div className="flex flex-col items-center">
+                            <span className="text-xs font-medium text-blue-600">+{product.images.length}</span>
+                            <span className="text-xs text-gray-500">photos</span>
                         </div>
                     )}
                 </div>
