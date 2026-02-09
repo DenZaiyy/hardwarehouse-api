@@ -1,33 +1,4 @@
-export interface PaginationParams {
-    page: number;
-    limit: number;
-    skip: number;
-}
-
-export interface SortParams {
-    sortBy: string;
-    order: 'asc' | 'desc';
-}
-
-export interface FilterParams {
-    minPrice?: number;
-    maxPrice?: number;
-    brandSlug?: string;
-    search?: string;
-    inStock?: boolean;
-}
-
-export interface PaginatedResponse<T> {
-    data: T[];
-    meta: {
-        total: number;
-        page: number;
-        limit: number;
-        totalPages: number;
-        hasNext: boolean;
-        hasPrev: boolean;
-    };
-}
+import {FilterParams, PaginationParams, SortParams} from "@/types/types";
 
 export function parsePagination(searchParams: URLSearchParams): PaginationParams {
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
@@ -51,6 +22,7 @@ export function parseFilters(searchParams: URLSearchParams): FilterParams {
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
     const brandSlug = searchParams.get('brand');
+    const categorySlug = searchParams.get('category');
     const search = searchParams.get('search');
     const inStock = searchParams.get('inStock');
 
@@ -58,8 +30,33 @@ export function parseFilters(searchParams: URLSearchParams): FilterParams {
         ...(minPrice && { minPrice: parseFloat(minPrice) }),
         ...(maxPrice && { maxPrice: parseFloat(maxPrice) }),
         ...(brandSlug && { brandSlug }),
+        ...(categorySlug && { categorySlug }),
         ...(search && { search }),
         ...(inStock === 'true' && { inStock: true })
+    };
+}
+
+export function buildBrandWhere(filters: FilterParams, extraWhere: object = {}) {
+    return {
+        active: true,
+        ...extraWhere,
+        ...(filters.search && {
+            OR: [
+                { name: { contains: filters.search } },
+            ]
+        }),
+    };
+}
+
+export function buildCategoryWhere(filters: FilterParams, extraWhere: object = {}) {
+    return {
+        active: true,
+        ...extraWhere,
+        ...(filters.search && {
+            OR: [
+                { name: { contains: filters.search } },
+            ]
+        }),
     };
 }
 
@@ -70,6 +67,7 @@ export function buildProductWhere(filters: FilterParams, extraWhere: object = {}
         ...(filters.minPrice && { price: { gte: filters.minPrice } }),
         ...(filters.maxPrice && { price: { lte: filters.maxPrice } }),
         ...(filters.brandSlug && { brand: { slug: filters.brandSlug } }),
+        ...(filters.categorySlug && { category: { slug: filters.categorySlug } }),
         ...(filters.search && {
             OR: [
                 { name: { contains: filters.search } },
