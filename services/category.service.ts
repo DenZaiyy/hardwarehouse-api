@@ -35,16 +35,27 @@ export async function getCategory(slug: string): Promise<Categories> {
     return res.json();
 }
 
-export async function createCategory(data: Partial<Categories>): Promise<Categories> {
+export async function createCategory(data: FormData | Partial<Categories>): Promise<Categories> {
     const cookieHeader = await cookies();
+
+    const headers: HeadersInit = {
+        Cookie: cookieHeader.toString()
+    };
+
+    let body: BodyInit;
+
+    if (data instanceof FormData) {
+        // Don't set Content-Type for FormData, let browser set it with boundary
+        body = data;
+    } else {
+        headers["Content-Type"] = "application/json";
+        body = JSON.stringify(data);
+    }
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Cookie: cookieHeader.toString()
-        },
-        body: JSON.stringify(data),
+        headers,
+        body,
         cache: "no-store"
     });
 
@@ -53,18 +64,29 @@ export async function createCategory(data: Partial<Categories>): Promise<Categor
     return res.json();
 }
 
-export async function updateCategory(slug: string, data: Partial<Categories>): Promise<Categories> {
+export async function updateCategory(slug: string, data: FormData | Partial<Categories>): Promise<Categories> {
     const cookieHeader = await cookies();
+
+    const headers: HeadersInit = {
+        Cookie: cookieHeader.toString()
+    };
+
+    let body: BodyInit;
+
+    if (data instanceof FormData) {
+        // Don't set Content-Type for FormData, let browser set it with boundary
+        body = data;
+    } else {
+        headers["Content-Type"] = "application/json";
+        body = JSON.stringify(data);
+    }
 
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/categories/${slug}`,
         {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookieHeader.toString()
-            },
-            body: JSON.stringify(data),
+            headers,
+            body,
             cache: "no-store"
         }
     );
