@@ -288,7 +288,12 @@ export class ImageUploadService {
    */
   static async uploadProductImages(slug: string, data: ProductUploadData): Promise<UploadResponse> {
     const directory = this.getUploadDir('products', slug);
-    const result: { thumbnail?: string; images: string[] } = { images: [] };
+    const result: {
+      thumbnail?: string;
+      thumbnailSet?: ResponsiveImageSet;
+      images: string[];
+      imageSets?: ResponsiveImageSet[]
+    } = { images: [] };
 
     try {
       // Valider tous les fichiers d'abord
