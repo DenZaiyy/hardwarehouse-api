@@ -1,6 +1,5 @@
 version: 2.1
 commands:
-  # Command to use npm ci to install dependencies
   npm-ci:
     description: Install npm dependencies using npm ci
     steps:
@@ -8,27 +7,44 @@ commands:
           pkg-manager: npm
           cache-version: v1
           override-ci-command: npm ci
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+  attach-workspace:
+    description: Attach workspace with node_modules
+    steps:
+      - attach_workspace:
+          at: .
 orbs:
   node: circleci/node@7.1.0 # Node.js orb for CircleCI
   lighthouse-check: foo-software/lighthouse-check@0.0.13
 jobs:
+  install-dependencies:
+    executor: node/default
+    resource_class: small
+    steps:
+      - checkout
+      - npm-ci
+
   # Job to run tests with jest-junit and store results to /test-results
   test-node:
     # Install node dependencies and run tests
     executor: node/default
+    resource_class: medium
     environment:
       JEST_JUNIT_OUTPUT_DIR: ./test-results/
     # Define the steps to run in this job
     steps:
       - checkout
-      - npm-ci
+      - attach-workspace  # Use cached node_modules
       - run:
           name: Create test-results directory
           command: mkdir -p ./test-results
         # Run the tests using npm and generate test results
       - run:
           name: Run tests
-          command: npm run test --ci --runInBand --reporters=default --reporters=jest-junit
+          command: npm run test -- --ci --runInBand --reporters=default --reporters=jest-junit
       # Store the test results in the specified directory
       - store_test_results:
           path: ./test-results/
@@ -39,11 +55,11 @@ jobs:
     # Define the steps to run in this job
     steps:
       - checkout
-      - npm-ci
+      - attach-workspace  # Use cached node_modules
       # Install JQ for audit
       - run:
           name: Install jq
-          command: sudo apt-get update && sudo apt-get install -y jq
+          command: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends jq
       # Run npm audit to check for vulnerabilities
       - run:
           name: Run npm audit
@@ -52,14 +68,30 @@ jobs:
   # Job to lint the node project
   lint-node:
     executor: node/default
+    resource_class: small
     # Define the steps to run in this job
     steps:
       - checkout
-      - npm-ci
+      - attach-workspace  # Use cached node_modules
       # Run npm lint to check for code style issues
       - run:
           name: Run npm lint
           command: npm run lint
+
+  # Job to check TypeScript types
+  typescript-check:
+    executor: node/default
+    steps:
+      - checkout
+      - attach-workspace  # Use cached node_modules
+      # Run NextJS types generation
+      - run:
+          name: Run Next Typegen to generate types helper
+          command: npx next typegen
+      # Run TypeScript type checking
+      - run:
+          name: Run TypeScript check
+          command: npx tsc --noEmit
 
   # Job to build the node project and store artifacts
   build-node:
@@ -70,7 +102,7 @@ jobs:
     steps:
       # Check out the code from the repository
       - checkout
-      - npm-ci
+      - attach-workspace  # Use cached node_modules
       # Restaurer le cache du build Next.js
       - restore_cache:
           keys:
@@ -96,6 +128,11 @@ jobs:
       - store_artifacts:
           path: ~/artifacts
           destination: node-build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .next
+            - node_modules
 
   # Job to check lighthouse scores and store the report in artifacts
   lighthouse-audit:
@@ -110,21 +147,6 @@ jobs:
           minPerformanceScore: '90'
           minSeoScore: '50'
 
-  # Job to check TypeScript types
-  typescript-check:
-    executor: node/default
-    steps:
-      - checkout
-      - npm-ci
-      # Run NextJS types generation
-      - run:
-          name: Run Next Typegen to generate types helper
-          command: npx next typegen
-      # Run TypeScript type checking
-      - run:
-          name: Run TypeScript check
-          command: npx tsc --noEmit
-
   # Job to auto merge to the test branch
   auto-merge-to-test:
     # Use the same node image as the test job
@@ -137,7 +159,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "SHA256:k3XuzNyv7ANUJUUCVb+Or4RQf7/2Cmto3vui9v0nRGM"
-      # Configure git user name and email
+      # Configure git username and email
       - run:
           name: Git config
           command: |
@@ -186,7 +208,8 @@ jobs:
     steps:
       # Check out the code from the repository
       - checkout
-      - npm-ci
+      - attach_workspace:
+          at: .
       # Génération explicite du client Prisma
       - run:
           name: Generate Prisma Client
@@ -222,70 +245,58 @@ jobs:
 
 workflows:
   ci-on-dev:
+    when:
+      equal: [ dev, << pipeline.git.branch >> ]
     jobs:
+      - install-dependencies
       - typescript-check:
-          filters:
-            branches:
-              only: dev
+          requires:
+            - install-dependencies
       - lint-node:
-          filters:
-            branches:
-              only: dev
+          requires:
+            - install-dependencies
       - audit-node:
-          filters:
-            branches:
-              only: dev
+          requires:
+            - install-dependencies
+      - test-node:
+          requires:
+            - typescript-check
+            - lint-node
       - auto-merge-to-test:
           requires:
+            - test-node
             - audit-node
-            - lint-node
-            - typescript-check
-          filters:
-            branches:
-              only: dev
+
   ci-on-test:
+    when:
+      equal: [ test, << pipeline.git.branch >> ]
     jobs:
+      - install-dependencies
       - audit-node:
-          filters:
-            branches:
-              only: test
+          requires:
+            - install-dependencies
       - lint-node:
-          filters:
-            branches:
-              only: test
+          requires:
+            - install-dependencies
       - typescript-check:
-          filters:
-            branches:
-              only: test
+          requires:
+            - install-dependencies
       - build-node:
           requires:
             - audit-node
             - lint-node
             - typescript-check
-          filters:
-            branches:
-              only: test
       - test-node:
           requires:
             - build-node
-          filters:
-            branches:
-              only: test
       - lighthouse-audit:
           requires:
             - test-node
-          filters:
-            branches:
-              only: test
       - create-pr:
           requires:
             - lighthouse-audit
-          filters:
-            branches:
-              only: test
   ci-on-main:
+    when:
+      equal: [ main, << pipeline.git.branch >> ]
     jobs:
-      - main-deployment:
-          filters:
-            branches:
-              only: main
+      - main-deployment
