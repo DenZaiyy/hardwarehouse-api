@@ -33,7 +33,7 @@ export async function GET(
         // Récupération de la catégorie pour vérifier son existence
         const category = await db.categories.findUnique({
             where: {
-                slug
+                slug: slug
             }
         });
 

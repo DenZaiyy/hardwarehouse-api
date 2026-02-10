@@ -4,7 +4,7 @@ import Link from "next/link";
 import {DataTable} from "@/components/admin/data-table";
 import {columns} from "@/app/(admin)/admin/brands/columns";
 import {Suspense} from "react";
-import {getBrands} from "@/services/brandService";
+import {getBrands} from "@/services/brand.service";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Brands",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 async function BrandsTable() {
     const data = await getBrands();
-    return <DataTable columns={columns} data={data} searchHolder="Filtrer les marques..." />;
+    return <DataTable columns={columns} data={data.data} searchHolder="Filtrer les marques..." />;
 }
 
 function BrandsTableSkeleton() {

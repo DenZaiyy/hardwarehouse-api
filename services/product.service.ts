@@ -1,10 +1,15 @@
 "use server";
 
-import {ProductsWithCategoryAndBrandAndAttributes, ProductsWithStocks} from "@/types/types";
+import {
+    PaginatedResponse,
+    ProductsWithCategoryAndBrand,
+    ProductsWithCategoryAndBrandAndAttributes,
+    ProductsWithStocks
+} from "@/types/types";
 import {cookies} from "next/headers";
 import toast from "react-hot-toast";
 
-export async function getProducts(): Promise<ProductsWithCategoryAndBrandAndAttributes[]> {
+export async function getProducts(): Promise<PaginatedResponse<ProductsWithCategoryAndBrand>> {
     const cookieHeader = await cookies();
 
     const res = await fetch(
@@ -44,16 +49,27 @@ export async function getProduct(slug: string): Promise<ProductsWithCategoryAndB
     return res.json();
 }
 
-export async function createProduct(data: Partial<ProductsWithCategoryAndBrandAndAttributes>): Promise<ProductsWithCategoryAndBrandAndAttributes> {
+export async function createProduct(data: FormData | Partial<ProductsWithCategoryAndBrandAndAttributes>): Promise<ProductsWithCategoryAndBrandAndAttributes> {
     const cookieHeader = await cookies();
+
+    const headers: HeadersInit = {
+        Cookie: cookieHeader.toString()
+    };
+
+    let body: BodyInit;
+
+    if (data instanceof FormData) {
+        // Don't set Content-Type for FormData, let browser set it with boundary
+        body = data;
+    } else {
+        headers["Content-Type"] = "application/json";
+        body = JSON.stringify(data);
+    }
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Cookie: cookieHeader.toString()
-        },
-        body: JSON.stringify(data),
+        headers,
+        body,
         cache: "no-store"
     });
 
@@ -62,18 +78,29 @@ export async function createProduct(data: Partial<ProductsWithCategoryAndBrandAn
     return res.json();
 }
 
-export async function updateProduct(slug: string, data: Partial<ProductsWithCategoryAndBrandAndAttributes>): Promise<ProductsWithCategoryAndBrandAndAttributes> {
+export async function updateProduct(slug: string, data: FormData | Partial<ProductsWithCategoryAndBrandAndAttributes>): Promise<ProductsWithCategoryAndBrandAndAttributes> {
     const cookieHeader = await cookies();
+
+    const headers: HeadersInit = {
+        Cookie: cookieHeader.toString()
+    };
+
+    let body: BodyInit;
+
+    if (data instanceof FormData) {
+        // Don't set Content-Type for FormData, let browser set it with boundary
+        body = data;
+    } else {
+        headers["Content-Type"] = "application/json";
+        body = JSON.stringify(data);
+    }
 
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/products/${slug}`,
         {
             method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Cookie: cookieHeader.toString()
-            },
-            body: JSON.stringify(data),
+            headers,
+            body,
             cache: "no-store"
         }
     );

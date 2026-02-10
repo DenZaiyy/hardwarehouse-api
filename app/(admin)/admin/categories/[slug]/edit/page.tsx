@@ -1,6 +1,6 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import CategoryForm from "@/components/admin/categories/form";
-import {getCategory} from "@/services/categoryService";
+import {getCategory} from "@/services/category.service";
 
 interface CategoryParams {
     params: Promise<{ slug: string }>;

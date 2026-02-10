@@ -13,11 +13,11 @@ import {AttributeType, Brands, Categories} from "@/app/generated/prisma/client";
 import toast from "react-hot-toast";
 import React, {useEffect, useState} from "react";
 import {Label} from "@/components/ui/label";
-import Image from "next/image";
 import {Switch} from "@/components/ui/switch";
-import {createProduct, updateProduct} from "@/services/productService";
+import {createProduct, updateProduct} from "@/services/product.service";
 import {productSchema} from "@/lib/validators/productSchema";
 import {Textarea} from "@/components/ui/textarea";
+import ImageUpload from "./image-upload";
 
 type CategoryAttribute = {
     id: string;
@@ -38,7 +38,7 @@ type ProductFormProps = {
 const ProductForm = ({ product, brands, categories, method }: ProductFormProps) => {
     const [categoryAttributes, setCategoryAttributes] = useState<CategoryAttribute[]>([]);
     const [attributeValues, setAttributeValues] = useState<Record<string, string>>({});
-    const [selectedCategoryId, setSelectedCategoryId] = useState<string>(product?.category.id ?? "");
+    const [selectedCategorySlug, setSelectedCategorySlug] = useState<string>(product?.category.slug ?? "");
 
     const form = useForm<z.infer<typeof productSchema>>({
         resolver: zodResolver(productSchema),
@@ -47,24 +47,22 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
             price: product?.price ?? 0,
             description: product?.description ?? "",
             shortDescription: product?.shortDescription ?? "",
-            thumbnail: product?.thumbnail ?? "",
-            images: product?.images ?? [],
             attributes: {},
-            active: product?.active,
+            active: product?.active ?? true,
             brandId: product?.brand.id ?? "",
-            categoryId: product?.category.id ?? "",
+            category: product?.category.slug ?? "",
         }
     })
 
     // Fonction pour récupérer les attributs d'une catégorie
-    const fetchCategoryAttributes = async (categoryId: string) => {
-        if (!categoryId) {
+    const fetchCategoryAttributes = async (categorySlug: string) => {
+        if (!categorySlug) {
             setCategoryAttributes([]);
             return;
         }
 
         try {
-            const response = await fetch(`/api/v1/categories/${categoryId}/attributes`);
+            const response = await fetch(`/api/v1/categories/${categorySlug}/attributes`);
             if (response.ok) {
                 const attributes = await response.json();
                 setCategoryAttributes(attributes);
@@ -79,10 +77,10 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
 
     // Charger les attributs lors du changement de catégorie
     useEffect(() => {
-        if (selectedCategoryId) {
-            fetchCategoryAttributes(selectedCategoryId);
+        if (selectedCategorySlug) {
+            fetchCategoryAttributes(selectedCategorySlug);
         }
-    }, [selectedCategoryId]);
+    }, [selectedCategorySlug]);
 
     async function onSubmit(values: z.infer<typeof productSchema>) {
         // Validate required attributes
@@ -98,15 +96,37 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
             return;
         }
 
-        // Include attribute values in the submission
-        const submitData = {
-            ...values,
-            attributes: attributeValues
-        };
+        // Create FormData for file uploads
+        const formData = new FormData();
+        
+        // Add text fields
+        formData.append('name', values.name);
+        formData.append('price', values.price.toString());
+        formData.append('active', values.active.toString());
+        formData.append('brandId', values.brandId);
+        formData.append('category', values.category);
+        
+        if (values.description) formData.append('description', values.description);
+        if (values.shortDescription) formData.append('shortDescription', values.shortDescription);
+        
+        // Add attributes as JSON string
+        if (Object.keys(attributeValues).length > 0) {
+            formData.append('attributes', JSON.stringify(attributeValues));
+        }
+        
+        // Add files from state
+        if (thumbnailFile) {
+            formData.append('thumbnail', thumbnailFile);
+        }
+        
+        imageFiles.forEach((file) => {
+            formData.append('images', file);
+        });
 
         if (!product) {
-            console.table(submitData);
-            const result = await createProduct(submitData)
+            console.log('[FORM] Creating product with FormData');
+            console.table(formData);
+            const result = await createProduct(formData)
 
             console.table(result)
 
@@ -118,8 +138,10 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
             toast.success("Produit créé avec succès.")
             form.reset()
             setAttributeValues({})
+            setThumbnailFile(null)
+            setImageFiles([])
         } else {
-            const result = await updateProduct(product.slug, submitData)
+            const result = await updateProduct(product.slug, formData)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour du produit.")
@@ -129,10 +151,13 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
             toast.success("Produit mis à jour avec succès.")
             form.reset()
             setAttributeValues({})
+            setThumbnailFile(null)
+            setImageFiles([])
         }
     }
 
-    const [previewImageUrl, setPreviewImageUrl] = React.useState<string | null>(null)
+    const [thumbnailFile, setThumbnailFile] = React.useState<File | null>(null);
+    const [imageFiles, setImageFiles] = React.useState<File[]>([]);
     const shortDescription = form.watch("shortDescription") || "";
     const shortDescriptionMaxLength = 255;
     const description = form.watch("description") || "";
@@ -240,7 +265,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                     />
                     <FormField
                         control={form.control}
-                        name="categoryId"
+                        name="category"
                         render={({ field }) => (
                             <FormItem className="w-full">
                                 <FormLabel>Catégorie</FormLabel>
@@ -248,7 +273,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                                     <Select
                                         onValueChange={(value) => {
                                             field.onChange(value);
-                                            setSelectedCategoryId(value);
+                                            setSelectedCategorySlug(value);
                                             setAttributeValues({}); // Reset attribute values when category changes
                                         }}
                                         value={field.value}
@@ -259,7 +284,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                                         <SelectContent>
                                             {categories && (
                                                 categories.map((category) => (
-                                                    <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
+                                                    <SelectItem key={category.id} value={category.slug}>{category.name}</SelectItem>
                                                 ))
                                             )}
                                         </SelectContent>
@@ -302,70 +327,12 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                     />
                 </div>
                 <div>
-                    <FormField
-                        control={form.control}
-                        name="thumbnail"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Thumbnail</FormLabel>
-                                <FormControl>
-                                    <Input id="thumbnail" type="file" accept='image/png, image/jpeg, image/webp, image/jpg' {...field} />
-                                    {/*<InputGroup>
-                                        <InputGroupInput
-                                            placeholder="URL de l'image..."
-                                            value={field.value ?? ""}
-                                            onChange={(e) => { field.onChange(e.target.value) }}
-                                        />
-                                        <InputGroupAddon align="inline-end">
-                                            <InputGroupButton
-                                                variant="ghost"
-                                                onClick={() => {
-                                                    if (field.value) {
-                                                        form.trigger("thumbnail") // Valide le champ image
-                                                        setPreviewImageUrl(field.value) // Met à jour l'aperçu de l'image
-                                                    }
-                                                }}
-                                            >
-                                                Aperçu
-                                            </InputGroupButton>
-                                        </InputGroupAddon>
-                                    </InputGroup>*/}
-                                </FormControl>
-                                <FormDescription>
-                                    L&#39;URL de l&#39;image doit être valide.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    {previewImageUrl && (
-                        <div className="mt-4">
-                            <Label htmlFor="preview-img">
-                                Aperçu
-                            </Label>
-                            <div className="w-80 h-80 relative mt-2">
-                                <Image src={previewImageUrl} alt={`Aperçu de l'image du produit`} id="preview-img" fill className="object-cover" />
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                <div>
-                    <FormField
-                        control={form.control}
-                        name="images"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Images</FormLabel>
-                                <FormControl>
-                                    <Input id="images" type="file" multiple accept='image/png, image/jpeg, image/webp, image/jpg' {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Liste des URL des images du produit.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+                    <ImageUpload
+                        mode="product"
+                        onThumbnailChange={setThumbnailFile}
+                        onImagesChange={setImageFiles}
+                        thumbnailPreview={product?.thumbnail}
+                        maxImages={8}
                     />
                 </div>
 

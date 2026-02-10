@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import StockForm from "@/components/admin/stocks/form";
-import {getStock} from "@/services/stockService";
-import {getProducts} from "@/services/productService";
+import {getStock} from "@/services/stock.service";
+import {getProducts} from "@/services/product.service";
 
 interface StockParams {
     params: Promise<{ id: string }>;

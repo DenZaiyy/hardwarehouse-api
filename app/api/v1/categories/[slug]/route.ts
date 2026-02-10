@@ -24,32 +24,6 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/categori
                 logo: true,
                 createdAt: true,
                 updatedAt: true,
-                Products: {
-                    select: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                        shortDescription: true,
-                        active: true,
-                        price: true,
-                        thumbnail: true,
-                        brand: {
-                            select: {
-                                id: true,
-                                name: true,
-                                slug: true
-                            }
-                        },
-                        stock: {
-                            select: {
-                                quantity: true
-                            }
-                        }
-                    },
-                    where: {
-                        active: true
-                    }
-                }
             }
         });
 

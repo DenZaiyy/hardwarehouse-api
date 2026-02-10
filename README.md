@@ -72,10 +72,10 @@ hardwarehouse-api/
 │   ├── admin/            # Admin dashboard components
 │   └── ui/               # Reusable UI components
 ├── services/             # Business logic for API endpoints
-│   ├── brandService.ts
-│   ├── categoryService.ts
-│   ├── productService.ts
-│   └── stockService.ts
+│   ├── brand.service.ts
+│   ├── category.service.ts
+│   ├── product.service.ts
+│   └── stock.service.ts
 ├── prisma/               # Database schema and seeds
 └── middleware.ts         # Clerk auth middleware
 ```

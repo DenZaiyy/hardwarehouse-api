@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 import React from "react";
 import {StocksWithProduct} from "@/types/types";
 import {Input} from "@/components/ui/input";
-import {createPurchase} from "@/services/purchaseOrderService";
+import {createPurchase} from "@/services/purchase-order.service";
 import {purchaseOrderSchema} from "@/lib/validators/purchaseOrderSchema";
 
 type PurchaseOrderFormProps = {

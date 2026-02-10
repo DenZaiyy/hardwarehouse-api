@@ -6,14 +6,13 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput} from "@/components/ui/input-group";
-import Image from "next/image";
-import {Label} from "@/components/ui/label";
 import {Brands} from "@/app/generated/prisma/client";
 import toast from "react-hot-toast";
 import React from "react";
-import {createBrand, updateBrand} from "@/services/brandService";
-import {brandSchema} from "@/lib/validators/brandSchema";
+import {createBrand, updateBrand} from "@/services/brand.service";
+import {Brand, brandSchema} from "@/lib/validators/brandSchema";
+import ImageUpload from "../products/image-upload";
+import {Switch} from "@/components/ui/switch";
 
 type BrandFormProps = {
     brand?: Brands
@@ -21,103 +20,98 @@ type BrandFormProps = {
 }
 
 const BrandForm = ({ brand, method }: BrandFormProps) => {
-    const [previewImageUrl, setPreviewImageUrl] = React.useState<string | null>(null)
+    const [logoFile, setLogoFile] = React.useState<File | null>(null);
 
-    const form = useForm<z.infer<typeof brandSchema>>({
+    const form = useForm<Brand>({
         resolver: zodResolver(brandSchema),
         defaultValues: {
             name: brand?.name ?? "",
-            logo: brand?.logo ?? "",
         }
     })
 
     async function onSubmit(values: z.infer<typeof brandSchema>) {
+        // Create FormData for file upload
+        const formData = new FormData();
+        
+        // Add text fields
+        formData.append('name', values.name);
+        
+        // Add logo file if present
+        if (logoFile) {
+            formData.append('logo', logoFile);
+        }
+
         if (!brand) {
-            const result = await createBrand(values)
+            const result = await createBrand(formData)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la création de la marque.")
                 return
             }
 
-            toast.success("Marque créé avec succès.")
+            toast.success("Marque créée avec succès.")
             form.reset()
+            setLogoFile(null)
         } else {
-            const result = await updateBrand(brand.slug, values)
+            const result = await updateBrand(brand.slug, formData)
 
             if (!result) {
                 toast.error("Une erreur est survenue lors de la mise à jour de la marque.")
                 return
             }
 
-            toast.success("Marque mis à jour avec succès.")
+            toast.success("Marque mise à jour avec succès.")
             form.reset()
+            setLogoFile(null)
         }
     }
 
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} method={method} className="space-y-8">
-                <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem className="w-full">
-                            <FormLabel>Nom de la marque</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Nom de la marque" type="text" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                                Le nom de la marque doit contenir au moins 2 caractères.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <div>
+                <div className="flex gap-4 w-full">
                     <FormField
                         control={form.control}
-                        name="logo"
+                        name="name"
                         render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Logo</FormLabel>
+                            <FormItem className="w-3/4">
+                                <FormLabel>Nom de la marque</FormLabel>
                                 <FormControl>
-                                    <InputGroup>
-                                        <InputGroupInput
-                                            placeholder="URL du logo..."
-                                            value={field.value ?? ""}
-                                            onChange={(e) => { field.onChange(e.target.value) }}
-                                        />
-                                        <InputGroupAddon align="inline-end">
-                                            <InputGroupButton
-                                                variant="ghost"
-                                                onClick={() => {
-                                                    if (field.value) {
-                                                        form.trigger("logo") // Valide le champ image
-                                                        setPreviewImageUrl(field.value) // Met à jour l'aperçu de l'image
-                                                    }
-                                                }}
-                                            >
-                                                Aperçu
-                                            </InputGroupButton>
-                                        </InputGroupAddon>
-                                    </InputGroup>
+                                    <Input placeholder="Nom de la marque" type="text" {...field} />
                                 </FormControl>
                                 <FormDescription>
-                                    L&#39;URL du logo doit être valide.
+                                    Le nom de la marque doit contenir au moins 2 caractères.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    {previewImageUrl && (
-                        <div className="mt-4">
-                            <Label htmlFor="preview-img">Aperçu</Label>
-                            <div className="w-80 h-80 relative mt-2">
-                                <Image src={previewImageUrl} alt="Image du produit" id="preview-img" fill={true} className="object-cover" />
-                            </div>
-                        </div>
-                    )}
+                    <FormField
+                        control={form.control}
+                        name="active"
+                        render={({ field }) => (
+                            <FormItem className="w-1/4">
+                                <FormLabel>Marque active</FormLabel>
+                                <FormControl>
+                                    <Switch
+                                        defaultChecked={field.value}
+                                        onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                                <FormDescription>
+                                    Définir si la marque est afficher ou non.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <div>
+                    <ImageUpload
+                        mode="logo"
+                        onLogoChange={setLogoFile}
+                        logoPreview={brand?.logo}
+                    />
                 </div>
                 <Button type="submit">Envoyer</Button>
             </form>

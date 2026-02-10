@@ -1,7 +1,7 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import React from "react";
 import TransactionForm from "@/components/admin/transactions/form";
-import {getStocks} from "@/services/stockService";
+import {getStocks} from "@/services/stock.service";
 
 const TransactionAddPage = async () => {
     const stocks = await getStocks();

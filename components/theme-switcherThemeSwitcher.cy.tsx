@@ -1,5 +1,5 @@
 import React from 'react'
-import { ThemeSwitcher } from './theme-switcher'
+import {ThemeSwitcher} from './theme-switcher'
 
 describe('<ThemeSwitcher />', () => {
   it('renders', () => {

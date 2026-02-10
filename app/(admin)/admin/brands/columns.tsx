@@ -8,7 +8,7 @@ import {DataTableColumnHeader} from "@/components/data-table-column-header"
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog"
 import toast from "react-hot-toast"
 import {BrandActions} from "@/components/admin/brands/actions";
-import {deleteBrand} from "@/services/brandService";
+import {deleteBrand} from "@/services/brand.service";
 
 async function handleConfirm(brandSlug: string) {
     await deleteBrand(brandSlug)
@@ -63,6 +63,17 @@ export const columns: ColumnDef<Brands>[] = [
                 </div>
             )
         },
+    },
+    {
+        accessorKey: "active",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Actif" />
+        ),
+        cell: ({ row }) => {
+            const active = row.getValue('active');
+
+            return <div className={`font-medium ${active ? 'text-green-500' : 'text-red-500'}`}>{active ? "Oui" : "Non"}</div>
+        }
     },
     {
         accessorKey: "createdAt",

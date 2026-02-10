@@ -6,7 +6,7 @@ import {DataTableColumnHeader} from "@/components/data-table-column-header"
 import toast from "react-hot-toast"
 import {User} from "@clerk/backend";
 import UserActions from "@/components/admin/users/actions";
-import {deleteUser, updateUser} from "@/services/userService";
+import {deleteUser, updateUser} from "@/services/user.service";
 
 async function handleConfirm(userId: string) {
     await deleteUser(userId)

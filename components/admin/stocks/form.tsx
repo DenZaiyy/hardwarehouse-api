@@ -8,15 +8,15 @@ import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import toast from "react-hot-toast";
 import React from "react";
-import {ProductsWithCategoryAndBrandAndAttributes} from "@/types/types";
+import {PaginatedResponse, ProductsWithCategoryAndBrand} from "@/types/types";
 import {Stocks} from "@/app/generated/prisma/client";
 import {Input} from "@/components/ui/input";
-import {createStock, updateStock} from "@/services/stockService";
+import {createStock, updateStock} from "@/services/stock.service";
 import {stockSchema} from "@/lib/validators/stockSchema";
 
 type StockFormProps = {
     stock?: Stocks
-    products: ProductsWithCategoryAndBrandAndAttributes[]
+    products: PaginatedResponse<ProductsWithCategoryAndBrand>
     method: "POST" | "PATCH"
 }
 
@@ -117,8 +117,8 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
                                             <SelectValue placeholder="Sélectionner un produit" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {products && (
-                                                products.map((product) => (
+                                            {products.data && (
+                                                products.data.map((product) => (
                                                     <SelectItem key={product.id} value={product.id}>{product.name}</SelectItem>
                                                 ))
                                             )}
