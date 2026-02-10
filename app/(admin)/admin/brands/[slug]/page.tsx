@@ -1,4 +1,4 @@
-import {getBrand} from "@/services/brandService";
+import {getBrand} from "@/services/brand.service";
 
 interface BrandParams {
     params: Promise<{ slug: string }>;

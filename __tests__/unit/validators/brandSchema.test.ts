@@ -3,73 +3,45 @@ import {brandSchema} from "@/lib/validators/brandSchema";
 
 describe('brandSchema', () => {
     describe('Valid inputs', () => {
-        test("should accept brand with name and valid logo URL", () => {
+        test("should accept brand with name and active true", () => {
             const result = brandSchema.safeParse({
                 name: "Apple",
-                logo: "https://example.com/logos/apple.png"
+                active: true
             });
 
             expect(result.success).toBe(true);
             if (result.success) {
                 expect(result.data.name).toBe("Apple");
-                expect(result.data.logo).toBe("https://example.com/logos/apple.png");
+                expect(result.data.active).toBe(true);
             }
         });
 
-        test("should accept brand with name and empty logo", () => {
+        test("should accept brand with name and active false", () => {
             const result = brandSchema.safeParse({
                 name: "Samsung",
-                logo: ""
+                active: false
             });
 
             expect(result.success).toBe(true);
             if (result.success) {
                 expect(result.data.name).toBe("Samsung");
-                expect(result.data.logo).toBe("");
-            }
-        });
-
-        test("should accept brand with only name (logo undefined)", () => {
-            const result = brandSchema.safeParse({
-                name: "Microsoft"
-            });
-
-            expect(result.success).toBe(true);
-            if (result.success) {
-                expect(result.data.name).toBe("Microsoft");
+                expect(result.data.active).toBe(false);
             }
         });
 
         test("should accept brand with long name", () => {
             const result = brandSchema.safeParse({
                 name: "International Business Machines Corporation",
-                logo: "https://example.com/logos/ibm.png"
+                active: true
             });
 
             expect(result.success).toBe(true);
         });
 
-        test("should accept various valid URL formats", () => {
-            const validUrls = [
-                "https://example.com/logo.png",
-                "http://cdn.example.com/brands/logo.jpg",
-                "https://storage.googleapis.com/bucket/logo.svg",
-                "https://s3.amazonaws.com/brand-logos/logo.webp"
-            ];
-
-            validUrls.forEach(url => {
-                const result = brandSchema.safeParse({
-                    name: "Brand",
-                    logo: url
-                });
-                expect(result.success).toBe(true);
-            });
-        });
-
         test("should trim whitespace from name", () => {
             const result = brandSchema.safeParse({
                 name: "  Dell  ",
-                logo: "https://example.com/dell.png"
+                active: true
             });
 
             expect(result.success).toBe(true);
@@ -81,7 +53,7 @@ describe('brandSchema', () => {
         test("should accept name with special characters", () => {
             const result = brandSchema.safeParse({
                 name: "L'Oréal",
-                logo: "https://example.com/loreal.png"
+                active: true
             });
 
             expect(result.success).toBe(true);
@@ -90,7 +62,7 @@ describe('brandSchema', () => {
         test("should accept name with numbers", () => {
             const result = brandSchema.safeParse({
                 name: "3M Company",
-                logo: "https://example.com/3m.png"
+                active: true
             });
 
             expect(result.success).toBe(true);
@@ -101,7 +73,7 @@ describe('brandSchema', () => {
         test("should reject name with only 1 character", () => {
             const result = brandSchema.safeParse({
                 name: "A",
-                logo: "https://example.com/logo.png"
+                active: true
             });
 
             expect(result.success).toBe(false);
@@ -116,7 +88,7 @@ describe('brandSchema', () => {
         test("should reject empty name", () => {
             const result = brandSchema.safeParse({
                 name: "",
-                logo: "https://example.com/logo.png"
+                active: true
             });
 
             expect(result.success).toBe(false);
@@ -130,7 +102,7 @@ describe('brandSchema', () => {
         test("should reject name with only whitespace", () => {
             const result = brandSchema.safeParse({
                 name: "   ",
-                logo: "https://example.com/logo.png"
+                active: true
             });
 
             expect(result.success).toBe(false);
@@ -140,7 +112,7 @@ describe('brandSchema', () => {
             const longName = "A".repeat(101);
             const result = brandSchema.safeParse({
                 name: longName,
-                logo: "https://example.com/logo.png"
+                active: true
             });
 
             expect(result.success).toBe(false);
@@ -153,68 +125,44 @@ describe('brandSchema', () => {
 
         test("should reject missing name", () => {
             const result = brandSchema.safeParse({
-                logo: "https://example.com/logo.png"
+                active: true
             });
 
             expect(result.success).toBe(false);
         });
     });
 
-    describe('Invalid inputs - Logo URL', () => {
-        test("should reject invalid URL format", () => {
+    describe('Invalid inputs - Active field', () => {
+        test("should reject missing active field", () => {
             const result = brandSchema.safeParse({
-                name: "Brand",
-                logo: "not-a-valid-url"
-            });
-
-            expect(result.success).toBe(false);
-            if (!result.success) {
-                expect(result.error.issues.some(issue =>
-                    issue.path.includes('logo') &&
-                    issue.message.includes('valide')
-                )).toBe(true);
-            }
-        });
-
-        test("should reject URL without protocol", () => {
-            const result = brandSchema.safeParse({
-                name: "Brand",
-                logo: "example.com/logo.png"
+                name: "Brand"
             });
 
             expect(result.success).toBe(false);
         });
 
-        test("should reject relative URL", () => {
+        test("should reject non-boolean active field", () => {
             const result = brandSchema.safeParse({
                 name: "Brand",
-                logo: "/images/logo.png"
+                active: "true"
             });
 
             expect(result.success).toBe(false);
         });
 
-        test("should reject malformed URL", () => {
-            const invalidUrls = [
-                "htp://example.com/logo.png",  // typo in protocol
-                "https//example.com/logo.png",  // missing colon
-                "https:example.com/logo.png",   // missing slashes
-                "javascript:alert('xss')"       // dangerous protocol
-            ];
-
-            invalidUrls.forEach(url => {
-                const result = brandSchema.safeParse({
-                    name: "Brand",
-                    logo: url
-                });
-                expect(result.success).toBe(false);
-            });
-        });
-
-        test("should reject URL with spaces", () => {
+        test("should reject null active field", () => {
             const result = brandSchema.safeParse({
                 name: "Brand",
-                logo: "https://example.com/logo with spaces.png"
+                active: null
+            });
+
+            expect(result.success).toBe(false);
+        });
+
+        test("should reject undefined active field", () => {
+            const result = brandSchema.safeParse({
+                name: "Brand",
+                active: undefined
             });
 
             expect(result.success).toBe(false);
@@ -225,7 +173,7 @@ describe('brandSchema', () => {
         test("should handle minimum valid name (2 characters)", () => {
             const result = brandSchema.safeParse({
                 name: "HP",
-                logo: "https://example.com/hp.png"
+                active: true
             });
 
             expect(result.success).toBe(true);
@@ -235,7 +183,7 @@ describe('brandSchema', () => {
             const maxName = "A".repeat(100);
             const result = brandSchema.safeParse({
                 name: maxName,
-                logo: "https://example.com/logo.png"
+                active: true
             });
 
             expect(result.success).toBe(true);
@@ -243,8 +191,8 @@ describe('brandSchema', () => {
 
         test("should accept Unicode characters in name", () => {
             const result = brandSchema.safeParse({
-                name: "日本電気株式会社",  // NEC in Japanese
-                logo: "https://example.com/nec.png"
+                name: "日本電気株式会社",
+                active: true
             });
 
             expect(result.success).toBe(true);
@@ -253,28 +201,19 @@ describe('brandSchema', () => {
         test("should accept emoji in name", () => {
             const result = brandSchema.safeParse({
                 name: "Tesla 🚗",
-                logo: "https://example.com/tesla.png"
+                active: false
             });
 
             expect(result.success).toBe(true);
         });
 
-        test("should handle null values gracefully", () => {
+        test("should handle null name gracefully", () => {
             const result = brandSchema.safeParse({
                 name: null,
-                logo: null
+                active: true
             });
 
             expect(result.success).toBe(false);
-        });
-
-        test("should handle undefined logo gracefully", () => {
-            const result = brandSchema.safeParse({
-                name: "Brand",
-                logo: undefined
-            });
-
-            expect(result.success).toBe(true);
         });
     });
 
@@ -282,23 +221,22 @@ describe('brandSchema', () => {
         test("should return correctly typed data on success", () => {
             const result = brandSchema.safeParse({
                 name: "Google",
-                logo: "https://example.com/google.png"
+                active: true
             });
 
             if (result.success) {
-                // TypeScript should infer correct types
                 const name: string = result.data.name;
-                const logo: string | undefined = result.data.logo;
+                const active: boolean = result.data.active;
 
                 expect(typeof name).toBe('string');
-                expect(logo).toBeDefined();
+                expect(typeof active).toBe('boolean');
             }
         });
 
         test("should return error details on failure", () => {
             const result = brandSchema.safeParse({
                 name: "A",
-                logo: "invalid-url"
+                active: "not-boolean"
             });
 
             if (!result.success) {
@@ -313,10 +251,10 @@ describe('brandSchema', () => {
     describe('Real-world brand examples', () => {
         test("should accept famous tech brands", () => {
             const brands = [
-                { name: "Apple Inc.", logo: "https://cdn.example.com/apple.svg" },
-                { name: "Google LLC", logo: "https://cdn.example.com/google.svg" },
-                { name: "Microsoft Corporation", logo: "https://cdn.example.com/microsoft.svg" },
-                { name: "Amazon.com, Inc.", logo: "https://cdn.example.com/amazon.svg" }
+                { name: "Apple Inc.", active: true },
+                { name: "Google LLC", active: true },
+                { name: "Microsoft Corporation", active: true },
+                { name: "Amazon.com, Inc.", active: false }
             ];
 
             brands.forEach(brand => {
@@ -325,18 +263,10 @@ describe('brandSchema', () => {
             });
         });
 
-        test("should accept brands without logos (startups)", () => {
+        test("should accept inactive brands", () => {
             const result = brandSchema.safeParse({
-                name: "New Startup Co."
-            });
-
-            expect(result.success).toBe(true);
-        });
-
-        test("should accept brands with CDN URLs", () => {
-            const result = brandSchema.safeParse({
-                name: "Nike",
-                logo: "https://cdn.cloudflare.com/brands/nike-logo.png"
+                name: "Discontinued Brand",
+                active: false
             });
 
             expect(result.success).toBe(true);

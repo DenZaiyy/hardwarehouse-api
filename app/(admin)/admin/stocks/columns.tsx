@@ -7,7 +7,7 @@ import {ProductsWithCategoryAndBrandAndAttributes, StocksWithProduct} from "@/ty
 import toast from "react-hot-toast";
 import {StockActions} from "@/components/admin/stocks/actions";
 import {formatDate} from "@/lib/utils";
-import {deleteStock} from "@/services/stockService";
+import {deleteStock} from "@/services/stock.service";
 
 async function handleConfirm(stockId: string) {
     await deleteStock(stockId)

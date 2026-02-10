@@ -7,7 +7,7 @@ model Products {
   shortDescription       String?
   description            String?
   price                  Float
-  active                 Boolean
+  active                 Boolean                  @default(true)
   categoryId             String                   @db.ObjectId
   category               Categories               @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   stock                  Stocks?

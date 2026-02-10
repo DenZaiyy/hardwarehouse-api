@@ -4,7 +4,7 @@ import {Separator} from "@/components/ui/separator";
 import {formatDate} from "@/lib/utils";
 import {BarChartCard} from "@/components/admin/bar-chart-card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {getProduct} from "@/services/productService";
+import {getProduct} from "@/services/product.service";
 import Characteristics from "@/components/admin/products/characteristics";
 
 interface ProductParams {

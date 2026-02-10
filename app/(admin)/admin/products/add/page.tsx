@@ -2,8 +2,8 @@ import type {Metadata} from "next";
 import React from "react";
 import {Card, CardContent} from "@/components/ui/card";
 import ProductForm from "@/components/admin/products/form";
-import {getCategories} from "@/services/categoryService";
-import {getBrands} from "@/services/brandService";
+import {getCategories} from "@/services/category.service";
+import {getBrands} from "@/services/brand.service";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Products - Add",
@@ -26,7 +26,7 @@ const ProductAddPage = async () => {
             <section>
                 <Card>
                     <CardContent>
-                        <ProductForm brands={brands} categories={categories}  method="POST" />
+                        <ProductForm brands={brands.data} categories={categories}  method="POST" />
                     </CardContent>
                 </Card>
             </section>

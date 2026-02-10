@@ -1,4 +1,4 @@
-import {getPurchaseOrders, getTransactions, getUser} from "@/services/userService";
+import {getPurchaseOrders, getTransactions, getUser} from "@/services/user.service";
 import type {Metadata} from "next";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";

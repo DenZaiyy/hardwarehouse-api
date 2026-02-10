@@ -9,7 +9,7 @@ import {Button} from "@/components/ui/button";
 import toast from "react-hot-toast";
 import React from "react";
 import {User} from "@clerk/backend";
-import {createUser, updateUser} from "@/services/userService";
+import {createUser, updateUser} from "@/services/user.service";
 import {Checkbox} from "@/components/ui/checkbox";
 import {userSchema} from "@/lib/validators/userSchema";
 

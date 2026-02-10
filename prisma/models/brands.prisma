@@ -3,6 +3,7 @@ model Brands {
   name      String
   logo      String?
   slug      String     @unique
+  active    Boolean    @default(true)
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   Products  Products[]

@@ -2,7 +2,7 @@ import type {Metadata} from "next";
 import React from "react";
 import {Card, CardContent} from "@/components/ui/card";
 import StockForm from "@/components/admin/stocks/form";
-import {getProducts} from "@/services/productService";
+import {getProducts} from "@/services/product.service";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Products - Add",

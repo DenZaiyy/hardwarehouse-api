@@ -4,7 +4,7 @@ import {columns} from "@/app/(admin)/admin/products/columns";
 import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/admin/data-table";
 import {Suspense} from "react";
-import {getProducts} from "@/services/productService";
+import {getProducts} from "@/services/product.service";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Produits",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 async function ProductsTable() {
     const data = await getProducts();
-    return <DataTable columns={columns} data={data} searchHolder="Filtrer les produits..." />;
+    return <DataTable columns={columns} data={data.data} searchHolder="Filtrer les produits..." />;
 }
 
 function ProductsTableSkeleton() {

@@ -11,7 +11,7 @@ import React, {useEffect} from "react";
 import {StocksWithProduct} from "@/types/types";
 import {Switch} from "@/components/ui/switch";
 import {Input} from "@/components/ui/input";
-import {createTransaction} from "@/services/transactionService";
+import {createTransaction} from "@/services/transaction.service";
 import {transactionSchema} from "@/lib/validators/transactionSchema";
 
 type TransactionFormProps = {
