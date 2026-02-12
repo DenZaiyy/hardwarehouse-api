@@ -48,18 +48,6 @@ export function buildBrandWhere(filters: FilterParams, extraWhere: object = {}) 
     };
 }
 
-export function buildCategoryWhere(filters: FilterParams, extraWhere: object = {}) {
-    return {
-        active: true,
-        ...extraWhere,
-        ...(filters.search && {
-            OR: [
-                { name: { contains: filters.search } },
-            ]
-        }),
-    };
-}
-
 export function buildProductWhere(filters: FilterParams, extraWhere: object = {}) {
     return {
         active: true,
