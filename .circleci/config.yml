@@ -32,6 +32,7 @@ jobs:
     # Install node dependencies and run tests
     executor: node/default
     resource_class: medium
+    parallelism: 4
     environment:
       JEST_JUNIT_OUTPUT_DIR: ./test-results/
     # Define the steps to run in this job
