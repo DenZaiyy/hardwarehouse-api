@@ -1,4 +1,5 @@
 import {FilterParams, PaginationParams, SortParams} from "@/types/types";
+import {Prisma} from "@/app/generated/prisma/client";
 
 export function parsePagination(searchParams: URLSearchParams): PaginationParams {
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
@@ -42,7 +43,7 @@ export function buildBrandWhere(filters: FilterParams, extraWhere: object = {}) 
         ...extraWhere,
         ...(filters.search && {
             OR: [
-                { name: { contains: filters.search } },
+                { name: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
             ]
         }),
     };
@@ -58,8 +59,9 @@ export function buildProductWhere(filters: FilterParams, extraWhere: object = {}
         ...(filters.categorySlug && { category: { slug: filters.categorySlug } }),
         ...(filters.search && {
             OR: [
-                { name: { contains: filters.search } },
-                { shortDescription: { contains: filters.search } }
+                { name: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
+                { shortDescription: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
+                { description: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } }
             ]
         }),
         ...(filters.inStock && { stock: { quantity: { gt: 0 } } })
