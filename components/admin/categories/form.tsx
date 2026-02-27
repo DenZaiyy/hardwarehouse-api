@@ -14,6 +14,32 @@ import {categorySchema} from "@/lib/validators/categorySchema";
 import ImageUpload from "../products/image-upload";
 import {Switch} from "@/components/ui/switch";
 
+// Fonction d'upload côté client (les File ne peuvent pas être envoyés via Server Actions)
+async function uploadCategoryLogoClient(
+    slug: string,
+    logo: File
+): Promise<{ success: boolean; logo?: string; error?: string }> {
+    const formData = new FormData();
+    formData.append('logo', logo);
+
+    try {
+        const res = await fetch(`/api/v1/upload/categories/${slug}`, {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            return { success: false, error: errorData.error || "Échec de l'upload du logo" };
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('[UPLOAD] Error:', error);
+        return { success: false, error: "Erreur réseau lors de l'upload" };
+    }
+}
+
 type CategoryFormProps = {
     category?: Categories
     method: "POST" | "PATCH"
@@ -31,39 +57,57 @@ const CategoryForm = ({ category, method }: CategoryFormProps) => {
     })
 
     async function onSubmit(values: z.infer<typeof categorySchema>) {
-        // Create FormData for file upload
-        const formData = new FormData();
+        try {
+            if (!category) {
+                const result = await createCategory({
+                    name: values.name,
+                    active: values.active,
+                });
 
-        // Add text fields
-        formData.append('name', values.name);
+                if (!result) {
+                    toast.error("Une erreur est survenue lors de la création de la catégorie.")
+                    return
+                }
 
-        // Add logo file if present
-        if (logoFile) {
-            formData.append('logo', logoFile);
-        }
+                if (logoFile) {
+                    const logoResult = await uploadCategoryLogoClient(result.slug, logoFile);
+                    if (!logoResult.success) {
+                        toast.error("Catégorie créée, mais erreur lors de l'upload du logo.")
+                    } else {
+                        toast.success('Logo uploadé avec succès.')
+                    }
+                }
 
-        if (!category) {
-            const result = await createCategory(formData)
+                toast.success("Catégorie créée avec succès.")
+                form.reset()
+                setLogoFile(null)
+            } else {
+                const result = await updateCategory(category.slug, {
+                    name: values.name,
+                    active: values.active,
+                });
 
-            if (!result) {
-                toast.error("Une erreur est survenue lors de la création de la catégorie.")
-                return
+                if (!result) {
+                    toast.error("Une erreur est survenue lors de la mise à jour de la catégorie.")
+                    return
+                }
+
+                if (logoFile) {
+                    const logoResult = await uploadCategoryLogoClient(result.slug, logoFile);
+                    if (!logoResult.success) {
+                        toast.error("Catégorie mise à jour, mais erreur lors de l'upload du logo.")
+                    } else {
+                        toast.success('Logo uploadé avec succès.')
+                    }
+                }
+
+                toast.success("Catégorie mise à jour avec succès.")
+                form.reset()
+                setLogoFile(null)
             }
-
-            toast.success("Catégorie créée avec succès.")
-            form.reset()
-            setLogoFile(null)
-        } else {
-            const result = await updateCategory(category.slug, formData)
-
-            if (!result) {
-                toast.error("Une erreur est survenue lors de la mise à jour de la catégorie.")
-                return
-            }
-
-            toast.success("Catégorie mise à jour avec succès.")
-            form.reset()
-            setLogoFile(null)
+        } catch (error) {
+            console.error('[CategoryForm]', error);
+            toast.error("Une erreur est survenue.")
         }
     }
 

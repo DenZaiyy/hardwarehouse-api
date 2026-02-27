@@ -5,6 +5,7 @@ import {auth} from "@clerk/nextjs/server";
 
 interface UpdateCategoryData {
     name?: string;
+    active?: boolean;
     slug?: string;
     logo?: string;
 }
@@ -20,6 +21,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/categori
             select: {
                 id: true,
                 name: true,
+                active: true,
                 slug: true,
                 logo: true,
                 createdAt: true,
@@ -43,7 +45,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/categori
     }
 }
 
-export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/categories/[slug]'>) {
+export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/categories/[slug]'>) {
     try {
         const { userId } = await auth();
 
@@ -52,10 +54,11 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/catego
         }
 
         const { slug } = await ctx.params;
-        const { name, logo } = await _req.json();
+        const body = await req.json();
+        const { name, logo, active } = body;
 
         // Vérifier qu'au moins un champ est fourni
-        if (!name && !logo) {
+        if (name === undefined && logo === undefined && active === undefined) {
             return NextResponse.json({ error: "Au moins un champ est obligatoire." }, { status: 400 });
         }
 
@@ -70,13 +73,20 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/catego
         }
 
         // Mettre à jour le slug seulement si le nom change
-        if (name !== category.name) {
+        if (name !== undefined && name !== category.name) {
             updateData.name = name;
             updateData.slug = slugifyName(name);
         }
 
         // Mettre à jour le logo seulement s'il change
-        if (logo !== category.logo) updateData.logo = logo;
+        if (logo !== undefined && logo !== category.logo) {
+            updateData.logo = logo;
+        }
+
+        // Mettre à jour active seulement s'il change
+        if (active !== undefined && active !== category.active) {
+            updateData.active = Boolean(active);
+        }
 
         const updatedCategory = await db.categories.update({
             where: {
@@ -89,8 +99,7 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/catego
     } catch(error) {
         if (error instanceof Error) {
             console.error('[CATEGORY PATCH] ', error.message)
-            return NextResponse.json(
-                { error: `[CATEGORY PATCH] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
+            return NextResponse.json(`[CATEGORY PATCH] Erreur interne : ${error ? error.message : 'Erreur inconnue'}`,
                 { status: 500 }
             );
         }

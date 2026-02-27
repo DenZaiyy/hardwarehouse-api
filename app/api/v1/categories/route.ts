@@ -2,15 +2,16 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
-import {ImageUploadService} from "@/services/image-upload.service";
+import {buildCategoryWhere, parseFilters} from "@/lib/api/filters";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function GET(_req: NextRequest) {
+export async function GET(req: NextRequest) {
     try {
+        const { searchParams } = req.nextUrl;
+        const filters = parseFilters(searchParams);
+        const where = buildCategoryWhere(filters);
+
         const categories = await db.categories.findMany({
-            where: {
-                active: true
-            },
+            where,
             select: {
                 id: true,
                 name: true,
@@ -52,9 +53,13 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        const formData = await req.formData();
-        const name = formData.get('name') as string;
-        const logo = formData.get('logo') as File | null;
+        // Accepter JSON au lieu de FormData
+        const body = await req.json();
+        const { name, active = true } = body;
+
+        if (!name || typeof name !== 'string') {
+            return NextResponse.json({ error: "Le nom est requis" }, { status: 400 });
+        }
 
         const slug = slugifyName(name);
 
@@ -71,64 +76,23 @@ export async function POST(req: NextRequest) {
             const category = await tx.categories.create({
                 data: {
                     name: name,
+                    active: Boolean(active),
                     slug: slug
                 },
                 select: {
                     id: true,
                     name: true,
+                    active: true,
                     slug: true,
                     logo: true,
                     createdAt: true
                 }
             });
 
-            let logoUrl: string | null = null;
-
-            // Upload logo if provided
-            if (logo && logo.size > 0) {
-                try {
-                    console.log('[UPLOAD] Uploading logo for category:', category.slug);
-                    const uploadData = { logo };
-                    const uploadResult = await ImageUploadService.uploadLogo('categories', category.slug, uploadData);
-
-                    if (uploadResult.success) {
-                        logoUrl = uploadResult.logo || null;
-                        console.log('[UPLOAD] Logo uploaded successfully:', logoUrl);
-                    } else {
-                        console.error('[UPLOAD] Upload failed:', uploadResult.error);
-                        // Continue without logo rather than failing completely
-                    }
-                } catch (uploadError) {
-                    console.error('[UPLOAD] Error uploading logo:', uploadError);
-                    // Continue without logo rather than failing completely
-                }
-            }
-
-            // Update category with logo URL if uploaded
-            const updatedCategory = await tx.categories.update({
-                where: { id: category.id },
-                data: {
-                    ...(logoUrl && { logo: logoUrl })
-                },
-                select: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                    logo: true,
-                    createdAt: true
-                }
-            });
-
-            return updatedCategory;
+            return category;
         });
 
-        return NextResponse.json(
-            {
-                category: result,
-                redirect: `/admin/categories/${result.slug}`
-            },
-            { status: 201 }
-        );
+        return NextResponse.json(result, { status: 201 });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[CATEGORY] ', error.message)
