@@ -1,3 +1,4 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/circleci/VGbp6eJGiqeE2nbyjZyTf6/SJneyybsELCQSCGKiWBwTs/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/VGbp6eJGiqeE2nbyjZyTf6/SJneyybsELCQSCGKiWBwTs/tree/main)
 # HardwareHouse Admin API
 
 A Next.js 15 admin-only application providing API endpoints and management interface for hardware inventory. Designed to serve as the backend for a Symfony frontend application.
