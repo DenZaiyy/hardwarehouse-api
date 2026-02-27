@@ -26,6 +26,7 @@ export function parseFilters(searchParams: URLSearchParams): FilterParams {
     const categorySlug = searchParams.get('category');
     const search = searchParams.get('search');
     const inStock = searchParams.get('inStock');
+    const active = searchParams.get('active'); // "true", "false", ou null
 
     return {
         ...(minPrice && { minPrice: parseFloat(minPrice) }),
@@ -33,14 +34,27 @@ export function parseFilters(searchParams: URLSearchParams): FilterParams {
         ...(brandSlug && { brandSlug }),
         ...(categorySlug && { categorySlug }),
         ...(search && { search }),
-        ...(inStock === 'true' && { inStock: true })
+        ...(inStock === 'true' && { inStock: true }),
+        ...(active !== null && { active: active === 'true' })
     };
 }
 
 export function buildBrandWhere(filters: FilterParams, extraWhere: object = {}) {
     return {
-        active: true,
         ...extraWhere,
+        ...(filters.active !== undefined && { active: filters.active }),
+        ...(filters.search && {
+            OR: [
+                { name: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
+            ]
+        }),
+    };
+}
+
+export function buildCategoryWhere(filters: FilterParams, extraWhere: object = {}) {
+    return {
+        ...extraWhere,
+        ...(filters.active !== undefined && { active: filters.active }),
         ...(filters.search && {
             OR: [
                 { name: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
@@ -51,8 +65,8 @@ export function buildBrandWhere(filters: FilterParams, extraWhere: object = {}) 
 
 export function buildProductWhere(filters: FilterParams, extraWhere: object = {}) {
     return {
-        active: true,
         ...extraWhere,
+        ...(filters.active !== undefined && { active: filters.active }),
         ...(filters.minPrice && { price: { gte: filters.minPrice } }),
         ...(filters.maxPrice && { price: { lte: filters.maxPrice } }),
         ...(filters.brandSlug && { brand: { slug: filters.brandSlug } }),
