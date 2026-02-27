@@ -14,6 +14,32 @@ import {Brand, brandSchema} from "@/lib/validators/brandSchema";
 import ImageUpload from "../products/image-upload";
 import {Switch} from "@/components/ui/switch";
 
+// Fonction d'upload côté client (les File ne peuvent pas être envoyés via Server Actions)
+async function uploadBrandLogoClient(
+    slug: string,
+    logo: File
+): Promise<{ success: boolean; logo?: string; error?: string }> {
+    const formData = new FormData();
+    formData.append('logo', logo);
+
+    try {
+        const res = await fetch(`/api/v1/upload/brands/${slug}`, {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            return { success: false, error: errorData.error || "Échec de l'upload du logo" };
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('[UPLOAD] Error:', error);
+        return { success: false, error: "Erreur réseau lors de l'upload" };
+    }
+}
+
 type BrandFormProps = {
     brand?: Brands
     method: "POST" | "PATCH"
@@ -26,43 +52,62 @@ const BrandForm = ({ brand, method }: BrandFormProps) => {
         resolver: zodResolver(brandSchema),
         defaultValues: {
             name: brand?.name ?? "",
+            active: brand?.active ?? true,
         }
     })
 
     async function onSubmit(values: z.infer<typeof brandSchema>) {
-        // Create FormData for file upload
-        const formData = new FormData();
-        
-        // Add text fields
-        formData.append('name', values.name);
-        
-        // Add logo file if present
-        if (logoFile) {
-            formData.append('logo', logoFile);
-        }
+        try {
+            if (!brand) {
+                const result = await createBrand({
+                    name: values.name,
+                    active: values.active,
+                });
 
-        if (!brand) {
-            const result = await createBrand(formData)
+                if (!result) {
+                    toast.error("Une erreur est survenue lors de la création de la marque.")
+                    return
+                }
 
-            if (!result) {
-                toast.error("Une erreur est survenue lors de la création de la marque.")
-                return
+                if (logoFile) {
+                    const logoResult = await uploadBrandLogoClient(result.slug, logoFile);
+                    if (!logoResult.success) {
+                        toast.error("Marque créée, mais erreur lors de l'upload du logo.")
+                    } else {
+                        toast.success('Logo uploadé avec succès.')
+                    }
+                }
+
+                toast.success("Marque créée avec succès.")
+                form.reset()
+                setLogoFile(null)
+            } else {
+                const result = await updateBrand(brand.slug, {
+                    name: values.name,
+                    active: values.active,
+                });
+
+                if (!result) {
+                    toast.error("Une erreur est survenue lors de la mise à jour de la marque.")
+                    return
+                }
+
+                if (logoFile) {
+                    const logoResult = await uploadBrandLogoClient(result.slug, logoFile);
+                    if (!logoResult.success) {
+                        toast.error("Marque mise à jour, mais erreur lors de l'upload du logo.")
+                    } else {
+                        toast.success('Logo uploadé avec succès.')
+                    }
+                }
+
+                toast.success("Marque mise à jour avec succès.")
+                form.reset()
+                setLogoFile(null)
             }
-
-            toast.success("Marque créée avec succès.")
-            form.reset()
-            setLogoFile(null)
-        } else {
-            const result = await updateBrand(brand.slug, formData)
-
-            if (!result) {
-                toast.error("Une erreur est survenue lors de la mise à jour de la marque.")
-                return
-            }
-
-            toast.success("Marque mise à jour avec succès.")
-            form.reset()
-            setLogoFile(null)
+        } catch (error) {
+            console.error('[BrandForm]', error);
+            toast.error("Une erreur est survenue.")
         }
     }
 
