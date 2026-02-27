@@ -1,5 +1,6 @@
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import Link from "next/link";
+import Image from "next/image";
 import {Separator} from "@/components/ui/separator";
 import {formatDate} from "@/lib/utils";
 import {BarChartCard} from "@/components/admin/bar-chart-card";
@@ -150,12 +151,71 @@ const ProductDetails = async ({ params }: ProductParams) => {
                 </CardFooter>
             </Card>
 
-            <Tabs defaultValue="characteristics" className="mt-4">
+            <Tabs defaultValue="images" className="mt-4">
                 <TabsList>
+                    <TabsTrigger value="images">Images</TabsTrigger>
                     <TabsTrigger value="characteristics">Caractéristiques</TabsTrigger>
                     <TabsTrigger value="statistics">Statistiques</TabsTrigger>
                     <TabsTrigger value="transactions">Transactions</TabsTrigger>
                 </TabsList>
+                <TabsContent value="images" className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Images du produit</CardTitle>
+                            <CardDescription>Thumbnail et galerie d&apos;images</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-6">
+                            {/* Thumbnail */}
+                            <div>
+                                <h3 className="text-sm font-medium mb-3">Thumbnail</h3>
+                                {product.thumbnail ? (
+                                    <div className="relative w-48 h-48 rounded-lg overflow-hidden border">
+                                        <Image
+                                            src={product.thumbnail}
+                                            alt={`Thumbnail de ${product.name}`}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </div>
+                                ) : (
+                                    <div className="w-48 h-48 rounded-lg border border-dashed flex items-center justify-center bg-muted">
+                                        <span className="text-muted-foreground text-sm">Aucun thumbnail</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <Separator />
+
+                            {/* Galerie d'images */}
+                            <div>
+                                <h3 className="text-sm font-medium mb-3">
+                                    Galerie d&apos;images ({product.images?.length || 0})
+                                </h3>
+                                {product.images && product.images.length > 0 ? (
+                                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                                        {product.images.map((imageUrl, index) => (
+                                            <div key={index} className="relative aspect-square rounded-lg overflow-hidden border">
+                                                <Image
+                                                    src={imageUrl}
+                                                    alt={`Image ${index + 1} de ${product.name}`}
+                                                    fill
+                                                    className="object-cover"
+                                                />
+                                                <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs py-1 px-2 text-center">
+                                                    Image {index + 1}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="w-full h-32 rounded-lg border border-dashed flex items-center justify-center bg-muted">
+                                        <span className="text-muted-foreground text-sm">Aucune image dans la galerie</span>
+                                    </div>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
                 <TabsContent value="characteristics" className="space-y-4">
                     <Characteristics attributes={product.productAttributeValues || []} />
                 </TabsContent>

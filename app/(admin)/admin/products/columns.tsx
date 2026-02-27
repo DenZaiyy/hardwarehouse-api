@@ -139,7 +139,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                 return <div>N/A</div>
             }
 
-            return <div><Link href={`/admin/brands/${brand.id}`} className="underline underline-offset-5">{brand.name}</Link></div>
+            return <div><Link href={`/admin/brands/${brand.slug}`} className="underline underline-offset-5">{brand.name}</Link></div>
         }
     },
     {
@@ -154,7 +154,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                 return <div>N/A</div>
             }
 
-            return <div><Link href={`/admin/categories/${category.id}`} className="underline underline-offset-5">{category.name}</Link></div>
+            return <div><Link href={`/admin/categories/${category.slug}`} className="underline underline-offset-5">{category.name}</Link></div>
         }
     },
     {
