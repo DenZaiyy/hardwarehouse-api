@@ -60,7 +60,8 @@ export const columns: ColumnDef<Categories>[] = [
             <DataTableColumnHeader column={column} title="Actif" />
         ),
         cell: ({ row }) => {
-            const active = row.getValue('active');
+            const category = row.original
+            const active = category.active;
 
             return <div className={`font-medium ${active ? 'text-green-500' : 'text-red-500'}`}>{active ? "Oui" : "Non"}</div>
         }

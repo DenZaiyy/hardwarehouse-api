@@ -1,4 +1,5 @@
 import {FilterParams, PaginationParams, SortParams} from "@/types/types";
+import {Prisma} from "@/app/generated/prisma/client";
 
 export function parsePagination(searchParams: URLSearchParams): PaginationParams {
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
@@ -25,6 +26,7 @@ export function parseFilters(searchParams: URLSearchParams): FilterParams {
     const categorySlug = searchParams.get('category');
     const search = searchParams.get('search');
     const inStock = searchParams.get('inStock');
+    const active = searchParams.get('active'); // "true", "false", ou null
 
     return {
         ...(minPrice && { minPrice: parseFloat(minPrice) }),
@@ -32,17 +34,18 @@ export function parseFilters(searchParams: URLSearchParams): FilterParams {
         ...(brandSlug && { brandSlug }),
         ...(categorySlug && { categorySlug }),
         ...(search && { search }),
-        ...(inStock === 'true' && { inStock: true })
+        ...(inStock === 'true' && { inStock: true }),
+        ...(active !== null && { active: active === 'true' })
     };
 }
 
 export function buildBrandWhere(filters: FilterParams, extraWhere: object = {}) {
     return {
-        active: true,
         ...extraWhere,
+        ...(filters.active !== undefined && { active: filters.active }),
         ...(filters.search && {
             OR: [
-                { name: { contains: filters.search } },
+                { name: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
             ]
         }),
     };
@@ -50,11 +53,11 @@ export function buildBrandWhere(filters: FilterParams, extraWhere: object = {}) 
 
 export function buildCategoryWhere(filters: FilterParams, extraWhere: object = {}) {
     return {
-        active: true,
         ...extraWhere,
+        ...(filters.active !== undefined && { active: filters.active }),
         ...(filters.search && {
             OR: [
-                { name: { contains: filters.search } },
+                { name: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
             ]
         }),
     };
@@ -62,16 +65,17 @@ export function buildCategoryWhere(filters: FilterParams, extraWhere: object = {
 
 export function buildProductWhere(filters: FilterParams, extraWhere: object = {}) {
     return {
-        active: true,
         ...extraWhere,
+        ...(filters.active !== undefined && { active: filters.active }),
         ...(filters.minPrice && { price: { gte: filters.minPrice } }),
         ...(filters.maxPrice && { price: { lte: filters.maxPrice } }),
         ...(filters.brandSlug && { brand: { slug: filters.brandSlug } }),
         ...(filters.categorySlug && { category: { slug: filters.categorySlug } }),
         ...(filters.search && {
             OR: [
-                { name: { contains: filters.search } },
-                { shortDescription: { contains: filters.search } }
+                { name: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
+                { shortDescription: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
+                { description: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } }
             ]
         }),
         ...(filters.inStock && { stock: { quantity: { gt: 0 } } })

@@ -16,6 +16,7 @@ interface ImageUploadProps {
   onThumbnailChange?: (file: File | null) => void;
   onImagesChange?: (files: File[]) => void;
   thumbnailPreview?: string | null;
+  imagesPreview?: string[]; // Images de galerie existantes
   maxImages?: number;
   // Props pour mode logo
   onLogoChange?: (file: File | null) => void;
@@ -177,6 +178,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onThumbnailChange,
   onImagesChange,
   thumbnailPreview,
+  imagesPreview,
   maxImages = 5,
   onLogoChange,
   logoPreview
@@ -187,6 +189,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(thumbnailPreview || null);
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(logoPreview || null);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>(imagesPreview || []);
 
   const handleThumbnailChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -293,6 +296,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     onImagesChange?.(updatedFiles);
   }, [imageFiles, imagePreviews, onImagesChange]);
 
+  const removeExistingImage = useCallback((index: number) => {
+    const updatedExisting = existingImages.filter((_, i) => i !== index);
+    setExistingImages(updatedExisting);
+  }, [existingImages]);
+
   const removeThumbnail = useCallback(() => {
     if (thumbnailPreviewUrl) {
       URL.revokeObjectURL(thumbnailPreviewUrl);
@@ -379,28 +387,50 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       {/* Gallery Upload */}
       <div className="space-y-4">
         <Label className="text-base font-medium">
-          Galerie d&#39;images ({imageFiles.length}/{maxImages})
+          Galerie d&#39;images ({existingImages.length + imageFiles.length}/{maxImages})
         </Label>
         
+        {/* Images existantes (déjà uploadées en base) */}
+        {existingImages.length > 0 && (
+          <div>
+            <p className="text-sm text-muted-foreground mb-2">Images actuelles :</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {existingImages.map((imageUrl, index) => (
+                <ImagePreview
+                  key={`existing-${index}`}
+                  src={imageUrl}
+                  alt={`Image existante ${index + 1}`}
+                  onRemove={() => removeExistingImage(index)}
+                  type="gallery"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Nouvelles images (uploadées dans ce formulaire) */}
         {imagePreviews.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {imagePreviews.map((preview, index) => (
-              <ImagePreview
-                key={index}
-                src={preview}
-                alt={`Aperçu ${index + 1}`}
-                onRemove={() => removeImage(index)}
-                type="gallery"
-              />
-            ))}
+          <div>
+            <p className="text-sm text-muted-foreground mb-2">Nouvelles images :</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {imagePreviews.map((preview, index) => (
+                <ImagePreview
+                  key={`new-${index}`}
+                  src={preview}
+                  alt={`Nouvelle image ${index + 1}`}
+                  onRemove={() => removeImage(index)}
+                  type="gallery"
+                />
+              ))}
+            </div>
           </div>
         )}
         
-        {imageFiles.length < maxImages && (
-          <EmptyUpload 
+        {(existingImages.length + imageFiles.length) < maxImages && (
+          <EmptyUpload
             type="gallery"
             inputId="images-upload"
-            remainingSlots={maxImages - imageFiles.length}
+            remainingSlots={maxImages - existingImages.length - imageFiles.length}
             maxImages={maxImages}
           />
         )}

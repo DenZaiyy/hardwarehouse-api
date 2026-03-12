@@ -8,6 +8,18 @@ export type ProductsWithCategoryAndBrandAndAttributes = ProductsGetPayload<{ inc
 export type ProductsWithCategoryAndBrand = ProductsGetPayload<{ include: { category: true; brand: true; } }>
 export type ProductsWithStocks = ProductsGetPayload<{ include: { stock: true }}>
 
+// Type pour les données d'entrée de création/mise à jour de produit
+export interface ProductInput {
+    name?: string;
+    price?: number;
+    description?: string;
+    shortDescription?: string;
+    active?: boolean;
+    brandId?: string;
+    category?: string; // slug de la catégorie
+    attributes?: Record<string, string>;
+}
+
 export type StocksWithProduct = StocksGetPayload<{ include: { product: true } }>
 
 export type TransactionsWithProduct = TransactionsGetPayload<{ include: { product: true } }>
@@ -41,6 +53,7 @@ export interface FilterParams {
     categorySlug?: string;
     search?: string;
     inStock?: boolean;
+    active?: boolean;
 }
 
 export interface PaginatedResponse<T> {

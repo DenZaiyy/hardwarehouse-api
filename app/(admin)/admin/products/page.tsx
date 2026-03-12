@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/admin/data-table";
 import {Suspense} from "react";
 import {getProducts} from "@/services/product.service";
+import {ProductsWithCategoryAndBrand} from "@/types/types";
 
 export const metadata: Metadata = {
     title: "HardWareHouse - Administration - Produits",
@@ -15,27 +16,29 @@ export const metadata: Metadata = {
     }
 }
 
-async function ProductsTable() {
-    const data = await getProducts();
-    return <DataTable columns={columns} data={data.data} searchHolder="Filtrer les produits..." />;
+function ProductsTable({ data }: { data: ProductsWithCategoryAndBrand[] }) {
+    return <DataTable columns={columns} data={data} searchHolder="Filtrer les produits..." />;
 }
 
 function ProductsTableSkeleton() {
     return <DataTable columns={columns} data={[]} searchHolder="Filtrer les produits..." isLoading={true} />;
 }
 
-const ProductsPage = () => {
+const ProductsPage = async () => {
+    const result = await getProducts();
+    const productsCount = result.meta.total;
+
     return (
         <div className="py-5">
             <div className="flex justify-between items-center">
-                <h1>Gestion des produits</h1>
+                <h1>Gestion des produits ({productsCount})</h1>
                 <Button asChild>
                     <Link href="/admin/products/add">Ajouter un produit</Link>
                 </Button>
             </div>
 
             <Suspense fallback={<ProductsTableSkeleton />}>
-                <ProductsTable />
+                <ProductsTable data={result.data} />
             </Suspense>
         </div>
     )
