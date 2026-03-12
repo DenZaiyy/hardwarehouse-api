@@ -40,6 +40,9 @@ jobs:
       - checkout
       - attach-workspace  # Use cached node_modules
       - run:
+          name: Generate Prisma Client
+          command: npx prisma generate
+      - run:
           name: Create test-results directory
           command: mkdir -p ./test-results
         # Run the tests using npm and generate test results
@@ -85,6 +88,9 @@ jobs:
     steps:
       - checkout
       - attach-workspace  # Use cached node_modules
+      - run:
+          name: Generate Prisma Client
+          command: npx prisma generate
       # Run NextJS types generation
       - run:
           name: Run Next Typegen to generate types helper
@@ -104,6 +110,9 @@ jobs:
       # Check out the code from the repository
       - checkout
       - attach-workspace  # Use cached node_modules
+      - run:
+          name: Generate Prisma Client
+          command: npx prisma generate
       # Restaurer le cache du build Next.js
       - restore_cache:
           keys:
