@@ -45,7 +45,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
         }
 
-        // 🚀 OPTIMIZATION #17: Add rate limiting to stocks POST
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success } = await rateLimiter.limit(ip);
 
@@ -55,12 +54,10 @@ export async function POST(req: NextRequest) {
 
         const { minQuantity, quantity, productId } = await req.json();
 
-        // 🚀 OPTIMIZATION #18: Fix validation logic
         if (!minQuantity || !quantity || !productId) {
             return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
         }
 
-        // 🚀 OPTIMIZATION #19: Use transaction for validation + creation
         const stock = await db.$transaction(async (tx) => {
             // Parallel validation queries
             const [existingProduct, existingStock] = await Promise.all([
@@ -83,7 +80,7 @@ export async function POST(req: NextRequest) {
             }
 
             // Create stock
-            return await tx.stocks.create({
+            return tx.stocks.create({
                 data: {
                     minQuantity: minQuantity,
                     quantity: quantity,

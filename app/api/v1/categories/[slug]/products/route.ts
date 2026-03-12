@@ -18,6 +18,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categorie
                 select: {
                     id: true,
                     name: true,
+                    active: true,
                     slug: true,
                     price: true,
                     thumbnail: true,

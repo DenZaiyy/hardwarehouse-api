@@ -35,27 +35,16 @@ export async function getCategory(slug: string): Promise<Categories> {
     return res.json();
 }
 
-export async function createCategory(data: FormData | Partial<Categories>): Promise<Categories> {
+export async function createCategory(data: Partial<Categories>): Promise<Categories> {
     const cookieHeader = await cookies();
-
-    const headers: HeadersInit = {
-        Cookie: cookieHeader.toString()
-    };
-
-    let body: BodyInit;
-
-    if (data instanceof FormData) {
-        // Don't set Content-Type for FormData, let browser set it with boundary
-        body = data;
-    } else {
-        headers["Content-Type"] = "application/json";
-        body = JSON.stringify(data);
-    }
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
         method: "POST",
-        headers,
-        body,
+        headers: {
+            Cookie: cookieHeader.toString(),
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
         cache: "no-store"
     });
 
@@ -64,34 +53,49 @@ export async function createCategory(data: FormData | Partial<Categories>): Prom
     return res.json();
 }
 
-export async function updateCategory(slug: string, data: FormData | Partial<Categories>): Promise<Categories> {
+export async function updateCategory(slug: string, data: Partial<Categories>): Promise<Categories> {
     const cookieHeader = await cookies();
-
-    const headers: HeadersInit = {
-        Cookie: cookieHeader.toString()
-    };
-
-    let body: BodyInit;
-
-    if (data instanceof FormData) {
-        // Don't set Content-Type for FormData, let browser set it with boundary
-        body = data;
-    } else {
-        headers["Content-Type"] = "application/json";
-        body = JSON.stringify(data);
-    }
 
     const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/categories/${slug}`,
         {
             method: "PATCH",
-            headers,
-            body,
+            headers: {
+                Cookie: cookieHeader.toString(),
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data),
             cache: "no-store"
         }
     );
 
-    if (!res.ok) throw new Error("Échec de la mise à jour de la catégorie");
+    if (!res.ok) throw Error(await res.json());
+
+    return res.json();
+}
+
+export async function uploadCategoryLogo(slug: string, logo: File): Promise<{ success: boolean; logo?: string; error?: string }> {
+    const cookieHeader = await cookies();
+
+    const formData = new FormData();
+    formData.append('logo', logo);
+
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/upload/categories/${slug}`,
+        {
+            method: "POST",
+            headers: {
+                Cookie: cookieHeader.toString()
+            },
+            body: formData,
+            cache: "no-store"
+        }
+    );
+
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        return { success: false, error: errorData.error || "Échec de l'upload du logo" };
+    }
 
     return res.json();
 }

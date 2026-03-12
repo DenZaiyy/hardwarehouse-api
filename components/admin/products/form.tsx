@@ -3,7 +3,7 @@
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {ProductsWithCategoryAndBrandAndAttributes} from "@/types/types";
+import {ProductInput, ProductsWithCategoryAndBrandAndAttributes} from "@/types/types";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -18,6 +18,47 @@ import {createProduct, updateProduct} from "@/services/product.service";
 import {productSchema} from "@/lib/validators/productSchema";
 import {Textarea} from "@/components/ui/textarea";
 import ImageUpload from "./image-upload";
+
+// Fonction d'upload côté client (les File ne peuvent pas être envoyés via Server Actions)
+async function uploadProductImagesClient(
+    slug: string,
+    thumbnail?: File | null,
+    images?: File[]
+): Promise<{ success: boolean; thumbnail?: string; images?: string[]; error?: string }> {
+    const formData = new FormData();
+
+    if (thumbnail) {
+        formData.append('thumbnail', thumbnail);
+    }
+
+    if (images && images.length > 0) {
+        images.forEach((file) => {
+            formData.append('images', file);
+        });
+    }
+
+    // Vérifier qu'il y a au moins un fichier
+    if (!thumbnail && (!images || images.length === 0)) {
+        return { success: true }; // Rien à uploader
+    }
+
+    try {
+        const res = await fetch(`/api/v1/upload/products/${slug}`, {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            return { success: false, error: errorData.error || "Échec de l'upload des images" };
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error('[UPLOAD] Error:', error);
+        return { success: false, error: "Erreur réseau lors de l'upload" };
+    }
+}
 
 type CategoryAttribute = {
     id: string;
@@ -39,6 +80,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
     const [categoryAttributes, setCategoryAttributes] = useState<CategoryAttribute[]>([]);
     const [attributeValues, setAttributeValues] = useState<Record<string, string>>({});
     const [selectedCategorySlug, setSelectedCategorySlug] = useState<string>(product?.category.slug ?? "");
+    const [isAttributesLoaded, setIsAttributesLoaded] = useState(false);
 
     const form = useForm<z.infer<typeof productSchema>>({
         resolver: zodResolver(productSchema),
@@ -82,6 +124,27 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
         }
     }, [selectedCategorySlug]);
 
+    // Hydrater les valeurs d'attributs existantes du produit (en mode édition)
+    useEffect(() => {
+        if (product?.productAttributeValues && categoryAttributes.length > 0 && !isAttributesLoaded) {
+            const existingValues: Record<string, string> = {};
+
+            product.productAttributeValues.forEach((pav) => {
+                // Utiliser categoryAttributeId directement ou categoryAttribute.id comme fallback
+                const categoryAttrId = (pav as { categoryAttributeId?: string }).categoryAttributeId
+                    || pav.categoryAttribute?.id;
+
+                if (categoryAttrId) {
+                    existingValues[categoryAttrId] = pav.value;
+                }
+            });
+
+            setAttributeValues(existingValues);
+            setIsAttributesLoaded(true);
+            console.log('[FORM] Hydrated attribute values:', existingValues);
+        }
+    }, [product?.productAttributeValues, categoryAttributes, isAttributesLoaded]);
+
     async function onSubmit(values: z.infer<typeof productSchema>) {
         // Validate required attributes
         const requiredAttributeErrors: string[] = [];
@@ -96,63 +159,79 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
             return;
         }
 
-        // Create FormData for file uploads
-        const formData = new FormData();
-        
-        // Add text fields
-        formData.append('name', values.name);
-        formData.append('price', values.price.toString());
-        formData.append('active', values.active.toString());
-        formData.append('brandId', values.brandId);
-        formData.append('category', values.category);
-        
-        if (values.description) formData.append('description', values.description);
-        if (values.shortDescription) formData.append('shortDescription', values.shortDescription);
-        
-        // Add attributes as JSON string
-        if (Object.keys(attributeValues).length > 0) {
-            formData.append('attributes', JSON.stringify(attributeValues));
-        }
-        
-        // Add files from state
-        if (thumbnailFile) {
-            formData.append('thumbnail', thumbnailFile);
-        }
-        
-        imageFiles.forEach((file) => {
-            formData.append('images', file);
-        });
+        try {
+            // Préparer les données JSON (sans fichiers)
+            const productData: ProductInput = {
+                name: values.name,
+                price: values.price,
+                active: values.active,
+                brandId: values.brandId,
+                category: values.category,
+                description: values.description || undefined,
+                shortDescription: values.shortDescription || undefined,
+                attributes: Object.keys(attributeValues).length > 0 ? attributeValues : undefined,
+            };
 
-        if (!product) {
-            console.log('[FORM] Creating product with FormData');
-            console.table(formData);
-            const result = await createProduct(formData)
+            if (!product) {
+                // 1. Créer le produit en JSON
+                console.log('[FORM] Creating product with JSON:', productData);
+                const result = await createProduct(productData);
 
-            console.table(result)
+                if (!result) {
+                    toast.error("Une erreur est survenue lors de la création du produit.")
+                    return;
+                }
 
-            if (!result) {
-                toast.error("Une erreur est survenue lors de la création du produit.")
-                return
+                // 2. Upload les images séparément si présentes
+                if (thumbnailFile || imageFiles.length > 0) {
+                    const uploadResult = await uploadProductImagesClient(
+                        result.slug,
+                        thumbnailFile,
+                        imageFiles
+                    );
+
+                    if (!uploadResult.success) {
+                        toast.error("Produit créé, mais erreur lors de l'upload des images.");
+                    }
+                }
+
+                toast.success("Produit créé avec succès.");
+                form.reset();
+                setAttributeValues({});
+                setThumbnailFile(null);
+                setImageFiles([]);
+            } else {
+                // 1. Mettre à jour le produit en JSON
+                console.log('[FORM] Updating product with JSON:', productData);
+                const result = await updateProduct(product.slug, productData);
+
+                if (!result) {
+                    toast.error("Une erreur est survenue lors de la mise à jour du produit.")
+                    return;
+                }
+
+                // 2. Upload les nouvelles images si présentes
+                if (thumbnailFile || imageFiles.length > 0) {
+                    const uploadResult = await uploadProductImagesClient(
+                        result.slug,
+                        thumbnailFile,
+                        imageFiles
+                    );
+
+                    if (!uploadResult.success) {
+                        toast.error("Produit mis à jour, mais erreur lors de l'upload des images.");
+                    }
+                }
+
+                toast.success("Produit mis à jour avec succès.");
+                form.reset();
+                setAttributeValues({});
+                setThumbnailFile(null);
+                setImageFiles([]);
             }
-
-            toast.success("Produit créé avec succès.")
-            form.reset()
-            setAttributeValues({})
-            setThumbnailFile(null)
-            setImageFiles([])
-        } else {
-            const result = await updateProduct(product.slug, formData)
-
-            if (!result) {
-                toast.error("Une erreur est survenue lors de la mise à jour du produit.")
-                return
-            }
-
-            toast.success("Produit mis à jour avec succès.")
-            form.reset()
-            setAttributeValues({})
-            setThumbnailFile(null)
-            setImageFiles([])
+        } catch (error) {
+            console.error('[ProductForm]', error);
+            toast.error("Une erreur est survenue.");
         }
     }
 
@@ -275,6 +354,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                                             field.onChange(value);
                                             setSelectedCategorySlug(value);
                                             setAttributeValues({}); // Reset attribute values when category changes
+                                            setIsAttributesLoaded(false); // Reset pour permettre la réhydratation si on revient à la catégorie originale
                                         }}
                                         value={field.value}
                                     >
@@ -332,6 +412,7 @@ const ProductForm = ({ product, brands, categories, method }: ProductFormProps) 
                         onThumbnailChange={setThumbnailFile}
                         onImagesChange={setImageFiles}
                         thumbnailPreview={product?.thumbnail}
+                        imagesPreview={product?.images || []}
                         maxImages={8}
                     />
                 </div>

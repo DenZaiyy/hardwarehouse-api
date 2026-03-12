@@ -148,10 +148,21 @@ export class ImageUploadService {
     const slug = directory.split('/').pop()!;
     
     let mainUrl = '';
+    let fallbackUrl = ''; // URL de secours si la version principale est skippée
     const sizeUrls: { [suffix: string]: string } = {};
 
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+
+    // Obtenir les dimensions originales de l'image
+    const metadata = await sharp(buffer).metadata();
+    const originalWidth = metadata.width || 1200;
+    const originalHeight = metadata.height || 1200;
+
+    console.log(`[UPLOAD] Processing ${baseFilename} - Original: ${originalWidth}x${originalHeight}`);
+
+    // Pour éviter de générer des tailles identiques, on track la dernière largeur générée
+    let lastGeneratedWidth = 0;
 
     for (const size of sizes) {
       const filename = `${baseFilename}${size.suffix}`;
@@ -159,20 +170,35 @@ export class ImageUploadService {
       // Détermine si c'est un format carré (thumbnails et logos)
       const isSquare = imageType === 'thumbnail' || imageType === 'logo';
       
+      let targetWidth: number;
       let sharpInstance = sharp(buffer);
       
       if (isSquare) {
-        // Format carré : resize et crop au centre
+        // Format carré : toujours générer à la taille exacte demandée
+        targetWidth = size.width;
         sharpInstance = sharpInstance
           .resize(size.width, size.width, {
             fit: 'cover',
             position: 'center'
           });
       } else {
-        // Format libre pour gallery : resize en gardant le ratio
+        // Format libre pour gallery : ne pas agrandir au-delà de l'original
+        targetWidth = Math.min(size.width, originalWidth);
+
+        // Skip si la taille serait identique à la précédente (sauf pour la version principale)
+        if (targetWidth === lastGeneratedWidth && size.suffix !== '') {
+          console.log(`[UPLOAD] Skipping ${filename} - same as previous (${targetWidth}px)`);
+          continue;
+        }
+
+        // Si c'est la version principale mais qu'elle serait identique, on la génère quand même
+        // car c'est elle qui est stockée en base
+        if (targetWidth === lastGeneratedWidth && size.suffix === '') {
+          console.log(`[UPLOAD] Generating ${filename} anyway (main version) - ${targetWidth}px`);
+        }
+
         sharpInstance = sharpInstance
-          .resize(size.width, null, {
-            withoutEnlargement: true,
+          .resize(targetWidth, null, {
             fit: 'inside',
           });
       }
@@ -180,6 +206,10 @@ export class ImageUploadService {
       const resizedBuffer = await sharpInstance
         .webp({ quality: this.UPLOAD_CONFIG.quality })
         .toBuffer();
+
+      // Obtenir les dimensions réelles après resize
+      const resizedMetadata = await sharp(resizedBuffer).metadata();
+      console.log(`[UPLOAD] Generated ${filename}: ${resizedMetadata.width}x${resizedMetadata.height}`);
 
       await this.ensureDirectory(directory);
       const filePath = join(directory, `${filename}.webp`);
@@ -191,7 +221,19 @@ export class ImageUploadService {
         mainUrl = url;
       } else {
         sizeUrls[size.suffix] = url;
+        // Garder la première URL générée comme fallback
+        if (!fallbackUrl) {
+          fallbackUrl = url;
+        }
       }
+
+      lastGeneratedWidth = targetWidth;
+    }
+
+    // Si mainUrl est vide (version principale skippée), utiliser le fallback
+    if (!mainUrl && fallbackUrl) {
+      console.log(`[UPLOAD] Using fallback URL for ${baseFilename}: ${fallbackUrl}`);
+      mainUrl = fallbackUrl;
     }
 
     return { main: mainUrl, sizes: sizeUrls };
@@ -248,14 +290,23 @@ export class ImageUploadService {
       data.thumbnail = thumbnail;
     }
 
-    // Images (images[0], images[1], etc.)
+    // Images - support deux formats:
+    // 1. images[0], images[1], etc. (format indexé)
+    // 2. images, images, images (même clé répétée avec getAll)
     const images = new Map<number, File>();
-    
+    let imageIndex = 0;
+
     for (const [key, value] of formData.entries()) {
+      // Format indexé: images[0], images[1], etc.
       const match = key.match(/^images\[(\d+)\]$/);
       if (match && value instanceof File && value.size > 0) {
         const index = parseInt(match[1], 10);
         images.set(index, value);
+      }
+      // Format simple: images (même clé répétée)
+      else if (key === 'images' && value instanceof File && value.size > 0) {
+        images.set(imageIndex, value);
+        imageIndex++;
       }
     }
 
@@ -507,6 +558,60 @@ export class ImageUploadService {
         error: error instanceof Error ? error.message : 'Erreur lors de la suppression',
         code: 'DELETE_ERROR',
       };
+    }
+  }
+
+  /**
+   * Supprime toutes les images de galerie d'un produit (image-*.webp)
+   * Garde le thumbnail intact
+   */
+  static async deleteGalleryImages(type: UploadEntityType, slug: string): Promise<void> {
+    const directory = this.getUploadDir(type, slug);
+
+    try {
+      if (!(await this.directoryExists(directory))) {
+        return;
+      }
+
+      const files = await readdir(directory);
+
+      // Supprimer uniquement les fichiers image-* (pas le thumbnail)
+      for (const file of files) {
+        if (file.match(/^image-\d+(-sm|-lg)?\.webp$/)) {
+          const filePath = join(directory, file);
+          await unlink(filePath);
+          console.log(`[DELETE] Removed gallery image: ${file}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Erreur suppression galerie ${type}/${slug}:`, error);
+    }
+  }
+
+  /**
+   * Supprime le thumbnail d'un produit (thumbnail*.webp)
+   * Garde les images de galerie intactes
+   */
+  static async deleteThumbnail(type: UploadEntityType, slug: string): Promise<void> {
+    const directory = this.getUploadDir(type, slug);
+
+    try {
+      if (!(await this.directoryExists(directory))) {
+        return;
+      }
+
+      const files = await readdir(directory);
+
+      // Supprimer uniquement les fichiers thumbnail* (pas les images de galerie)
+      for (const file of files) {
+        if (file.match(/^thumbnail(@2x)?\.webp$/)) {
+          const filePath = join(directory, file);
+          await unlink(filePath);
+          console.log(`[DELETE] Removed thumbnail: ${file}`);
+        }
+      }
+    } catch (error) {
+      console.error(`Erreur suppression thumbnail ${type}/${slug}:`, error);
     }
   }
 

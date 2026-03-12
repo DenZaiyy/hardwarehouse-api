@@ -13,6 +13,7 @@ interface UpdateProductData {
     thumbnail?: string;
     images?: string[];
     categoryId?: string;
+    brandId?: string;
 }
 
 interface RouteParams {
@@ -63,6 +64,7 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
                     select: {
                         id: true,
                         value: true,
+                        categoryAttributeId: true,
                         categoryAttribute: {
                             select: {
                                 id: true,
@@ -113,11 +115,14 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { slug } = await params;
-        const { name, price, description, shortDescription, active, thumbnail, images, categoryId, attributes } = await req.json();
+        const body = await req.json();
+        const { name, price, description, shortDescription, active, thumbnail, images, category, brandId, attributes } = body;
 
         // Vérifier qu'au moins un champ est fourni
-        if (!name && !price && !description && !shortDescription && !images && !thumbnail && !categoryId && !active) {
-            return NextResponse.json("Au moins un champ est obligatoire.", { status: 400 });
+        if (name === undefined && price === undefined && description === undefined &&
+            shortDescription === undefined && images === undefined && thumbnail === undefined &&
+            category === undefined && brandId === undefined && active === undefined && attributes === undefined) {
+            return NextResponse.json({ error: "Au moins un champ est obligatoire." }, { status: 400 });
         }
 
         const { success, remaining, reset } = await rateLimiter.limit(ip);
@@ -142,24 +147,51 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
         const productId = product.id;
 
         // Mettre à jour le slug seulement si le nom change
-        if (name !== product.name) {
+        if (name !== undefined && name !== product.name) {
             updateData.name = name;
             updateData.slug = slugifyName(name);
         }
         // Mettre à jour la description seulement si elle change
-        if (description !== product.description) updateData.description = description;
+        if (description !== undefined && description !== product.description) {
+            updateData.description = description;
+        }
         // Mettre à jour la shortDescription seulement si elle change
-        if (shortDescription !== product.shortDescription) updateData.shortDescription = shortDescription;
+        if (shortDescription !== undefined && shortDescription !== product.shortDescription) {
+            updateData.shortDescription = shortDescription;
+        }
         // Mettre à jour les images seulement si elles changent
-        if (images && JSON.stringify(images) !== JSON.stringify(product.images)) updateData.images = images;
+        if (images !== undefined && JSON.stringify(images) !== JSON.stringify(product.images)) {
+            updateData.images = images;
+        }
         // Mettre à jour le prix seulement s'il change
-        if (price !== product.price) updateData.price = price;
+        if (price !== undefined && price !== product.price) {
+            updateData.price = price;
+        }
         // Mettre à jour le status actif seulement s'il change
-        if (active !== product.active) updateData.active = active;
+        if (active !== undefined && active !== product.active) {
+            updateData.active = active;
+        }
         // Mettre à jour l'image seulement si elle change
-        if (thumbnail !== product.thumbnail) updateData.thumbnail = thumbnail;
-        // Mettre à jour la categoryId seulement si elle change
-        if (categoryId) updateData.categoryId = categoryId;
+        if (thumbnail !== undefined && thumbnail !== product.thumbnail) {
+            updateData.thumbnail = thumbnail;
+        }
+        // Mettre à jour la catégorie si elle change (par slug)
+        if (category !== undefined) {
+            const newCategory = await db.categories.findUnique({
+                where: { slug: category },
+                select: { id: true }
+            });
+            if (newCategory && newCategory.id !== product.categoryId) {
+                updateData.categoryId = newCategory.id;
+            }
+        }
+        // Mettre à jour la marque si elle change
+        if (brandId !== undefined && brandId !== product.brandId) {
+            updateData.brandId = brandId;
+        }
+
+        console.log('[PRODUCT PATCH] updateData:', updateData);
+        console.log('[PRODUCT PATCH] attributes:', attributes);
 
         const updatedProduct = await db.$transaction(async (tx) => {
             // Update product

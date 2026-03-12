@@ -1,5 +1,6 @@
 import {NextRequest, NextResponse} from 'next/server';
-import { ImageUploadService } from '@/services/image-upload.service';
+import {ImageUploadService} from '@/services/image-upload.service';
+import {db} from '@/lib/db';
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
@@ -7,8 +8,8 @@ interface RouteParams {
 
 /**
  * POST /api/upload/brands/[slug]
- * Upload le logo d'une marque
- * 
+ * Upload le logo d'une marque et met à jour la marque en DB
+ *
  * FormData:
  * - logo: File
  */
@@ -20,6 +21,19 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       return NextResponse.json(
         { success: false, error: 'Slug requis', code: 'INVALID_TYPE' },
         { status: 400 }
+      );
+    }
+
+    // Vérifier que la marque existe
+    const brand = await db.brands.findUnique({
+      where: { slug },
+      select: { id: true }
+    });
+
+    if (!brand) {
+      return NextResponse.json(
+        { success: false, error: 'Marque introuvable', code: 'NOT_FOUND' },
+        { status: 404 }
       );
     }
 
@@ -42,6 +56,14 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       return NextResponse.json(result, { status });
     }
 
+    // Mettre à jour la marque avec l'URL du logo
+    if (result.logo) {
+      await db.brands.update({
+        where: { slug },
+        data: { logo: result.logo }
+      });
+    }
+
     return NextResponse.json(result);
   } catch (error) {
     console.error('Erreur POST /api/upload/brands/[slug]:', error);
@@ -58,7 +80,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 
 /**
  * DELETE /api/upload/brands/[slug]
- * Supprime le logo d'une marque
+ * Supprime le logo d'une marque et met à jour la marque en DB
  */
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
@@ -71,12 +93,31 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       );
     }
 
+    // Vérifier que la marque existe
+    const brand = await db.brands.findUnique({
+      where: { slug },
+      select: { id: true }
+    });
+
+    if (!brand) {
+      return NextResponse.json(
+        { success: false, error: 'Marque introuvable', code: 'NOT_FOUND' },
+        { status: 404 }
+      );
+    }
+
     const result = await ImageUploadService.deleteAllImages('brands', slug);
 
     if (!result.success) {
       const status = result.code === 'NOT_FOUND' ? 404 : 500;
       return NextResponse.json(result, { status });
     }
+
+    // Supprimer le logo de la marque en DB
+    await db.brands.update({
+      where: { slug },
+      data: { logo: null }
+    });
 
     return NextResponse.json(result);
   } catch (error) {

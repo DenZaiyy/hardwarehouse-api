@@ -7,6 +7,7 @@ interface UpdateBrandData {
     name?: string;
     slug?: string;
     logo?: string;
+    active?: boolean;
 }
 
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/brands/[slug]'>) {
@@ -47,10 +48,11 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/brands/
         }
 
         const { slug } = await ctx.params;
-        const { name, logo } = await req.json();
+        const body = await req.json();
+        const { name, logo, active } = body;
 
         // Vérifier qu'au moins un champ est fourni
-        if (!name && !logo) {
+        if (name === undefined && logo === undefined && active === undefined) {
             return NextResponse.json({ error: "Au moins un champ est obligatoire." }, { status: 400 });
         }
 
@@ -65,13 +67,20 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/brands/
         }
 
         // Mettre à jour le slug seulement si le nom change
-        if (name !== brand.name) {
+        if (name !== undefined && name !== brand.name) {
             updateData.name = name;
             updateData.slug = slugifyName(name);
         }
 
         // Mettre à jour le logo seulement s'il change
-        if (logo !== brand.logo) updateData.logo = logo;
+        if (logo !== undefined && logo !== brand.logo) {
+            updateData.logo = logo;
+        }
+
+        // Mettre à jour active seulement s'il change
+        if (active !== undefined && active !== brand.active) {
+            updateData.active = Boolean(active);
+        }
 
         const updatedBrand = await db.brands.update({
             where: {
