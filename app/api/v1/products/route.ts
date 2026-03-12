@@ -30,14 +30,16 @@ export async function GET(req: NextRequest) {
                         select: {
                             id: true,
                             name: true,
-                            slug: true
+                            slug: true,
+                            active: true
                         }
                     },
                     brand: {
                         select: {
                             id: true,
                             name: true,
-                            slug: true
+                            slug: true,
+                            active: true
                         }
                     },
                 },

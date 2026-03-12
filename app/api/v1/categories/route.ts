@@ -19,14 +19,30 @@ export async function GET(req: NextRequest) {
                 logo: true,
                 active: true,
                 createdAt: true,
-                updatedAt: true
+                updatedAt: true,
+                _count: {
+                    select: {
+                        Products: true
+                    }
+                }
             },
             orderBy: {
                 createdAt: 'desc'
             }
         });
 
-        return NextResponse.json(categories, {status: 200});
+        const formattedCategories = categories.map((category) => ({
+            id: category.id,
+            name: category.name,
+            slug: category.slug,
+            logo: category.logo,
+            active: category.active,
+            createdAt: category.createdAt,
+            updatedAt: category.updatedAt,
+            productsCount: category._count.Products,
+        }));
+
+        return NextResponse.json(formattedCategories, {status: 200});
     } catch (error) {
         if (error instanceof Error) {
             console.error('[CATEGORIES] ', error.message)
