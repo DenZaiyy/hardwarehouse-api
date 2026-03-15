@@ -129,21 +129,26 @@ const ProductDetails = async ({ params }: ProductParams) => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4 flex flex-row justify-between gap-2">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 w-1/4">
                         <p>Nom: <strong>{product.name}</strong></p>
                         <p>Prix HT: <strong>{product.price}</strong></p>
                         <p>TVA: <strong>20%</strong></p>
                         <p>Prix TTC: <strong>{Number((product.price * 1.2)).toFixed(2)}</strong></p>
                     </div>
                     <Separator orientation="vertical" />
-                    <div className="flex flex-col gap-2">
-                        <p>Catégorie: <strong><Link href={`/admin/categories/${product.category.id}`}>{product.category.name}</Link></strong></p>
-                        <p>Marque: <strong><Link href={`/admin/brands/${product.brand.id}`}>{product.brand.name}</Link></strong></p>
+                    <div className="flex flex-col gap-2 w-1/4">
+                        <p>Catégorie: <strong><Link href={`/admin/categories/${product.category.slug}`}>{product.category.name}</Link></strong></p>
+                        <p>Marque: <strong><Link href={`/admin/brands/${product.brand.slug}`}>{product.brand.name}</Link></strong></p>
                     </div>
                     <Separator orientation="vertical" />
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 w-1/4">
                         <p>Crée le: <strong>{formatDate(product.createdAt)}</strong></p>
                         <p>Mise à jour le: <strong>{formatDate(product.updatedAt)}</strong></p>
+                    </div>
+                    <Separator orientation="vertical" />
+                    <div className="flex flex-col gap-2 w-1/4">
+                        <p>Description courte: {product.shortDescription}</p>
+                        <p className="text-wrap">Description longue: {product.description}</p>
                     </div>
                 </CardContent>
                 <CardFooter>
