@@ -1,5 +1,5 @@
 import {FilterParams, PaginationParams, SortParams} from "@/types/types";
-import {Prisma} from "@/app/generated/prisma/client";
+import {Prisma} from "@prisma/client";
 
 export function parsePagination(searchParams: URLSearchParams): PaginationParams {
     const page = Math.max(1, parseInt(searchParams.get('page') || '1'));

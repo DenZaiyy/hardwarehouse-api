@@ -6,7 +6,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {Brands} from "@/app/generated/prisma/client";
+import {Brands} from "@prisma/client";
 import toast from "react-hot-toast";
 import React from "react";
 import {createBrand, updateBrand} from "@/services/brand.service";

@@ -4,37 +4,49 @@ import {auth, currentUser} from "@clerk/nextjs/server";
 import {rateLimiter} from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
+    const { userId } = await auth();
+
+    if (!userId) {
+        return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
+    }
+
+    let remaining = 0;
+    let reset = 0;
+
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+
+
     try {
-        const { userId } = await auth();
+        const result = await rateLimiter.limit(ip);
+        remaining = result.remaining ? result.remaining : 0;
+        reset = result.reset ? result.reset : 0;
 
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
-        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
-        const { success, remaining, reset } = await rateLimiter.limit(ip);
-
-        if (!success) {
+        if (!result.success) {
             return NextResponse.json(
                 { error: "Trop de demandes" },
                 { status: 429 }
             );
         }
+    } catch (err) {
+        console.warn('Rate limiter unavailable', err);
+    }
 
-        // 🚀 OPTIMIZATION #20: Selective field loading for transactions (FIXED)
+
+    try {
         const transactions = await db.transactions.findMany({
             select: {
                 id: true,
-                type: true,        // Boolean field
-                oldQtt: true,      // Correct field name
-                newQtt: true,      // Correct field name
+                type: true,
+                oldQtt: true,
+                newQtt: true,
                 userId: true,
                 userFullName: true,
-                createdAt: true,   // Only field that exists, no updatedAt
+                createdAt: true,
                 product: {
                     select: {
                         id: true,
                         name: true,
+                        active: true,
                         slug: true,
                         price: true,
                         thumbnail: true
@@ -46,6 +58,12 @@ export async function GET(req: NextRequest) {
             }
         });
 
+        if (transactions.length > 0) {
+            console.log("plus de 1");
+        } else {
+
+        }
+
         const res = NextResponse.json(transactions, { status: 200 });
         res.headers.set('X-RateLimit-Remaining', remaining.toString());
         res.headers.set('X-RateLimit-Reset', reset.toString());
@@ -53,9 +71,13 @@ export async function GET(req: NextRequest) {
         return res;
     } catch (error) {
         if (error instanceof Error) {
-            console.error('[TRANSACTIONS] ', error.message)
+            console.error('[TRANSACTIONS] allo', error.message)
+
+            return NextResponse.json(
+                {error: `[TRANSACTIONS] Erreur interne : ${error ? error.message : 'Erreur inconnue'}`},
+                {status: 500}
+            );
         }
-        return new NextResponse('Internal Error', { status: 500 });
     }
 }
 
@@ -124,7 +146,7 @@ export async function POST(req: NextRequest) {
     } catch (e) {
         if (e instanceof  Error) {
             console.error(e.message);
-            return NextResponse.json({ error: "[TRANSACTION POST] Une erreur est survenue lors de la création d'une transaction" })
+            return NextResponse.json({ error: "[TRANSACTION POST] Une erreur est survenue lors de la création d'une transaction" }, { status: 500 })
         }
     }
 }

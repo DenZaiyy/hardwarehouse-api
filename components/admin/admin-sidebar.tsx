@@ -15,7 +15,7 @@ import {
 import React from "react";
 import {ThemeSwitcher} from "@/components/theme-switcher";
 import Link from "next/link";
-import {SignedIn, SignOutButton} from "@clerk/nextjs";
+import {Show, SignOutButton} from "@clerk/nextjs";
 import {auth, currentUser} from "@clerk/nextjs/server";
 
 const items = [
@@ -104,7 +104,7 @@ export async function AdminSidebar({ ...props }: React.ComponentProps<typeof Sid
             </SidebarContent>
             <SidebarFooter className="text-center">
                 <SidebarMenu>
-                    <SignedIn>
+                    <Show when="signed-in">
                         <SidebarMenuItem>
                             <SidebarMenuButton asChild className="cursor-pointer">
                                 <SignOutButton>
@@ -114,7 +114,7 @@ export async function AdminSidebar({ ...props }: React.ComponentProps<typeof Sid
                                 </SignOutButton>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
-                    </SignedIn>
+                    </Show>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild>
                             <Link href="/" target="_blank">
@@ -127,5 +127,5 @@ export async function AdminSidebar({ ...props }: React.ComponentProps<typeof Sid
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>
-    )
+    );
 }
