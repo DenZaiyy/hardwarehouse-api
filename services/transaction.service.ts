@@ -17,7 +17,10 @@ export async function getTransactions(): Promise<TransactionsWithProduct[]>  {
         }
     );
 
-    if (!res.ok) throw new Error("Failed to fetch transactions");
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || 'Failed to fetch transactions');
+    }
 
     return res.json();
 }
