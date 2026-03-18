@@ -38,7 +38,7 @@ export const columns: ColumnDef<TransactionsWithProduct>[] = [
                 return <div>N/A</div>
             }
 
-            return <div><Link href={`/admin/products/${product.id}`}
+            return <div><Link href={`/admin/products/${product.slug}`}
                               className="underline underline-offset-5">{product.name}</Link></div>
         }
     },
