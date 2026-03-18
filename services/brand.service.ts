@@ -1,6 +1,6 @@
 "use server";
 
-import {Brands} from "@/app/generated/prisma/client";
+import {Brands} from "@prisma/client";
 import {cookies} from "next/headers";
 import {PaginatedResponse} from "@/types/types";
 

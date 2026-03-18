@@ -64,3 +64,10 @@ lint: ## Lint the codebase
 test: ## Run tests using jest
 	$(call banner,$(INFO),Running tests...)
 	npm run test
+
+.PHONY: clean
+clean: ## Clean project dependencies (remove node_modules and next server)
+	$(call banner,$(INFO),Remove folders...)
+	rm -rf ./node_modules ./.next
+	$(call banner,$(INFO),Install dependencies...)
+	npm install

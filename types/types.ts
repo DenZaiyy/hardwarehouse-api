@@ -1,4 +1,4 @@
-import {Prisma} from "@/app/generated/prisma/client";
+import {Prisma} from "@prisma/client";
 import ProductsGetPayload = Prisma.ProductsGetPayload;
 import StocksGetPayload = Prisma.StocksGetPayload;
 import TransactionsGetPayload = Prisma.TransactionsGetPayload;

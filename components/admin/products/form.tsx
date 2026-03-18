@@ -9,7 +9,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {InputGroup, InputGroupAddon, InputGroupInput, InputGroupText} from "@/components/ui/input-group";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {AttributeType, Brands, Categories} from "@/app/generated/prisma/client";
+import {AttributeType, Brands, Categories} from "@prisma/client";
 import toast from "react-hot-toast";
 import React, {useEffect, useState} from "react";
 import {Label} from "@/components/ui/label";
