@@ -1,6 +1,6 @@
 "use server"
 
-import {Categories} from "@/app/generated/prisma/client";
+import {Categories} from "@prisma/client";
 import {cookies} from "next/headers";
 
 export async function getCategories(): Promise<Categories[]> {

@@ -9,7 +9,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import toast from "react-hot-toast";
 import React from "react";
 import {PaginatedResponse, ProductsWithCategoryAndBrand} from "@/types/types";
-import {Stocks} from "@/app/generated/prisma/client";
+import {Stocks} from "@prisma/client";
 import {Input} from "@/components/ui/input";
 import {createStock, updateStock} from "@/services/stock.service";
 import {stockSchema} from "@/lib/validators/stockSchema";

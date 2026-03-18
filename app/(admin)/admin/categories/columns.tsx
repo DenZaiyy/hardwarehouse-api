@@ -1,7 +1,7 @@
 "use client"
 
 import {ColumnDef} from "@tanstack/react-table"
-import {Categories} from "@/app/generated/prisma/client";
+import {Categories} from "@prisma/client";
 import {formatDate} from "@/lib/utils";
 import Image from "next/image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
