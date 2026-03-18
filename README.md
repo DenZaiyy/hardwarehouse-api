@@ -78,7 +78,7 @@ hardwarehouse-api/
 │   ├── product.service.ts
 │   └── stock.service.ts
 ├── prisma/               # Database schema and seeds
-└── middleware.ts         # Clerk auth middleware
+└── proxy.ts         # Clerk auth middleware
 ```
 
 ## 🔐 Admin Access Control
