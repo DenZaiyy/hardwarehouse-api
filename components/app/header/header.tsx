@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {SignedIn, SignedOut, UserButton} from "@clerk/nextjs";
+import { Show, UserButton } from "@clerk/nextjs";
 import React from "react";
 
 const Header = () => {
@@ -9,15 +9,15 @@ const Header = () => {
                 <Link href="/">HardWareHouse</Link>
                 <Link href="/">Accueil</Link>
             </nav>
-            <SignedOut>
+            <Show when="signed-out">
                 <Link href="/sign-in/">Se connecter</Link>
-            </SignedOut>
-            <SignedIn>
+            </Show>
+            <Show when="signed-in">
                 <Link href="/admin/">Administration</Link>
                 <UserButton />
-            </SignedIn>
+            </Show>
         </header>
-    )
+    );
 }
 
 export default Header;

@@ -30,9 +30,9 @@ export default async function DashboardLayout({ children}: { children: React.Rea
     const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
     return (
-        <ClerkProvider>
-            <html lang="fr" suppressHydrationWarning>
-                <body className="antialiased">
+        <html lang="fr" suppressHydrationWarning>
+            <body className="antialiased">
+                <ClerkProvider>
                     <ThemeProvider
                         attribute="class"
                         defaultTheme="system"
@@ -51,8 +51,8 @@ export default async function DashboardLayout({ children}: { children: React.Rea
                             </main>
                         </SidebarProvider>
                     </ThemeProvider>
-                </body>
-            </html>
-        </ClerkProvider>
+                </ClerkProvider>
+            </body>
+        </html>
     );
 }

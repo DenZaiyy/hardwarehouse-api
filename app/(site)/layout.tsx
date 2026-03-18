@@ -16,23 +16,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {
     return (
-        <ClerkProvider localization={frFR}>
-            <html lang="fr" suppressHydrationWarning>
-                <body className={`antialiased`}>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                    disableTransitionOnChange
-                >
-                    <Header />
-                    <main className="p-2 md:p-4">
-                        <Toaster position={"bottom-right"} />
-                        {children}
-                    </main>
-                </ThemeProvider>
-                </body>
-            </html>
-        </ClerkProvider>
+        <html lang="fr" suppressHydrationWarning>
+            <body className={`antialiased`}>
+                <ClerkProvider localization={frFR}>
+                    <ThemeProvider
+                        attribute="class"
+                        defaultTheme="system"
+                        enableSystem
+                        disableTransitionOnChange
+                    >
+                        <Header />
+                        <main className="p-2 md:p-4">
+                            <Toaster position={"bottom-right"} />
+                            {children}
+                        </main>
+                    </ThemeProvider>
+                </ClerkProvider>
+            </body>
+        </html>
     );
 }
