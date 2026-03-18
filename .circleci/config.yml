@@ -218,8 +218,7 @@ jobs:
     steps:
       # Check out the code from the repository
       - checkout
-      - attach_workspace:
-          at: .
+      - attach-workspace
       # Génération explicite du client Prisma
       - run:
           name: Generate Prisma Client
