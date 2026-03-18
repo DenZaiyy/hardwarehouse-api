@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG NODE_VERSION=24.5.0
+ARG NODE_VERSION=24.14.0
 
 ################################################################################
 # Use node image for base image for all stages.
