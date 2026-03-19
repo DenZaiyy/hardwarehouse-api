@@ -7,52 +7,57 @@ import {buildMeta, buildProductWhere, parseFilters, parsePagination, parseSort} 
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = req.nextUrl;
+        const isInternal = req.headers.get('x-internal-request') === process.env.INTERNAL_API_SECRET;
 
-        const pagination = parsePagination(searchParams);
         const sort = parseSort(searchParams);
         const filters = parseFilters(searchParams);
         const where = buildProductWhere(filters);
+        const pagination = isInternal ? null : parsePagination(searchParams);
 
-        const [products, total] = await Promise.all([
-            db.products.findMany({
-                where,
+        const select = {
+            id: true,
+            name: true,
+            slug: true,
+            price: true,
+            thumbnail: true,
+            shortDescription: true,
+            createdAt: true,
+            updatedAt: true,
+            active: true,
+            category: {
                 select: {
                     id: true,
                     name: true,
                     slug: true,
-                    price: true,
-                    thumbnail: true,
-                    shortDescription: true,
-                    createdAt: true,
-                    updatedAt: true,
-                    active: true,
-                    category: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true,
-                            active: true
-                        }
-                    },
-                    brand: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true,
-                            active: true
-                        }
-                    },
-                },
-                orderBy: { [sort.sortBy]: sort.order },
-                skip: pagination.skip,
-                take: pagination.limit
-            }),
+                    active: true
+                }
+            },
+            brand: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    active: true
+                }
+            },
+        }
+
+        const queryOptions = {
+            where,
+            select,
+            orderBy: { [sort.sortBy]: sort.order },
+            ...(pagination && { skip: pagination.skip, take: pagination.limit })
+        };
+
+        const [products, total] = await Promise.all([
+            db.products.findMany(queryOptions),
             db.products.count({ where })
         ]);
 
         return NextResponse.json({
             data: products,
-            meta: buildMeta(total, pagination)
+            total,
+            ...(pagination && { meta: buildMeta(total, pagination) })
         }, { status: 200 });
     } catch (error) {
         if (error instanceof Error) {

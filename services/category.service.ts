@@ -2,8 +2,9 @@
 
 import {Categories} from "@prisma/client";
 import {cookies} from "next/headers";
+import {PaginatedResponse} from "@/types/types";
 
-export async function getCategories(): Promise<Categories[]> {
+export async function getCategories(): Promise<PaginatedResponse<Categories>> {
     const cookieHeader = await cookies();
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {

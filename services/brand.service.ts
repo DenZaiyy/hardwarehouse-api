@@ -12,7 +12,8 @@ export async function getBrands(): Promise<PaginatedResponse<Brands>> {
         {
             method: "GET",
             headers: {
-                Cookie: cookieHeader.toString()
+                Cookie: cookieHeader.toString(),
+                'x-internal-request': process.env.INTERNAL_API_SECRET!
             },
             cache: "no-store"
         }

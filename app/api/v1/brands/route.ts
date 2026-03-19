@@ -7,35 +7,40 @@ import {buildBrandWhere, buildMeta, parseFilters, parsePagination, parseSort} fr
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = req.nextUrl;
+        const isInternal = req.headers.get('x-internal-request') === process.env.INTERNAL_API_SECRET;
 
-        const pagination = parsePagination(searchParams);
         const sort = parseSort(searchParams);
         const filters = parseFilters(searchParams);
         const where = buildBrandWhere(filters);
+        const pagination = isInternal ? null : parsePagination(searchParams);
+
+        const select = {
+            id: true,
+            name: true,
+            slug: true,
+            logo: true,
+            active: true,
+            createdAt: true,
+            updatedAt: true
+        }
+
+        const queryOptions = {
+            where,
+            select,
+            orderBy: {[sort.sortBy]: sort.order},
+            ...(pagination && { skip: pagination.skip, take: pagination.limit })
+        }
 
         const [brands, total] = await Promise.all([
-            db.brands.findMany({
-                where,
-                select: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                    logo: true,
-                    active: true,
-                    createdAt: true,
-                    updatedAt: true
-                },
-                orderBy: { [sort.sortBy]: sort.order },
-                skip: pagination.skip,
-                take: pagination.limit
-            }),
+            db.brands.findMany(queryOptions),
             db.brands.count({ where })
         ]);
 
         return NextResponse.json({
             data: brands,
-            meta: buildMeta(total, pagination)
-        }, {status: 200});
+            total,
+            ...(pagination && { meta: buildMeta(total, pagination) })
+        }, { status: 200 });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[BRANDS] ', error.message)
