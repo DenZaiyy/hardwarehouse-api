@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     description: "API to manage products and categories for a hardware store",
     authors: {name: 'DenZaiyy', url: 'https://github.com/denzaiyy/'},
     keywords: ['Hardware', 'Store', 'Products', 'Categories', 'API', 'Next.js', 'TypeScript', 'Prisma', 'RESTful'],
+    appleWebApp: { title: "HardWareHouse" },
 };
 
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode; }>) {

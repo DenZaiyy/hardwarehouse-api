@@ -23,6 +23,7 @@ export const metadata: Metadata = {
         "Prisma",
         "RESTful",
     ],
+    appleWebApp: { title: "HardWareHouse" },
 };
 
 export default async function DashboardLayout({ children}: { children: React.ReactNode }) {
