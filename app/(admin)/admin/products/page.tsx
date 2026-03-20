@@ -26,12 +26,12 @@ function ProductsTableSkeleton() {
 
 const ProductsPage = async () => {
     const result = await getProducts();
-    const productsCount = result.meta.total;
+    const productsCount = result.total;
 
     return (
         <div className="py-5">
             <div className="flex justify-between items-center">
-                <h1>Gestion des produits ({productsCount})</h1>
+                <h1>Gestion des produits ({productsCount ?? 0})</h1>
                 <Button asChild>
                     <Link href="/admin/products/add">Ajouter un produit</Link>
                 </Button>

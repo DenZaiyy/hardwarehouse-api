@@ -58,6 +58,7 @@ export interface FilterParams {
 
 export interface PaginatedResponse<T> {
     data: T[];
+    total: number;
     meta: {
         total: number;
         page: number;
