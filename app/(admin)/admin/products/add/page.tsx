@@ -26,7 +26,7 @@ const ProductAddPage = async () => {
             <section>
                 <Card>
                     <CardContent>
-                        <ProductForm brands={brands.data} categories={categories}  method="POST" />
+                        <ProductForm brands={brands.data} categories={categories.data}  method="POST" />
                     </CardContent>
                 </Card>
             </section>

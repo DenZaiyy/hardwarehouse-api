@@ -2,34 +2,41 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
-import {buildCategoryWhere, parseFilters} from "@/lib/api/filters";
+import {buildCategoryWhere, parseFilters, parseSort} from "@/lib/api/filters";
 
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = req.nextUrl;
+
+        const sort = parseSort(searchParams);
         const filters = parseFilters(searchParams);
         const where = buildCategoryWhere(filters);
 
-        const categories = await db.categories.findMany({
-            where,
-            select: {
-                id: true,
-                name: true,
-                slug: true,
-                logo: true,
-                active: true,
-                createdAt: true,
-                updatedAt: true,
-                _count: {
-                    select: {
-                        Products: true
-                    }
+        const select = {
+            id: true,
+            name: true,
+            slug: true,
+            logo: true,
+            active: true,
+            createdAt: true,
+            updatedAt: true,
+            _count: {
+                select: {
+                    Products: true
                 }
-            },
-            orderBy: {
-                createdAt: 'desc'
             }
-        });
+        }
+
+        const queryOptions = {
+            where,
+            select,
+            orderBy: {[sort.sortBy]: sort.order},
+        }
+
+        const [categories, total] = await Promise.all([
+            db.categories.findMany(queryOptions),
+            db.categories.count({ where })
+        ]);
 
         const formattedCategories = categories.map((category) => ({
             id: category.id,
@@ -42,7 +49,10 @@ export async function GET(req: NextRequest) {
             productsCount: category._count.Products,
         }));
 
-        return NextResponse.json(formattedCategories, {status: 200});
+        return NextResponse.json({
+            data: formattedCategories,
+            total,
+        }, { status: 200 });
     } catch (error) {
         if (error instanceof Error) {
             console.error('[CATEGORIES] ', error.message)
