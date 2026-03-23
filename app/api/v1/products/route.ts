@@ -86,7 +86,6 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        // Accepter JSON au lieu de FormData
         const body = await req.json();
         const {
             name,
