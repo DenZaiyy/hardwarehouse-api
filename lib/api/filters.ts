@@ -27,6 +27,9 @@ export function parseFilters(searchParams: URLSearchParams): FilterParams {
     const search = searchParams.get('search');
     const inStock = searchParams.get('inStock');
     const active = searchParams.get('active'); // "true", "false", ou null
+    const productId = searchParams.get('productId');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
 
     return {
         ...(minPrice && { minPrice: parseFloat(minPrice) }),
@@ -35,7 +38,10 @@ export function parseFilters(searchParams: URLSearchParams): FilterParams {
         ...(categorySlug && { categorySlug }),
         ...(search && { search }),
         ...(inStock === 'true' && { inStock: true }),
-        ...(active !== null && { active: active === 'true' })
+        ...(active !== null && { active: active === 'true' }),
+        ...(productId && { productId }),
+        ...(startDate && { startDate: startDate }),
+        ...(endDate && { endDate: endDate }),
     };
 }
 
@@ -92,7 +98,6 @@ export function buildDiscountWhere(filters: FilterParams, extraWhere: object = {
         ...(filters.search && {
             OR: [
                 { product: { name: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } } },
-                { discount_amount: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
             ]
         })
     }
@@ -100,7 +105,6 @@ export function buildDiscountWhere(filters: FilterParams, extraWhere: object = {
 
 export function buildMeta(total: number, pagination: PaginationParams) {
     return {
-        total,
         page: pagination.page,
         limit: pagination.limit,
         totalPages: Math.ceil(total / pagination.limit),

@@ -1,15 +1,23 @@
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
 model Discounts {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  productId       String   @db.ObjectId
-  product         Products @relation(fields: [productId], references: [id], onDelete: Cascade)
-  discount_amount Float    // Percentage discount (e.g., 15.5 for 15.5%)
-  discount_type   String   @default("percentage") // "percentage" or "fixed"
-  active          Boolean  @default(true)
-  start_date      DateTime @default(now())
-  end_date        DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  productId      String?      @db.ObjectId
+  product        Products?    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  categoryId     String?      @db.ObjectId
+  category       Categories?  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  discountAmount Float
+  discountType   DiscountType @default(PERCENTAGE)
+  active         Boolean      @default(true)
+  startDate      DateTime     @default(now())
+  endDate        DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index([productId])
-  @@index([active])
+  @@index([categoryId])
+  @@index([active, startDate, endDate])
 }

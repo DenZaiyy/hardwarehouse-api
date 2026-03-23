@@ -19,6 +19,9 @@ export async function GET(req: NextRequest) {
             name: true,
             slug: true,
             price: true,
+            discountPrice: true,
+            discountAmount: true,
+            promote: true,
             thumbnail: true,
             shortDescription: true,
             createdAt: true,
@@ -39,7 +42,7 @@ export async function GET(req: NextRequest) {
                     slug: true,
                     active: true
                 }
-            },
+            }
         }
 
         const queryOptions = {

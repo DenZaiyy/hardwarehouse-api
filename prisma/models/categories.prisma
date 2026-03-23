@@ -8,4 +8,5 @@ model Categories {
   updatedAt          DateTime             @updatedAt
   Products           Products[]
   categoryAttributes CategoryAttributes[]
+  discounts          Discounts[]
 }

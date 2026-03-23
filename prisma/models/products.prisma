@@ -7,7 +7,9 @@ model Products {
   shortDescription       String?
   description            String?
   price                  Float
-  discount_price         Float?
+  discountPrice          Float?
+  discountAmount         Float?
+  promote                Boolean                  @default(false)
   active                 Boolean                  @default(true)
   categoryId             String                   @db.ObjectId
   category               Categories               @relation(fields: [categoryId], references: [id], onDelete: Cascade)

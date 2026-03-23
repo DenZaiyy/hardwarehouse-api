@@ -19,6 +19,9 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categorie
                     id: true,
                     name: true,
                     active: true,
+                    promote: true,
+                    discountPrice: true,
+                    discountAmount: true,
                     slug: true,
                     price: true,
                     thumbnail: true,
@@ -50,6 +53,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categorie
 
         return NextResponse.json({
             data: products,
+            total,
             meta: buildMeta(total, pagination)
         }, { status: 200 });
     } catch (error) {
