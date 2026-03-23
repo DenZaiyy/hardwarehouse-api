@@ -3,7 +3,7 @@
 import {ColumnDef} from "@tanstack/react-table"
 import {ProductsWithCategoryAndBrand} from "@/types/types";
 import {Brands, Categories} from "@prisma/client";
-import {formatDate} from "@/lib/utils";
+import {formatDate, formatPrice} from "@/lib/utils";
 import Image from "next/image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import {ProductActions} from "@/components/admin/products/actions";
 import Link from "next/link";
 import {getProduct, updateProduct} from "@/services/product.service";
+import {formattedPercentNumber} from "@/lib/discounts/formatted-percent-number";
 
 async function handleConfirm(productSlug: string) {
     const product = await getProduct(productSlug);
@@ -27,6 +28,22 @@ async function handleConfirm(productSlug: string) {
 }
 
 export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
+    {
+        id: "actions",
+        cell: ({ row }) => {
+            const product = row.original
+
+            return (
+                <ProductActions
+                    productId={product.id}
+                    productSlug={product.slug}
+                    productName={product.name}
+                    onDisable={(slug) => handleConfirm(slug)}
+                    productActive={product.active}
+                />
+            )
+        }
+    },
     {
         accessorKey: "id",
         header: "ID",
@@ -118,13 +135,48 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
             <DataTableColumnHeader column={column} title="Prix HT" />
         ),
         cell: ({ row }) => {
-            const price = parseFloat(row.getValue('price'));
-            const formatted = new Intl.NumberFormat('fr-FR', {
-                style: 'currency',
-                currency: 'EUR'
-            }).format(price);
+            const price: number = row.getValue('price');
+            
+            if (!price) {
+                return <div className="text-right font-medium">N/A</div>
+            }
+
+            const formatted = formatPrice(price);
 
             return <div className="text-right font-medium">{formatted}</div>
+        }
+    },
+    {
+        accessorKey: "discountPrice",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Prix remise HT" />
+        ),
+        cell: ({ row }) => {
+            const price: number = row.getValue('discountPrice');
+            if (!price) {
+                return <div className="text-right font-medium">N/A</div>
+            }
+
+            const formatted = formatPrice(price);
+
+            return <div className="text-right font-medium">{formatted}</div>
+        }
+    },
+    {
+        accessorKey: "discountAmount",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Remise" />
+        ),
+        cell: ({ row }) => {
+            const discount = row.getValue('discountAmount');
+
+            if (!discount) {
+                return <div className="text-right font-medium">N/A</div>
+            }
+
+            const amount = parseFloat(row.getValue('discountAmount'));
+
+            return <div className="text-right font-medium">{formattedPercentNumber(amount)}</div>
         }
     },
     {
@@ -186,22 +238,6 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
         cell: ({ row }) => {
             const updatedAt: string = row.getValue('updatedAt')
             return <div>{formatDate(updatedAt)}</div>
-        }
-    },
-    {
-        id: "actions",
-        cell: ({ row }) => {
-            const product = row.original
-
-            return (
-                <ProductActions
-                    productId={product.id}
-                    productSlug={product.slug}
-                    productName={product.name}
-                    onDisable={(slug) => handleConfirm(slug)}
-                    productActive={product.active}
-                />
-            )
         }
     }
 ]
