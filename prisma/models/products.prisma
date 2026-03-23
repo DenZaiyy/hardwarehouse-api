@@ -7,6 +7,7 @@ model Products {
   shortDescription       String?
   description            String?
   price                  Float
+  discount_price         Float?
   active                 Boolean                  @default(true)
   categoryId             String                   @db.ObjectId
   category               Categories               @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -18,6 +19,7 @@ model Products {
   Transactions           Transactions[]
   PurchaseOrder          PurchaseOrder[]
   productAttributeValues ProductAttributeValues[]
+  discounts              Discounts[]
 
   @@index([categoryId, brandId])
 }
