@@ -2,9 +2,9 @@
 
 import type {User} from "@clerk/backend";
 import {cookies} from "next/headers";
-import {OrdersResponse, TransactionsResponse} from "@/types/types";
+import {OrdersResponse, PaginatedResponse, TransactionsResponse} from "@/types/types";
 
-export async function getUsers(): Promise<User[]> {
+export async function getUsers(): Promise<PaginatedResponse<User>> {
     const cookieHeader = await cookies();
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/`, {

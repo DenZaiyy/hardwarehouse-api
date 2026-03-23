@@ -18,7 +18,10 @@ export async function GET() {
         const client = await clerkClient();
         const users = await client.users.getUserList()
 
-        return NextResponse.json(users.data);
+        return NextResponse.json({
+            data: users.data,
+            total: users.totalCount
+        }, { status: 200 });
     } catch(error) {
         if (error instanceof  Error) {
             console.error(error.message);
