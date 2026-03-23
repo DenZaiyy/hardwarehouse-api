@@ -54,6 +54,9 @@ export interface FilterParams {
     search?: string;
     inStock?: boolean;
     active?: boolean;
+    productId?: string;
+    startDate?: Date;
+    endDate?: Date;
 }
 
 export interface PaginatedResponse<T> {

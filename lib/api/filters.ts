@@ -82,6 +82,22 @@ export function buildProductWhere(filters: FilterParams, extraWhere: object = {}
     };
 }
 
+export function buildDiscountWhere(filters: FilterParams, extraWhere: object = {}) {
+    return {
+        ...extraWhere,
+        ...(filters.active !== undefined && { active: filters.active }),
+        ...(filters.productId && { product: { id: filters.productId }}),
+        ...(filters.startDate && { startDate: filters.startDate }),
+        ...(filters.endDate && { endDate: filters.endDate }),
+        ...(filters.search && {
+            OR: [
+                { product: { name: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } } },
+                { discount_amount: { contains: filters.search, mode: 'insensitive' as Prisma.QueryMode } },
+            ]
+        })
+    }
+}
+
 export function buildMeta(total: number, pagination: PaginationParams) {
     return {
         total,
