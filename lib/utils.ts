@@ -21,6 +21,14 @@ export function formatDate(date: Date|string): string {
     return format(new Date(date), "dd/MM/yyyy HH:mm:ss") ?? "Date not available"
 }
 
+export function formatPrice(price: number): string {
+    return new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 2,
+    }).format(price);
+}
+
 export const rateLimiter = new Ratelimit({
     redis: Redis.fromEnv(),
     limiter: Ratelimit.slidingWindow(10, "1 m"), // 10 requests per minute
