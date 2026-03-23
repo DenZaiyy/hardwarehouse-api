@@ -1,5 +1,4 @@
 import {NextRequest, NextResponse} from "next/server";
-import {rateLimiter} from "@/lib/utils";
 import {db} from "@/lib/db";
 import {auth} from "@clerk/nextjs/server";
 
@@ -12,7 +11,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/transact
         }
 
         const { id } = await ctx.params;
-        const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
+        /*const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
 
         if (!success) {
@@ -20,7 +19,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/transact
                 { error: "Trop de demandes" },
                 { status: 429 }
             );
-        }
+        }*/
 
         const transaction = await db.transactions.findUnique({
             where: {
@@ -35,11 +34,13 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/transact
             return new NextResponse('Transaction not found', { status: 404 });
         }
 
-        const res = NextResponse.json(transaction, { status: 200 });
+        return NextResponse.json(transaction, { status: 200 });
+
+        /*const res = NextResponse.json(transaction, { status: 200 });
         res.headers.set('X-RateLimit-Remaining', remaining.toString());
         res.headers.set('X-RateLimit-Reset', reset.toString());
 
-        return res;
+        return res;*/
     } catch (error) {
         console.error('[TRANSACTION] ', error)
         return new NextResponse('Internal Error', { status: 500 });

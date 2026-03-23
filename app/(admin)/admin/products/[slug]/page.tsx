@@ -7,6 +7,12 @@ import {BarChartCard} from "@/components/admin/bar-chart-card";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {getProduct} from "@/services/product.service";
 import Characteristics from "@/components/admin/products/characteristics";
+import {formattedPercentNumber} from "@/lib/discounts/formatted-percent-number";
+import {getTransactionsByProduct} from "@/services/transaction.service";
+import {DataTable} from "@/components/admin/data-table";
+import {Suspense} from "react";
+import {Transactions} from "@prisma/client";
+import {columns} from "@/app/(admin)/admin/products/[slug]/columns";
 
 interface ProductParams {
     params: Promise<{ slug: string }>;
@@ -112,9 +118,18 @@ const config = {
     mobile: { label: "Mobile", color: "var(--chart-1)" },
 } as const
 
+function TransactionsTable({ data }: { data: Transactions[] }) {
+    return <DataTable columns={columns} data={data} inputSearch={false} />;
+}
+
+function TransactionsTableSkeleton() {
+    return <DataTable columns={columns} data={[]} searchHolder="Filtrer les transactions..." isLoading={true} />;
+}
+
 const ProductDetails = async ({ params }: ProductParams) => {
     const { slug } = await params;
     const product = await getProduct(slug);
+    const transactions = await getTransactionsByProduct(slug);
 
     return (
         <>
@@ -132,6 +147,9 @@ const ProductDetails = async ({ params }: ProductParams) => {
                     <div className="flex flex-col gap-2 w-1/4">
                         <p>Nom: <strong>{product.name}</strong></p>
                         <p>Prix HT: <strong>{product.price}</strong></p>
+                        <p>En promo: <strong className={product.promote ? 'text-green-500' : 'text-red-500'}>{product.promote ? 'Oui' : 'Non'}</strong></p>
+                        <p>Remise: <strong>{product.discountAmount ? formattedPercentNumber(product.discountAmount) : 'N/A'}</strong></p>
+                        <p>Prix remise HT: <strong>{product.discountPrice ?? 'N/A'}</strong></p>
                         <p>TVA: <strong>20%</strong></p>
                         <p>Prix TTC: <strong>{Number((product.price * 1.2)).toFixed(2)}</strong></p>
                     </div>
@@ -161,7 +179,7 @@ const ProductDetails = async ({ params }: ProductParams) => {
                     <TabsTrigger value="images">Images</TabsTrigger>
                     <TabsTrigger value="characteristics">Caractéristiques</TabsTrigger>
                     <TabsTrigger value="statistics">Statistiques</TabsTrigger>
-                    <TabsTrigger value="transactions">Transactions</TabsTrigger>
+                    {transactions.data.length > 0 ? <TabsTrigger value="transactions">Transactions ({transactions.total || 0})</TabsTrigger> : null}
                 </TabsList>
                 <TabsContent value="images" className="space-y-6">
                     <Card>
@@ -228,7 +246,14 @@ const ProductDetails = async ({ params }: ProductParams) => {
                     <BarChartCard title="Evolution du stock" description="Showing total visitors for the last 3 months" data={data} config={config} defaultKey="stocks" />
                     <BarChartCard title="Evolution du stock" description="" data={data} config={config} defaultKey="stocks" />
                 </TabsContent>
-                <TabsContent value="transactions">Change your password here.</TabsContent>
+                {transactions.data.length > 0 ?
+                    <TabsContent value="transactions">
+                        <Suspense fallback={<TransactionsTableSkeleton />}>
+                            <TransactionsTable data={transactions.data} />
+                        </Suspense>
+                    </TabsContent>
+                    : null
+                }
             </Tabs>
         </>
     )
