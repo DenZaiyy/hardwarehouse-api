@@ -55,15 +55,14 @@ export interface FilterParams {
     inStock?: boolean;
     active?: boolean;
     productId?: string;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string;
+    endDate?: string;
 }
 
 export interface PaginatedResponse<T> {
     data: T[];
     total: number;
     meta: {
-        total: number;
         page: number;
         limit: number;
         totalPages: number;
