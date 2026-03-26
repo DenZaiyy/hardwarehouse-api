@@ -3,6 +3,7 @@ import ProductsGetPayload = Prisma.ProductsGetPayload;
 import StocksGetPayload = Prisma.StocksGetPayload;
 import TransactionsGetPayload = Prisma.TransactionsGetPayload;
 import PurchaseOrdersGetPayload = Prisma.PurchaseOrderGetPayload;
+import DiscountsGetPayload = Prisma.DiscountsGetPayload;
 
 export type ProductsWithCategoryAndBrandAndAttributes = ProductsGetPayload<{ include: { category: true; brand: true; productAttributeValues: { include: { categoryAttribute: { include: { attribute: true } } } } } }>
 export type ProductsWithCategoryAndBrand = ProductsGetPayload<{ include: { category: true; brand: true; } }>
@@ -24,6 +25,8 @@ export type StocksWithProduct = StocksGetPayload<{ include: { product: true } }>
 
 export type TransactionsWithProduct = TransactionsGetPayload<{ include: { product: true } }>
 export type PurchaseOrdersWithProduct = PurchaseOrdersGetPayload<{ include: { product: true } }>
+
+export type DiscountsWithProductOrCategory = DiscountsGetPayload<{ include: { product: true, category: true }}>
 
 export interface TransactionsResponse {
     data: TransactionsWithProduct[];
