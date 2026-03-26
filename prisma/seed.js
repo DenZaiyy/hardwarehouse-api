@@ -1,9 +1,97 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const {PrismaClient} = require("@prisma/client");
+const { PrismaClient } = require('@prisma/client');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const slugify = require('slugify');
 
 const prisma = new PrismaClient();
+
+const productIdentifiers = {
+    'core i9-13900k': {
+        mpn: 'BX8071513900K',
+        ean13: '5032037258647',
+    },
+    'ryzen 9 7950x': {
+        mpn: '100-100000514WOF',
+        ean13: '0730143314534',
+    },
+    'core i7-13700k': {
+        mpn: 'BX8071513700K',
+        ean13: '5032037258708',
+    },
+    'ryzen 7 7800x3d': {
+        mpn: '100-100000910WOF',
+        ean13: '0730143314930',
+    },
+    'ryzen 5 7600x': {
+        mpn: '100-100000593WOF',
+        ean13: '0730143314442',
+    },
+    'rog strix z790-e gaming wifi': {
+        mpn: '90MB1CL0-M0EAY0',
+        ean13: '4711081938538',
+    },
+    'mag b650 tomahawk wifi': {
+        mpn: '7D75-001R',
+        ean13: '4711377010153',
+    },
+    'tuf gaming b550-plus': {
+        mpn: '90MB14G0',
+        ean13: '4718017749435',
+    },
+    '980 pro 1tb nvme': {
+        mpn: 'MZ-V8P1T0BW',
+        ean13: null,
+    },
+    'nv2 1tb nvme': {
+        mpn: 'SNV2S/1000G',
+        ean13: null,
+    },
+    's2721dgf 27" 1440p 165hz': {
+        mpn: '210-AXEH',
+        ean13: '5397184200803',
+    },
+};
+
+function normalizeName(value) {
+    return value.trim().toLowerCase();
+}
+
+function buildSku({ categoryName, brandName, productName }) {
+    const categoryCodeMap = {
+        Processeurs: 'CPU',
+        'Cartes mères': 'MB',
+        'Mémoire RAM': 'RAM',
+        'Cartes graphiques': 'GPU',
+        'Disques durs': 'HDD',
+        SSD: 'SSD',
+        'Boîtiers': 'CASE',
+        Alimentations: 'PSU',
+        'Périphériques': 'PERI',
+        'Écrans': 'MON',
+    };
+
+    const categoryCode = categoryCodeMap[categoryName] ?? 'PRD';
+    const brandCode = slugify(brandName, { lower: false, strict: true, locale: 'fr' })
+        .toUpperCase()
+        .slice(0, 6);
+
+    const productCode = slugify(productName, { lower: false, strict: true, locale: 'fr' })
+        .toUpperCase()
+        .slice(0, 24);
+
+    return `${categoryCode}-${brandCode}-${productCode}`;
+}
+
+function buildImageSet(seed) {
+    return {
+        thumbnail: `https://picsum.photos/400/400?random=${seed}`,
+        images: [
+            `https://picsum.photos/800/800?random=${seed}`,
+            `https://picsum.photos/800/800?random=${seed + 1}`,
+            `https://picsum.photos/800/800?random=${seed + 2}`,
+        ],
+    };
+}
 
 // Données des marques
 const brandsData = [
@@ -32,747 +120,555 @@ const brandsData = [
     { name: 'Razer', logo: 'https://picsum.photos/200/200?random=23' },
     { name: 'SteelSeries', logo: 'https://picsum.photos/200/200?random=24' },
     { name: 'Dell', logo: 'https://picsum.photos/200/200?random=25' },
-    { name: 'LG', logo: 'https://picsum.photos/200/200?random=26' }
+    { name: 'LG', logo: 'https://picsum.photos/200/200?random=26' },
 ];
 
 // Données des catégories
 const categoriesData = [
-    {
-        name: 'Processeurs',
-        logo: 'https://picsum.photos/300/300?random=101'
-    },
-    {
-        name: 'Cartes mères',
-        logo: 'https://picsum.photos/300/300?random=102'
-    },
-    {
-        name: 'Mémoire RAM',
-        logo: 'https://picsum.photos/300/300?random=103'
-    },
-    {
-        name: 'Cartes graphiques',
-        logo: 'https://picsum.photos/300/300?random=104'
-    },
-    {
-        name: 'Disques durs',
-        logo: 'https://picsum.photos/300/300?random=105'
-    },
-    {
-        name: 'SSD',
-        logo: 'https://picsum.photos/300/300?random=106'
-    },
-    {
-        name: 'Boîtiers',
-        logo: 'https://picsum.photos/300/300?random=107'
-    },
-    {
-        name: 'Alimentations',
-        logo: 'https://picsum.photos/300/300?random=108'
-    },
-    {
-        name: 'Périphériques',
-        logo: 'https://picsum.photos/300/300?random=109'
-    },
-    {
-        name: 'Écrans',
-        logo: 'https://picsum.photos/300/300?random=110'
-    }
+    { name: 'Processeurs', logo: 'https://picsum.photos/300/300?random=101' },
+    { name: 'Cartes mères', logo: 'https://picsum.photos/300/300?random=102' },
+    { name: 'Mémoire RAM', logo: 'https://picsum.photos/300/300?random=103' },
+    { name: 'Cartes graphiques', logo: 'https://picsum.photos/300/300?random=104' },
+    { name: 'Disques durs', logo: 'https://picsum.photos/300/300?random=105' },
+    { name: 'SSD', logo: 'https://picsum.photos/300/300?random=106' },
+    { name: 'Boîtiers', logo: 'https://picsum.photos/300/300?random=107' },
+    { name: 'Alimentations', logo: 'https://picsum.photos/300/300?random=108' },
+    { name: 'Périphériques', logo: 'https://picsum.photos/300/300?random=109' },
+    { name: 'Écrans', logo: 'https://picsum.photos/300/300?random=110' },
 ];
 
-// Données des produits par catégorie avec marque
-const productsData = {
-    'Processeurs': [
-        { 
-            name: 'Core i9-13900K', 
-            brand: 'Intel', 
-            price: 589.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=201', 
-            images: [
-                'https://picsum.photos/800/800?random=201',
-                'https://picsum.photos/800/800?random=202',
-                'https://picsum.photos/800/800?random=203'
-            ],
-            shortDescription: 'Processeur Intel Core i9 haute performance pour gaming et création',
-            description: 'Le processeur Intel Core i9-13900K offre des performances exceptionnelles avec ses 24 cœurs (8P+16E) et 32 threads. Avec une fréquence de base de 3.0 GHz et un boost jusqu\'à 5.8 GHz, il est parfait pour le gaming en 4K, le streaming et les tâches de création de contenu intensives.',
-            active: true 
-        },
-        { 
-            name: 'Ryzen 9 7950X', 
-            brand: 'AMD', 
-            price: 699.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=204', 
-            images: [
-                'https://picsum.photos/800/800?random=204',
-                'https://picsum.photos/800/800?random=205',
-                'https://picsum.photos/800/800?random=206'
-            ],
-            shortDescription: 'Processeur AMD Ryzen 9 16 cœurs pour les professionnels',
-            description: 'Le Ryzen 9 7950X est le processeur phare d\'AMD avec 16 cœurs et 32 threads. Basé sur l\'architecture Zen 4 en 5nm, il offre des performances exceptionnelles en création de contenu, rendu 3D et multitâche intensif. Compatible socket AM5 avec support DDR5.',
-            active: true 
-        },
-        { 
-            name: 'Core i7-13700K', 
-            brand: 'Intel', 
-            price: 419.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=207', 
-            images: [
-                'https://picsum.photos/800/800?random=207',
-                'https://picsum.photos/800/800?random=208'
-            ],
-            shortDescription: 'Processeur Intel Core i7 équilibré pour gaming et productivité',
-            description: 'Le Core i7-13700K combine 8 cœurs de performance et 8 cœurs d\'efficience pour un total de 24 threads. Idéal pour le gaming en haute résolution et les applications de productivité. Fréquence boost jusqu\'à 5.4 GHz.',
-            active: true 
-        },
-        { 
-            name: 'Ryzen 7 7800X3D', 
-            brand: 'AMD', 
-            price: 449.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=209', 
-            images: [
-                'https://picsum.photos/800/800?random=209',
-                'https://picsum.photos/800/800?random=210'
-            ],
-            shortDescription: 'Processeur gaming AMD avec cache 3D V-Cache révolutionnaire',
-            description: 'Le Ryzen 7 7800X3D intègre la technologie 3D V-Cache d\'AMD qui triple le cache L3 pour des performances gaming exceptionnelles. Avec 8 cœurs et 16 threads, il offre les meilleures performances par cœur pour le gaming.',
-            active: true 
-        },
-        { 
-            name: 'Core i5-13600K', 
-            brand: 'Intel', 
-            price: 319.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=211', 
-            images: [
-                'https://picsum.photos/800/800?random=211',
-                'https://picsum.photos/800/800?random=212'
-            ],
-            shortDescription: 'Processeur Intel Core i5 excellent rapport qualité-prix',
-            description: 'Le Core i5-13600K offre 6 cœurs de performance et 8 cœurs d\'efficience pour 20 threads au total. Parfait pour le gaming en 1440p et les tâches de productivité courantes. Excellent choix pour les builds gaming milieu de gamme.',
-            active: true 
-        },
-        { 
-            name: 'Ryzen 5 7600X', 
-            brand: 'AMD', 
-            price: 279.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=213', 
-            images: [
-                'https://picsum.photos/800/800?random=213',
-                'https://picsum.photos/800/800?random=214'
-            ],
-            shortDescription: 'Processeur AMD Ryzen 5 performant et économique',
-            description: 'Le Ryzen 5 7600X avec 6 cœurs et 12 threads est parfait pour le gaming et les applications courantes. Architecture Zen 4 moderne avec support DDR5 et PCIe 5.0. Excellent choix pour les builds gaming abordables.',
-            active: true 
-        }
-    ],
-    'Cartes mères': [
-        { 
-            name: 'ROG STRIX Z790-E Gaming', 
-            brand: 'ASUS', 
-            price: 459.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=215', 
-            images: [
-                'https://picsum.photos/800/800?random=215',
-                'https://picsum.photos/800/800?random=216',
-                'https://picsum.photos/800/800?random=217'
-            ],
-            shortDescription: 'Carte mère ASUS ROG haut de gamme pour processeurs Intel Z790',
-            description: 'La ROG STRIX Z790-E Gaming est une carte mère premium d\'ASUS conçue pour les processeurs Intel de 13e génération. Elle offre un VRM robuste, WiFi 6E, Bluetooth 5.3, ports USB 3.2, et un design gaming avec éclairage RGB Aura Sync.',
-            active: true 
-        },
-        { 
-            name: 'MAG B650 TOMAHAWK WiFi', 
-            brand: 'MSI', 
-            price: 219.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=218', 
-            images: [
-                'https://picsum.photos/800/800?random=218',
-                'https://picsum.photos/800/800?random=219'
-            ],
-            shortDescription: 'Carte mère MSI B650 complète avec WiFi intégré',
-            description: 'La MAG B650 TOMAHAWK WiFi de MSI offre un excellent équilibre entre fonctionnalités et prix pour les processeurs AMD Ryzen 7000. Inclut WiFi 6E, USB 3.2, PCIe 5.0, et un design élégant avec refroidissement optimisé.',
-            active: true 
-        },
-        { 
-            name: 'Z790 AORUS ELITE AX', 
-            brand: 'Gigabyte', 
-            price: 299.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=220', 
-            images: [
-                'https://picsum.photos/800/800?random=220',
-                'https://picsum.photos/800/800?random=221'
-            ],
-            shortDescription: 'Carte mère Gigabyte Z790 avec connectivité avancée',
-            description: 'La Z790 AORUS ELITE AX combine performance et connectivité moderne. Compatible avec les processeurs Intel 12e et 13e gen, elle propose WiFi 6E, Ethernet 2.5G, PCIe 5.0, et le RGB Fusion 2.0 de Gigabyte.',
-            active: true 
-        },
-        { 
-            name: 'B650M PRO B WiFi', 
-            brand: 'ASRock', 
-            price: 129.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=222', 
-            images: [
-                'https://picsum.photos/800/800?random=222'
-            ],
-            shortDescription: 'Carte mère ASRock micro-ATX abordable avec WiFi',
-            description: 'La B650M PRO B WiFi est une carte mère micro-ATX compacte et abordable pour les processeurs AMD Ryzen 7000. Malgré son prix attractif, elle inclut WiFi 6, USB 3.2, et PCIe 4.0 pour une expérience moderne.',
-            active: true 
-        },
-        { 
-            name: 'TUF Gaming B550-PLUS', 
-            brand: 'ASUS', 
-            price: 159.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=223', 
-            images: [
-                'https://picsum.photos/800/800?random=223',
-                'https://picsum.photos/800/800?random=224'
-            ],
-            shortDescription: 'Carte mère ASUS TUF robuste pour Ryzen série 5000',
-            description: 'La TUF Gaming B550-PLUS est conçue pour la durabilité avec des composants de qualité militaire. Compatible Ryzen 5000, elle offre PCIe 4.0, USB 3.2, et le design TUF Gaming d\'ASUS réputé pour sa fiabilité.',
-            active: true 
-        }
-    ],
-    'Mémoire RAM': [
-        { 
-            name: 'Vengeance LPX 32GB DDR4-3200', 
-            brand: 'Corsair', 
-            price: 89.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=225', 
-            images: [
-                'https://picsum.photos/800/800?random=225',
-                'https://picsum.photos/800/800?random=226'
-            ],
-            shortDescription: 'Mémoire DDR4 Corsair haute performance 32GB',
-            description: 'La mémoire Vengeance LPX 32GB DDR4-3200 de Corsair offre des performances fiables pour le gaming et les applications professionnelles. Design low-profile, dissipateur thermique optimisé et compatibilité étendue avec les cartes mères modernes.',
-            active: true 
-        },
-        { 
-            name: 'Trident Z5 32GB DDR5-6000', 
-            brand: 'G.Skill', 
-            price: 179.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=227', 
-            images: [
-                'https://picsum.photos/800/800?random=227',
-                'https://picsum.photos/800/800?random=228',
-                'https://picsum.photos/800/800?random=229'
-            ],
-            shortDescription: 'Mémoire DDR5 G.Skill ultra-rapide avec RGB',
-            description: 'La Trident Z5 32GB DDR5-6000 représente le summum de la performance mémoire. Avec des fréquences de 6000 MHz et un éclairage RGB personnalisable, elle est parfaite pour les systèmes haut de gamme et l\'overclocking.',
-            active: true 
-        },
-        { 
-            name: 'Fury Beast 16GB DDR4-3200', 
-            brand: 'Kingston', 
-            price: 49.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=230', 
-            images: [
-                'https://picsum.photos/800/800?random=230'
-            ],
-            shortDescription: 'Mémoire Kingston abordable et fiable 16GB',
-            description: 'La Fury Beast 16GB DDR4-3200 de Kingston offre un excellent rapport qualité-prix. Conçue pour les gamers et créateurs de contenu, elle propose des performances stables et une compatibilité optimale avec les plateformes Intel et AMD.',
-            active: true 
-        },
-        { 
-            name: 'Ballistix 64GB DDR4-3600', 
-            brand: 'Crucial', 
-            price: 199.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=231', 
-            images: [
-                'https://picsum.photos/800/800?random=231',
-                'https://picsum.photos/800/800?random=232'
-            ],
-            shortDescription: 'Kit mémoire Crucial haute capacité 64GB pour workstations',
-            description: 'La Ballistix 64GB DDR4-3600 est destinée aux professionnels nécessitant une grande quantité de mémoire. Parfaite pour le rendu 3D, la virtualisation et les applications gourmandes en RAM. Dissipateur thermique intégré.',
-            active: true 
-        },
-        { 
-            name: 'Vengeance RGB Pro 16GB DDR4-3600', 
-            brand: 'Corsair', 
-            price: 69.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=233', 
-            images: [
-                'https://picsum.photos/800/800?random=233',
-                'https://picsum.photos/800/800?random=234'
-            ],
-            shortDescription: 'Mémoire Corsair RGB gaming 16GB haute fréquence',
-            description: 'La Vengeance RGB Pro 16GB DDR4-3600 combine performances et esthétique gaming. Avec son éclairage RGB dynamique contrôlable via iCUE et ses timings optimisés, elle est idéale pour les builds gaming RGB.',
-            active: true 
-        }
-    ],
-    'Cartes graphiques': [
-        { 
-            name: 'GeForce RTX 4090', 
-            brand: 'NVIDIA', 
-            price: 1599.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=240', 
-            images: [
-                'https://picsum.photos/800/800?random=240',
-                'https://picsum.photos/800/800?random=241',
-                'https://picsum.photos/800/800?random=242'
-            ],
-            shortDescription: 'Carte graphique NVIDIA RTX 4090 flagship pour 4K gaming',
-            description: 'La GeForce RTX 4090 est la carte graphique la plus puissante de NVIDIA. Avec 24GB de VRAM GDDR6X et l\'architecture Ada Lovelace, elle offre des performances exceptionnelles en 4K, ray tracing avancé et création de contenu IA.',
-            active: true 
-        },
-        { 
-            name: 'Radeon RX 7900 XTX', 
-            brand: 'AMD', 
-            price: 999.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=243', 
-            images: [
-                'https://picsum.photos/800/800?random=243',
-                'https://picsum.photos/800/800?random=244'
-            ],
-            shortDescription: 'Carte graphique AMD RX 7900 XTX haut de gamme',
-            description: 'La Radeon RX 7900 XTX utilise l\'architecture RDNA 3 d\'AMD pour offrir des performances exceptionnelles en 1440p et 4K. Avec 24GB de VRAM, elle excelle dans les jeux modernes et la création de contenu.',
-            active: true 
-        },
-        { 
-            name: 'GeForce RTX 4070 Ti', 
-            brand: 'NVIDIA', 
-            price: 799.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=245', 
-            images: [
-                'https://picsum.photos/800/800?random=245',
-                'https://picsum.photos/800/800?random=246'
-            ],
-            shortDescription: 'Carte graphique RTX 4070 Ti équilibrée pour 1440p',
-            description: 'La RTX 4070 Ti offre un excellent équilibre entre performance et prix pour le gaming en 1440p. Avec DLSS 3, ray tracing de 3e génération et 12GB de VRAM, elle garantit des expériences de jeu fluides.',
-            active: true 
-        },
-        { 
-            name: 'Radeon RX 7800 XT', 
-            brand: 'AMD', 
-            price: 499.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=247', 
-            images: [
-                'https://picsum.photos/800/800?random=247'
-            ],
-            shortDescription: 'Carte graphique AMD milieu de gamme performante',
-            description: 'La RX 7800 XT est parfaite pour le gaming en 1440p avec des réglages élevés. Architecture RDNA 3 efficace, 16GB de VRAM et excellent rapport performance/prix pour les gamers exigeants.',
-            active: true 
-        },
-        { 
-            name: 'GeForce RTX 4060', 
-            brand: 'NVIDIA', 
-            price: 299.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=248', 
-            images: [
-                'https://picsum.photos/800/800?random=248',
-                'https://picsum.photos/800/800?random=249'
-            ],
-            shortDescription: 'Carte graphique RTX 4060 abordable pour 1080p',
-            description: 'La RTX 4060 est la solution idéale pour le gaming en 1080p avec ray tracing. Grâce au DLSS 3 et à son efficacité énergétique, elle offre d\'excellentes performances dans un budget maîtrisé.',
-            active: true 
-        },
-        { 
-            name: 'ROG Strix RTX 4080', 
-            brand: 'ASUS', 
-            price: 1199.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=250', 
-            images: [
-                'https://picsum.photos/800/800?random=250',
-                'https://picsum.photos/800/800?random=251',
-                'https://picsum.photos/800/800?random=252'
-            ],
-            shortDescription: 'RTX 4080 ASUS ROG Strix premium avec refroidissement avancé',
-            description: 'La ROG Strix RTX 4080 combine la puissance de la RTX 4080 avec le refroidissement et le design premium d\'ASUS. Triple ventilateur, RGB Aura Sync, et overclocking d\'usine pour des performances maximales.',
-            active: true 
-        }
-    ],
-    'Disques durs': [
-        { 
-            name: 'Barracuda 2TB 7200RPM', 
-            brand: 'Seagate', 
-            price: 54.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=260', 
-            images: [
-                'https://picsum.photos/800/800?random=260',
-                'https://picsum.photos/800/800?random=261'
-            ],
-            shortDescription: 'Disque dur Seagate Barracuda 2TB haute performance',
-            description: 'Le Barracuda 2TB 7200RPM de Seagate offre un stockage fiable et performant pour vos jeux, médias et applications. Avec sa vitesse de 7200 tours/minute et son cache optimisé, il garantit des temps de chargement rapides.',
-            active: true 
-        },
-        { 
-            name: 'Blue 1TB 7200RPM', 
-            brand: 'Western Digital', 
-            price: 39.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=262', 
-            images: [
-                'https://picsum.photos/800/800?random=262'
-            ],
-            shortDescription: 'Disque dur WD Blue 1TB économique et fiable',
-            description: 'Le WD Blue 1TB est la solution de stockage idéale pour les utilisateurs recherchant fiabilité et performance. Conçu pour un usage quotidien, il offre des performances constantes et une longue durée de vie.',
-            active: true 
-        },
-        { 
-            name: 'P300 3TB 7200RPM', 
-            brand: 'Toshiba', 
-            price: 79.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=263', 
-            images: [
-                'https://picsum.photos/800/800?random=263',
-                'https://picsum.photos/800/800?random=264'
-            ],
-            shortDescription: 'Disque dur Toshiba P300 3TB grande capacité',
-            description: 'Le P300 3TB de Toshiba combine grande capacité et performances solides. Parfait pour le stockage de masse, les sauvegardes et les applications nécessitant beaucoup d\'espace de stockage.',
-            active: true 
-        },
-        { 
-            name: 'IronWolf 4TB NAS', 
-            brand: 'Seagate', 
-            price: 119.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=265', 
-            images: [
-                'https://picsum.photos/800/800?random=265',
-                'https://picsum.photos/800/800?random=266'
-            ],
-            shortDescription: 'Disque dur Seagate IronWolf 4TB optimisé NAS',
-            description: 'L\'IronWolf 4TB est spécialement conçu pour les serveurs NAS et le stockage en réseau. Avec sa technologie AgileArray et sa fiabilité 24/7, il est parfait pour les environnements multi-utilisateurs.',
-            active: true 
-        }
-    ],
-    'SSD': [
-        { 
-            name: '980 PRO 1TB NVMe', 
-            brand: 'Samsung', 
-            price: 89.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=275', 
-            images: [
-                'https://picsum.photos/800/800?random=275',
-                'https://picsum.photos/800/800?random=276'
-            ],
-            shortDescription: 'SSD NVMe Samsung 980 PRO 1TB ultra-rapide',
-            description: 'Le Samsung 980 PRO 1TB est un SSD NVMe PCIe 4.0 haut de gamme offrant des performances exceptionnelles. Avec des vitesses de lecture jusqu\'à 7000 MB/s, il est parfait pour le gaming, la création de contenu et les applications professionnelles.',
-            active: true 
-        },
-        { 
-            name: 'Black SN850X 2TB NVMe', 
-            brand: 'Western Digital', 
-            price: 179.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=277', 
-            images: [
-                'https://picsum.photos/800/800?random=277',
-                'https://picsum.photos/800/800?random=278'
-            ],
-            shortDescription: 'SSD NVMe WD Black SN850X 2TB gaming',
-            description: 'Le WD Black SN850X 2TB est optimisé pour les gamers exigeants. PCIe 4.0, dissipateur thermique intégré et performances soutenues pour le gaming en haute définition et le stockage de bibliothèques de jeux volumineuses.',
-            active: true 
-        },
-        { 
-            name: 'MX4 500GB SATA', 
-            brand: 'Crucial', 
-            price: 49.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=279', 
-            images: [
-                'https://picsum.photos/800/800?random=279'
-            ],
-            shortDescription: 'SSD SATA Crucial MX4 500GB économique',
-            description: 'Le Crucial MX4 500GB SATA offre un excellent rapport qualité-prix pour upgrader un ancien système. Interface SATA 3.0, fiabilité éprouvée et performances bien supérieures aux disques durs traditionnels.',
-            active: true 
-        },
-        { 
-            name: 'NV2 1TB NVMe', 
-            brand: 'Kingston', 
-            price: 59.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=280', 
-            images: [
-                'https://picsum.photos/800/800?random=280',
-                'https://picsum.photos/800/800?random=281'
-            ],
-            shortDescription: 'SSD NVMe Kingston NV2 1TB abordable',
-            description: 'Le Kingston NV2 1TB offre les avantages du stockage NVMe à prix accessible. PCIe 4.0, format M.2 compact et performances solides pour améliorer la réactivité de votre système.',
-            active: true 
-        },
-        { 
-            name: '990 EVO 2TB NVMe', 
-            brand: 'Samsung', 
-            price: 149.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=282', 
-            images: [
-                'https://picsum.photos/800/800?random=282',
-                'https://picsum.photos/800/800?random=283'
-            ],
-            shortDescription: 'SSD NVMe Samsung 990 EVO 2TB nouvelle génération',
-            description: 'Le Samsung 990 EVO 2TB représente l\'évolution de la gamme EVO avec des performances améliorées et une efficacité énergétique optimisée. Parfait pour les laptops gaming et les systèmes compacts.',
-            active: true 
-        }
-    ],
-    'Boîtiers': [
-        { 
-            name: 'Define 7 ATX Mid Tower', 
-            brand: 'Fractal Design', 
-            price: 169.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=290', 
-            images: [
-                'https://picsum.photos/800/800?random=290',
-                'https://picsum.photos/800/800?random=291'
-            ],
-            shortDescription: 'Boîtier Fractal Design Define 7 silencieux et spacieux',
-            description: 'Le Define 7 de Fractal Design combine élégance scandinave et fonctionnalité. Isolation acoustique optimale, excellent airflow, support multi-GPU et construction premium en font un choix de référence pour les builds haut de gamme.',
-            active: true 
-        },
-        { 
-            name: 'H510 Elite Mid Tower', 
-            brand: 'NZXT', 
-            price: 149.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=292', 
-            images: [
-                'https://picsum.photos/800/800?random=292',
-                'https://picsum.photos/800/800?random=293'
-            ],
-            shortDescription: 'Boîtier NZXT H510 Elite avec panneau verre trempé',
-            description: 'Le H510 Elite de NZXT offre un design moderne et épuré avec panneau en verre trempé. Câble management optimisé, RGB intégré et compatibilité avec les systèmes de refroidissement liquide NZXT.',
-            active: true 
-        },
-        { 
-            name: '4000D Airflow Mid Tower', 
-            brand: 'Corsair', 
-            price: 104.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=294', 
-            images: [
-                'https://picsum.photos/800/800?random=294',
-                'https://picsum.photos/800/800?random=295'
-            ],
-            shortDescription: 'Boîtier Corsair 4000D Airflow optimisé refroidissement',
-            description: 'Le 4000D Airflow de Corsair privilégie les performances thermiques avec sa façade perforée. Construction robuste, space management intelligent et excellent rapport qualité-prix pour les builds gaming performants.',
-            active: true 
-        },
-        { 
-            name: 'MasterBox Q300L mITX', 
-            brand: 'Cooler Master', 
-            price: 39.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=296', 
-            images: [
-                'https://picsum.photos/800/800?random=296'
-            ],
-            shortDescription: 'Boîtier Cooler Master Q300L compact mini-ITX',
-            description: 'Le MasterBox Q300L est parfait pour les builds compactes. Format mini-ITX, panneau transparent, modularité et prix abordable en font la solution idéale pour un premier build ou un HTPC.',
-            active: true 
-        },
-        { 
-            name: 'H7 Flow Mid Tower', 
-            brand: 'NZXT', 
-            price: 139.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=297', 
-            images: [
-                'https://picsum.photos/800/800?random=297',
-                'https://picsum.photos/800/800?random=298'
-            ],
-            shortDescription: 'Boîtier NZXT H7 Flow nouvelle génération',
-            description: 'Le H7 Flow représente l\'évolution de la gamme H de NZXT. Design moderne, airflow optimisé, compatibilité étendue et construction premium pour des builds gaming de nouvelle génération.',
-            active: true 
-        }
-    ],
-    'Alimentations': [
-        { 
-            name: 'RM850x 850W 80+ Gold Modular', 
-            brand: 'Corsair', 
-            price: 139.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=305', 
-            images: [
-                'https://picsum.photos/800/800?random=305',
-                'https://picsum.photos/800/800?random=306'
-            ],
-            shortDescription: 'Alimentation Corsair RM850x modulaire 80+ Gold',
-            description: 'La Corsair RM850x 850W offre une efficacité 80+ Gold et une modularité complète pour un câblage optimisé. Ventilateur silencieux à contrôle thermique et garantie 10 ans pour une tranquillité d\'esprit totale.',
-            active: true 
-        },
-        { 
-            name: 'Focus GX-750 750W 80+ Gold', 
-            brand: 'Seasonic', 
-            price: 119.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=307', 
-            images: [
-                'https://picsum.photos/800/800?random=307',
-                'https://picsum.photos/800/800?random=308'
-            ],
-            shortDescription: 'Alimentation Seasonic Focus GX-750 fiable et efficace',
-            description: 'La Seasonic Focus GX-750 combine la réputation légendaire de Seasonic avec des performances modernes. Efficacité 80+ Gold, protection complète et fonctionnement silencieux pour les builds haut de gamme.',
-            active: true 
-        },
-        { 
-            name: 'SuperNOVA 650 P6 80+ Platinum', 
-            brand: 'EVGA', 
-            price: 99.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=309', 
-            images: [
-                'https://picsum.photos/800/800?random=309',
-                'https://picsum.photos/800/800?random=310'
-            ],
-            shortDescription: 'Alimentation EVGA SuperNOVA 650W 80+ Platinum',
-            description: 'La SuperNOVA 650 P6 d\'EVGA offre une efficacité 80+ Platinum premium. Conception entièrement modulaire, ventilateur ECO mode et garantie 10 ans pour les builds gaming exigeants.',
-            active: true 
-        },
-        { 
-            name: 'Straight Power 11 600W 80+ Gold', 
-            brand: 'be quiet!', 
-            price: 89.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=311', 
-            images: [
-                'https://picsum.photos/800/800?random=311'
-            ],
-            shortDescription: 'Alimentation be quiet! Straight Power 11 silencieuse',
-            description: 'La Straight Power 11 de be quiet! privilégie le silence absolu sans compromettre les performances. Ventilateur Silent Wings 3 et efficacité 80+ Gold pour des builds silencieux professionnels.',
-            active: true 
-        },
-        { 
-            name: 'HX1000 1000W 80+ Platinum', 
-            brand: 'Corsair', 
-            price: 219.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=312', 
-            images: [
-                'https://picsum.photos/800/800?random=312',
-                'https://picsum.photos/800/800?random=313',
-                'https://picsum.photos/800/800?random=314'
-            ],
-            shortDescription: 'Alimentation Corsair HX1000 1000W haut de gamme',
-            description: 'La HX1000 de Corsair est conçue pour les systèmes les plus exigeants. 1000W 80+ Platinum, modularité complète et composants premium pour alimenter les configurations multi-GPU et workstations.',
-            active: true 
-        }
-    ],
-    'Périphériques': [
-        { 
-            name: 'MX Master 3S Wireless Mouse', 
-            brand: 'Logitech', 
-            price: 99.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=320', 
-            images: [
-                'https://picsum.photos/800/800?random=320',
-                'https://picsum.photos/800/800?random=321'
-            ],
-            shortDescription: 'Souris Logitech MX Master 3S sans fil professionnelle',
-            description: 'La MX Master 3S de Logitech redéfinit la productivité avec son capteur haute précision, sa molette MagSpeed et sa connectivité multi-appareils. Ergonomie parfaite et autonomie exceptionnelle pour les professionnels.',
-            active: true 
-        },
-        { 
-            name: 'K95 RGB Platinum Mechanical', 
-            brand: 'Corsair', 
-            price: 199.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=322', 
-            images: [
-                'https://picsum.photos/800/800?random=322',
-                'https://picsum.photos/800/800?random=323',
-                'https://picsum.photos/800/800?random=324'
-            ],
-            shortDescription: 'Clavier mécanique Corsair K95 RGB gaming premium',
-            description: 'Le K95 RGB Platinum combine switches Cherry MX premium, éclairage RGB par touche et touches macro dédiées. Construction aluminium, repose-poignet amovible et logiciel iCUE pour une expérience gaming ultime.',
-            active: true 
-        },
-        { 
-            name: 'DeathAdder V3 Gaming Mouse', 
-            brand: 'Razer', 
-            price: 69.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=325', 
-            images: [
-                'https://picsum.photos/800/800?random=325',
-                'https://picsum.photos/800/800?random=326'
-            ],
-            shortDescription: 'Souris gaming Razer DeathAdder V3 iconique',
-            description: 'La DeathAdder V3 perpétue l\'héritage de la souris gaming la plus vendue au monde. Capteur Focus Pro 30K, switches optiques et ergonomie légendaire pour des performances gaming de niveau professionnel.',
-            active: true 
-        },
-        { 
-            name: 'Apex Pro Mechanical Keyboard', 
-            brand: 'SteelSeries', 
-            price: 179.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=327', 
-            images: [
-                'https://picsum.photos/800/800?random=327',
-                'https://picsum.photos/800/800?random=328'
-            ],
-            shortDescription: 'Clavier SteelSeries Apex Pro avec switches ajustables',
-            description: 'L\'Apex Pro révolutionne l\'expérience gaming avec ses switches magnétiques OmniPoint ajustables. Point d\'actuation personnalisable, écran OLED intégré et construction premium pour les gamers les plus exigeants.',
-            active: true 
-        },
-        { 
-            name: 'G Pro X Superlight 2', 
-            brand: 'Logitech', 
-            price: 159.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=329', 
-            images: [
-                'https://picsum.photos/800/800?random=329',
-                'https://picsum.photos/800/800?random=330'
-            ],
-            shortDescription: 'Souris Logitech G Pro X Superlight 2 esports',
-            description: 'La G Pro X Superlight 2 est développée avec les professionnels esports. Poids ultra-léger, capteur HERO 25K et technologie LIGHTSPEED pour une précision et une réactivité sans compromis.',
-            active: true 
-        }
-    ],
-    'Écrans': [
-        { 
-            name: 'TUF Gaming VG27AQ 27" 1440p', 
-            brand: 'ASUS', 
-            price: 329.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=335', 
-            images: [
-                'https://picsum.photos/800/800?random=335',
-                'https://picsum.photos/800/800?random=336'
-            ],
-            shortDescription: 'Écran gaming ASUS TUF VG27AQ 27" 1440p IPS',
-            description: 'L\'ASUS TUF Gaming VG27AQ combine dalle IPS 27" 1440p avec 165Hz et compatibilité G-SYNC. Couleurs fidèles, temps de réponse rapide et robustesse TUF pour une expérience gaming immersive.',
-            active: true 
-        },
-        { 
-            name: 'S2721DGF 27" 1440p 165Hz', 
-            brand: 'Dell', 
-            price: 299.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=337', 
-            images: [
-                'https://picsum.photos/800/800?random=337',
-                'https://picsum.photos/800/800?random=338'
-            ],
-            shortDescription: 'Écran Dell S2721DGF 27" gaming 1440p',
-            description: 'Le Dell S2721DGF offre un excellent rapport qualité-prix avec sa dalle Fast IPS 27" 1440p 165Hz. Compatible FreeSync/G-SYNC, design moderne et ergonomie complète pour le gaming et la productivité.',
-            active: true 
-        },
-        { 
-            name: '27GN950-B 4K 144Hz Nano IPS', 
-            brand: 'LG', 
-            price: 799.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=339', 
-            images: [
-                'https://picsum.photos/800/800?random=339',
-                'https://picsum.photos/800/800?random=340',
-                'https://picsum.photos/800/800?random=341'
-            ],
-            shortDescription: 'Écran LG 27GN950-B 4K 144Hz Nano IPS premium',
-            description: 'Le LG 27GN950-B redéfinit le gaming 4K avec sa dalle Nano IPS 27" 144Hz. Couverture colorimétrique exceptionnelle, temps de réponse 1ms et compatibilité G-SYNC Ultimate pour une expérience gaming ultime.',
-            active: true 
-        },
-        { 
-            name: 'Odyssey G7 32" 1440p Curved', 
-            brand: 'Samsung', 
-            price: 599.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=342', 
-            images: [
-                'https://picsum.photos/800/800?random=342',
-                'https://picsum.photos/800/800?random=343',
-                'https://picsum.photos/800/800?random=344'
-            ],
-            shortDescription: 'Écran Samsung Odyssey G7 32" incurvé 1440p gaming',
-            description: 'L\'Odyssey G7 de Samsung révolutionne l\'immersion gaming avec son écran incurvé 32" 1440p 240Hz. Courbure 1000R, technologie QLED et design futuriste pour une expérience gaming sans précédent.',
-            active: true 
-        },
-        { 
-            name: 'ROG Swift PG279QM 27" 240Hz', 
-            brand: 'ASUS', 
-            price: 699.99, 
-            thumbnail: 'https://picsum.photos/400/400?random=345', 
-            images: [
-                'https://picsum.photos/800/800?random=345',
-                'https://picsum.photos/800/800?random=346'
-            ],
-            shortDescription: 'Écran ASUS ROG Swift PG279QM 27" 240Hz esports',
-            description: 'Le ROG Swift PG279QM est conçu pour l\'esports avec sa dalle Fast IPS 27" 1440p 240Hz. Temps de réponse ultra-rapide, G-SYNC et design ROG premium pour dominer la compétition.',
-            active: true 
-        }
-    ]
-};
+function buildProduct(seed) {
+    return {
+        name: seed.name,
+        brand: seed.brand,
+        price: seed.price,
+        thumbnail: seed.thumbnail,
+        images: seed.images,
+        shortDescription: seed.shortDescription,
+        description: seed.description,
+        active: true,
+    };
+}
+
+function cpuDescription(name, brand) {
+    return `Le processeur ${brand} ${name} offre d'excellentes performances pour le gaming, la productivité et les usages avancés. Il s'intègre parfaitement dans une configuration moderne orientée performance et évolutivité.`;
+}
+
+function motherboardDescription(name, brand) {
+    return `La carte mère ${brand} ${name} propose une plateforme stable et moderne avec une connectique complète, un étage d'alimentation solide et une bonne compatibilité pour les configurations gaming et polyvalentes.`;
+}
+
+function ramDescription(name, brand) {
+    return `Le kit mémoire ${brand} ${name} améliore la réactivité globale du système avec un bon équilibre entre fréquence, capacité et stabilité. Il convient parfaitement à une configuration gaming ou créative.`;
+}
+
+function gpuDescription(name, brand) {
+    return `La carte graphique ${brand} ${name} est conçue pour offrir de solides performances en jeu avec prise en charge des technologies graphiques modernes. Elle convient aussi bien au gaming qu'aux usages créatifs accélérés par GPU.`;
+}
+
+function hddDescription(name, brand) {
+    return `Le disque dur ${brand} ${name} constitue une solution fiable pour le stockage massif, les sauvegardes et les bibliothèques multimédias. Il est adapté à un usage quotidien comme à un environnement domestique avancé.`;
+}
+
+function ssdDescription(name, brand) {
+    return `Le SSD ${brand} ${name} apporte un excellent niveau de réactivité au système avec de bonnes performances de lecture et d'écriture. Il constitue un très bon choix pour un PC gaming ou bureautique moderne.`;
+}
+
+function caseDescription(name, brand) {
+    return `Le boîtier ${brand} ${name} combine design, airflow et facilité de montage. Il convient à différents types de configurations et met l'accent sur la compatibilité et l'organisation interne.`;
+}
+
+function psuDescription(name, brand) {
+    return `L'alimentation ${brand} ${name} fournit une puissance stable et efficace pour sécuriser l'ensemble de la configuration. Elle convient parfaitement aux PC gaming et aux stations de travail exigeantes.`;
+}
+
+function peripheralDescription(name, brand) {
+    return `Le périphérique ${brand} ${name} a été pensé pour offrir confort, précision et fiabilité, aussi bien pour le gaming que pour la productivité quotidienne.`;
+}
+
+function monitorDescription(name, brand) {
+    return `L'écran ${brand} ${name} offre une expérience visuelle fluide et détaillée, adaptée au gaming comme à la productivité. Il combine une bonne qualité d'image avec des caractéristiques modernes.`;
+}
+
+function generateCpuProducts() {
+    const models = [
+        { brand: 'Intel', name: 'Core i5-13400F', price: 209.99 },
+        { brand: 'Intel', name: 'Core i5-13600K', price: 319.99 },
+        { brand: 'Intel', name: 'Core i5-14600K', price: 349.99 },
+        { brand: 'Intel', name: 'Core i7-13700K', price: 419.99 },
+        { brand: 'Intel', name: 'Core i7-14700K', price: 469.99 },
+        { brand: 'Intel', name: 'Core i9-13900K', price: 589.99 },
+        { brand: 'Intel', name: 'Core i9-14900K', price: 649.99 },
+        { brand: 'Intel', name: 'Core i7-12700KF', price: 299.99 },
+        { brand: 'Intel', name: 'Core i5-12600K', price: 249.99 },
+        { brand: 'Intel', name: 'Core i3-13100F', price: 129.99 },
+
+        { brand: 'AMD', name: 'Ryzen 5 5600', price: 129.99 },
+        { brand: 'AMD', name: 'Ryzen 5 5600X', price: 159.99 },
+        { brand: 'AMD', name: 'Ryzen 5 7600', price: 239.99 },
+        { brand: 'AMD', name: 'Ryzen 5 7600X', price: 279.99 },
+        { brand: 'AMD', name: 'Ryzen 7 5700X', price: 199.99 },
+        { brand: 'AMD', name: 'Ryzen 7 5800X3D', price: 309.99 },
+        { brand: 'AMD', name: 'Ryzen 7 7700X', price: 349.99 },
+        { brand: 'AMD', name: 'Ryzen 7 7800X3D', price: 449.99 },
+        { brand: 'AMD', name: 'Ryzen 9 7900X', price: 479.99 },
+        { brand: 'AMD', name: 'Ryzen 9 7950X', price: 699.99 },
+        { brand: 'AMD', name: 'Ryzen 9 7950X3D', price: 749.99 },
+        { brand: 'AMD', name: 'Ryzen 7 8700G', price: 329.99 },
+        { brand: 'AMD', name: 'Ryzen 5 8600G', price: 239.99 },
+        { brand: 'Intel', name: 'Core Ultra 7 265K', price: 489.99 },
+        { brand: 'Intel', name: 'Core Ultra 5 245K', price: 359.99 },
+        { brand: 'AMD', name: 'Ryzen 9 9900X', price: 559.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(2000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `Processeur ${model.brand} ${model.name} pour gaming et productivité`,
+            description: cpuDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generateMotherboardProducts() {
+    const models = [
+        { brand: 'ASUS', name: 'ROG STRIX Z790-E Gaming WiFi', price: 459.99 },
+        { brand: 'ASUS', name: 'TUF Gaming B550-PLUS', price: 159.99 },
+        { brand: 'ASUS', name: 'PRIME B760-PLUS', price: 149.99 },
+        { brand: 'ASUS', name: 'ROG STRIX B650-A Gaming WiFi', price: 249.99 },
+        { brand: 'ASUS', name: 'TUF Gaming X670E-PLUS WiFi', price: 329.99 },
+
+        { brand: 'MSI', name: 'MAG B650 TOMAHAWK WiFi', price: 219.99 },
+        { brand: 'MSI', name: 'PRO B760-P WiFi', price: 169.99 },
+        { brand: 'MSI', name: 'MAG Z790 TOMAHAWK MAX WiFi', price: 319.99 },
+        { brand: 'MSI', name: 'PRO B650M-A WiFi', price: 149.99 },
+        { brand: 'MSI', name: 'MPG X670E Carbon WiFi', price: 429.99 },
+
+        { brand: 'Gigabyte', name: 'Z790 AORUS ELITE AX', price: 299.99 },
+        { brand: 'Gigabyte', name: 'B650 AORUS ELITE AX', price: 229.99 },
+        { brand: 'Gigabyte', name: 'B760 Gaming X AX', price: 179.99 },
+        { brand: 'Gigabyte', name: 'X670 AORUS ELITE AX', price: 299.99 },
+        { brand: 'Gigabyte', name: 'B550 AORUS ELITE V2', price: 139.99 },
+
+        { brand: 'ASRock', name: 'B650M PRO RS WiFi', price: 159.99 },
+        { brand: 'ASRock', name: 'B650M PRO B WiFi', price: 129.99 },
+        { brand: 'ASRock', name: 'Z790 Steel Legend WiFi', price: 279.99 },
+        { brand: 'ASRock', name: 'B760M Steel Legend WiFi', price: 189.99 },
+        { brand: 'ASRock', name: 'X670E Pro RS', price: 289.99 },
+
+        { brand: 'ASUS', name: 'PRIME X670-P WiFi', price: 279.99 },
+        { brand: 'MSI', name: 'MAG B550 TOMAHAWK', price: 159.99 },
+        { brand: 'Gigabyte', name: 'Z690 UD AX DDR4', price: 199.99 },
+        { brand: 'ASRock', name: 'B550 Phantom Gaming 4', price: 109.99 },
+        { brand: 'ASUS', name: 'ROG STRIX B760-F Gaming WiFi', price: 249.99 },
+        { brand: 'MSI', name: 'PRO Z790-A MAX WiFi', price: 269.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(3000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `Carte mère ${model.brand} ${model.name} pour configuration moderne`,
+            description: motherboardDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generateRamProducts() {
+    const models = [
+        { brand: 'Corsair', name: 'Vengeance LPX 16GB DDR4-3200', price: 49.99 },
+        { brand: 'Corsair', name: 'Vengeance LPX 32GB DDR4-3200', price: 89.99 },
+        { brand: 'Corsair', name: 'Vengeance RGB Pro 16GB DDR4-3600', price: 69.99 },
+        { brand: 'Corsair', name: 'Vengeance RGB DDR5 32GB 6000', price: 149.99 },
+        { brand: 'Corsair', name: 'Dominator Platinum RGB 32GB DDR5-6200', price: 219.99 },
+
+        { brand: 'G.Skill', name: 'Trident Z5 32GB DDR5-6000', price: 179.99 },
+        { brand: 'G.Skill', name: 'Trident Z Neo 32GB DDR5-6000', price: 189.99 },
+        { brand: 'G.Skill', name: 'Ripjaws V 16GB DDR4-3200', price: 44.99 },
+        { brand: 'G.Skill', name: 'Ripjaws S5 32GB DDR5-5600', price: 139.99 },
+        { brand: 'G.Skill', name: 'Flare X5 32GB DDR5-6000', price: 159.99 },
+
+        { brand: 'Kingston', name: 'Fury Beast 16GB DDR4-3200', price: 49.99 },
+        { brand: 'Kingston', name: 'Fury Beast 32GB DDR5-5600', price: 129.99 },
+        { brand: 'Kingston', name: 'Fury Renegade 32GB DDR5-6400', price: 199.99 },
+        { brand: 'Kingston', name: 'Fury Beast RGB 16GB DDR4-3600', price: 69.99 },
+        { brand: 'Kingston', name: 'ValueRAM 16GB DDR4-3200', price: 39.99 },
+
+        { brand: 'Crucial', name: 'Pro 32GB DDR5-5600', price: 119.99 },
+        { brand: 'Crucial', name: 'Ballistix 32GB DDR4-3600', price: 109.99 },
+        { brand: 'Crucial', name: 'Ballistix 64GB DDR4-3600', price: 199.99 },
+        { brand: 'Crucial', name: 'Pro 64GB DDR5-6000', price: 239.99 },
+        { brand: 'Crucial', name: 'Classic 16GB DDR4-3200', price: 42.99 },
+
+        { brand: 'Corsair', name: 'Vengeance 64GB DDR5-6000', price: 249.99 },
+        { brand: 'G.Skill', name: 'Trident Z5 RGB 48GB DDR5-6800', price: 289.99 },
+        { brand: 'Kingston', name: 'Fury Beast 64GB DDR5-6000', price: 259.99 },
+        { brand: 'Crucial', name: 'Pro 96GB DDR5-5600', price: 349.99 },
+        { brand: 'Corsair', name: 'Vengeance LPX 64GB DDR4-3200', price: 169.99 },
+        { brand: 'G.Skill', name: 'Ripjaws V 32GB DDR4-3600', price: 99.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(4000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `Mémoire ${model.brand} ${model.name} pour PC gaming et productif`,
+            description: ramDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generateGpuProducts() {
+    const models = [
+        { brand: 'NVIDIA', name: 'GeForce RTX 4060 8GB', price: 299.99 },
+        { brand: 'NVIDIA', name: 'GeForce RTX 4060 Ti 8GB', price: 399.99 },
+        { brand: 'NVIDIA', name: 'GeForce RTX 4070 12GB', price: 599.99 },
+        { brand: 'NVIDIA', name: 'GeForce RTX 4070 Ti SUPER 16GB', price: 849.99 },
+        { brand: 'NVIDIA', name: 'GeForce RTX 4080 SUPER 16GB', price: 1099.99 },
+        { brand: 'NVIDIA', name: 'GeForce RTX 4090 24GB', price: 1599.99 },
+
+        { brand: 'AMD', name: 'Radeon RX 7600 8GB', price: 279.99 },
+        { brand: 'AMD', name: 'Radeon RX 7700 XT 12GB', price: 449.99 },
+        { brand: 'AMD', name: 'Radeon RX 7800 XT 16GB', price: 499.99 },
+        { brand: 'AMD', name: 'Radeon RX 7900 GRE 16GB', price: 599.99 },
+        { brand: 'AMD', name: 'Radeon RX 7900 XT 20GB', price: 799.99 },
+        { brand: 'AMD', name: 'Radeon RX 7900 XTX 24GB', price: 999.99 },
+
+        { brand: 'ASUS', name: 'Dual GeForce RTX 4060 OC 8GB', price: 329.99 },
+        { brand: 'ASUS', name: 'TUF Gaming Radeon RX 7800 XT OC 16GB', price: 559.99 },
+        { brand: 'ASUS', name: 'ROG Strix RTX 4080 SUPER OC 16GB', price: 1299.99 },
+
+        { brand: 'MSI', name: 'Ventus 2X RTX 4060 Ti OC 8GB', price: 429.99 },
+        { brand: 'MSI', name: 'Gaming X Slim RTX 4070 SUPER 12GB', price: 699.99 },
+        { brand: 'MSI', name: 'Gaming Trio RX 7900 XTX 24GB', price: 1099.99 },
+
+        { brand: 'Gigabyte', name: 'Gaming OC RTX 4070 12GB', price: 649.99 },
+        { brand: 'Gigabyte', name: 'AORUS Master RTX 4090 24GB', price: 1799.99 },
+        { brand: 'Gigabyte', name: 'Gaming OC RX 7800 XT 16GB', price: 539.99 },
+
+        { brand: 'ASRock', name: 'Phantom Gaming RX 7700 XT 12GB', price: 469.99 },
+        { brand: 'ASRock', name: 'Challenger RX 7600 8GB', price: 289.99 },
+        { brand: 'ASRock', name: 'Taichi RX 7900 XTX 24GB', price: 1149.99 },
+
+        { brand: 'EVGA', name: 'FTW3 RTX 3080 10GB', price: 699.99 },
+        { brand: 'EVGA', name: 'XC3 RTX 3070 8GB', price: 529.99 },
+        { brand: 'MSI', name: 'SUPRIM X RTX 4080 SUPER 16GB', price: 1349.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(5000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `Carte graphique ${model.brand} ${model.name} pour gaming moderne`,
+            description: gpuDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generateHddProducts() {
+    const models = [
+        { brand: 'Seagate', name: 'Barracuda 1TB 7200RPM', price: 39.99 },
+        { brand: 'Seagate', name: 'Barracuda 2TB 7200RPM', price: 54.99 },
+        { brand: 'Seagate', name: 'Barracuda 4TB 5400RPM', price: 89.99 },
+        { brand: 'Seagate', name: 'IronWolf 4TB NAS', price: 119.99 },
+        { brand: 'Seagate', name: 'IronWolf 8TB NAS', price: 219.99 },
+        { brand: 'Seagate', name: 'SkyHawk 4TB Surveillance', price: 109.99 },
+        { brand: 'Seagate', name: 'Exos X18 12TB Enterprise', price: 289.99 },
+        { brand: 'Seagate', name: 'BarraCuda Pro 6TB 7200RPM', price: 179.99 },
+
+        { brand: 'Western Digital', name: 'Blue 1TB 7200RPM', price: 39.99 },
+        { brand: 'Western Digital', name: 'Blue 2TB 7200RPM', price: 59.99 },
+        { brand: 'Western Digital', name: 'Black 4TB Performance', price: 189.99 },
+        { brand: 'Western Digital', name: 'Red Plus 4TB NAS', price: 129.99 },
+        { brand: 'Western Digital', name: 'Red Plus 8TB NAS', price: 239.99 },
+        { brand: 'Western Digital', name: 'Purple 6TB Surveillance', price: 169.99 },
+        { brand: 'Western Digital', name: 'Gold 10TB Enterprise', price: 329.99 },
+
+        { brand: 'Toshiba', name: 'P300 1TB 7200RPM', price: 42.99 },
+        { brand: 'Toshiba', name: 'P300 3TB 7200RPM', price: 79.99 },
+        { brand: 'Toshiba', name: 'P300 6TB 7200RPM', price: 139.99 },
+        { brand: 'Toshiba', name: 'X300 8TB Performance', price: 219.99 },
+        { brand: 'Toshiba', name: 'N300 4TB NAS', price: 119.99 },
+        { brand: 'Toshiba', name: 'N300 8TB NAS', price: 229.99 },
+        { brand: 'Toshiba', name: 'S300 4TB Surveillance', price: 99.99 },
+        { brand: 'Seagate', name: 'IronWolf Pro 12TB NAS', price: 349.99 },
+        { brand: 'Western Digital', name: 'Ultrastar DC HC550 16TB', price: 449.99 },
+        { brand: 'Toshiba', name: 'MG09 18TB Enterprise', price: 499.99 },
+        { brand: 'Western Digital', name: 'Blue 4TB 5400RPM', price: 99.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(6000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `Disque dur ${model.brand} ${model.name} pour stockage et sauvegarde`,
+            description: hddDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generateSsdProducts() {
+    const models = [
+        { brand: 'Samsung', name: '980 500GB NVMe', price: 49.99 },
+        { brand: 'Samsung', name: '980 PRO 1TB NVMe', price: 89.99 },
+        { brand: 'Samsung', name: '990 EVO 2TB NVMe', price: 149.99 },
+        { brand: 'Samsung', name: '990 PRO 2TB NVMe', price: 199.99 },
+        { brand: 'Samsung', name: '870 EVO 1TB SATA', price: 79.99 },
+
+        { brand: 'Western Digital', name: 'Blue SN580 1TB NVMe', price: 69.99 },
+        { brand: 'Western Digital', name: 'Blue SN580 2TB NVMe', price: 129.99 },
+        { brand: 'Western Digital', name: 'Black SN770 1TB NVMe', price: 84.99 },
+        { brand: 'Western Digital', name: 'Black SN850X 2TB NVMe', price: 179.99 },
+        { brand: 'Western Digital', name: 'Blue SA510 1TB SATA', price: 69.99 },
+
+        { brand: 'Kingston', name: 'NV2 500GB NVMe', price: 39.99 },
+        { brand: 'Kingston', name: 'NV2 1TB NVMe', price: 59.99 },
+        { brand: 'Kingston', name: 'KC3000 1TB NVMe', price: 89.99 },
+        { brand: 'Kingston', name: 'KC3000 2TB NVMe', price: 159.99 },
+        { brand: 'Kingston', name: 'A400 960GB SATA', price: 54.99 },
+
+        { brand: 'Crucial', name: 'BX500 1TB SATA', price: 59.99 },
+        { brand: 'Crucial', name: 'MX500 1TB SATA', price: 74.99 },
+        { brand: 'Crucial', name: 'P3 1TB NVMe', price: 64.99 },
+        { brand: 'Crucial', name: 'P3 Plus 2TB NVMe', price: 124.99 },
+        { brand: 'Crucial', name: 'T500 2TB NVMe', price: 169.99 },
+
+        { brand: 'Samsung', name: '970 EVO Plus 1TB NVMe', price: 79.99 },
+        { brand: 'Western Digital', name: 'Green SN350 1TB NVMe', price: 54.99 },
+        { brand: 'Kingston', name: 'NV3 2TB NVMe', price: 119.99 },
+        { brand: 'Crucial', name: 'MX500 500GB SATA', price: 49.99 },
+        { brand: 'Samsung', name: '870 EVO 2TB SATA', price: 139.99 },
+        { brand: 'Western Digital', name: 'Black SN850X 1TB NVMe', price: 119.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(7000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `SSD ${model.brand} ${model.name} pour système rapide et réactif`,
+            description: ssdDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generateCaseProducts() {
+    const models = [
+        { brand: 'Fractal Design', name: 'Define 7 ATX Mid Tower', price: 169.99 },
+        { brand: 'Fractal Design', name: 'Meshify 2 Compact TG', price: 129.99 },
+        { brand: 'Fractal Design', name: 'North Charcoal TG', price: 149.99 },
+        { brand: 'Fractal Design', name: 'Pop Air RGB TG', price: 109.99 },
+        { brand: 'Fractal Design', name: 'Torrent Compact TG', price: 159.99 },
+
+        { brand: 'NZXT', name: 'H5 Flow Mid Tower', price: 99.99 },
+        { brand: 'NZXT', name: 'H6 Flow RGB', price: 139.99 },
+        { brand: 'NZXT', name: 'H7 Flow Mid Tower', price: 139.99 },
+        { brand: 'NZXT', name: 'H9 Flow Dual Chamber', price: 179.99 },
+        { brand: 'NZXT', name: 'H510 Elite Mid Tower', price: 149.99 },
+
+        { brand: 'Cooler Master', name: 'MasterBox Q300L mATX', price: 39.99 },
+        { brand: 'Cooler Master', name: 'TD500 Mesh V2', price: 109.99 },
+        { brand: 'Cooler Master', name: 'NR200P Mini-ITX', price: 99.99 },
+        { brand: 'Cooler Master', name: 'HAF 500 ATX', price: 129.99 },
+        { brand: 'Cooler Master', name: 'MasterBox 520 Mesh', price: 94.99 },
+
+        { brand: 'Corsair', name: '4000D Airflow Mid Tower', price: 104.99 },
+        { brand: 'Corsair', name: '3000D Airflow', price: 79.99 },
+        { brand: 'Corsair', name: '5000D Airflow', price: 159.99 },
+        { brand: 'Corsair', name: '6500X Dual Chamber', price: 199.99 },
+        { brand: 'Corsair', name: 'iCUE 4000X RGB', price: 139.99 },
+
+        { brand: 'be quiet!', name: 'Pure Base 500DX', price: 99.99 },
+        { brand: 'be quiet!', name: 'Shadow Base 800 FX', price: 179.99 },
+        { brand: 'be quiet!', name: 'Silent Base 802', price: 169.99 },
+        { brand: 'Fractal Design', name: 'Focus 2 RGB TG', price: 89.99 },
+        { brand: 'NZXT', name: 'H7 Elite RGB', price: 199.99 },
+        { brand: 'Corsair', name: '7000D Airflow Full Tower', price: 249.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(8000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `Boîtier ${model.brand} ${model.name} pour configuration gaming`,
+            description: caseDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generatePsuProducts() {
+    const models = [
+        { brand: 'Corsair', name: 'RM650e 650W 80+ Gold', price: 89.99 },
+        { brand: 'Corsair', name: 'RM750e 750W 80+ Gold', price: 99.99 },
+        { brand: 'Corsair', name: 'RM850x 850W 80+ Gold Modular', price: 139.99 },
+        { brand: 'Corsair', name: 'HX1000 1000W 80+ Platinum', price: 219.99 },
+        { brand: 'Corsair', name: 'CX550 550W 80+ Bronze', price: 64.99 },
+
+        { brand: 'Seasonic', name: 'Focus GX-650 650W 80+ Gold', price: 99.99 },
+        { brand: 'Seasonic', name: 'Focus GX-750 750W 80+ Gold', price: 119.99 },
+        { brand: 'Seasonic', name: 'Focus GX-850 850W 80+ Gold', price: 139.99 },
+        { brand: 'Seasonic', name: 'Vertex GX-1000 1000W 80+ Gold', price: 199.99 },
+        { brand: 'Seasonic', name: 'Prime TX-850 850W 80+ Titanium', price: 249.99 },
+
+        { brand: 'EVGA', name: '600 BR 600W 80+ Bronze', price: 59.99 },
+        { brand: 'EVGA', name: '750 GT 750W 80+ Gold', price: 109.99 },
+        { brand: 'EVGA', name: 'SuperNOVA 650 P6 80+ Platinum', price: 99.99 },
+        { brand: 'EVGA', name: 'SuperNOVA 850 G7 80+ Gold', price: 149.99 },
+        { brand: 'EVGA', name: 'SuperNOVA 1000 G6 80+ Gold', price: 189.99 },
+
+        { brand: 'be quiet!', name: 'System Power 10 550W 80+ Bronze', price: 59.99 },
+        { brand: 'be quiet!', name: 'Pure Power 12 M 750W 80+ Gold', price: 119.99 },
+        { brand: 'be quiet!', name: 'Straight Power 11 600W 80+ Gold', price: 89.99 },
+        { brand: 'be quiet!', name: 'Straight Power 12 850W 80+ Platinum', price: 169.99 },
+        { brand: 'be quiet!', name: 'Dark Power 13 1000W 80+ Titanium', price: 279.99 },
+
+        { brand: 'Cooler Master', name: 'MWE Bronze V2 650W', price: 69.99 },
+        { brand: 'Cooler Master', name: 'MWE Gold 750 V2', price: 99.99 },
+        { brand: 'Cooler Master', name: 'V850 Gold i 850W', price: 149.99 },
+        { brand: 'Corsair', name: 'SF750 750W 80+ Platinum SFX', price: 169.99 },
+        { brand: 'Seasonic', name: 'Core GX-650 650W Gold', price: 89.99 },
+        { brand: 'be quiet!', name: 'Pure Power 12 M 850W 80+ Gold', price: 139.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(9000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `Alimentation ${model.brand} ${model.name} pour configuration stable`,
+            description: psuDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generatePeripheralProducts() {
+    const models = [
+        { brand: 'Logitech', name: 'MX Master 3S Wireless Mouse', price: 99.99 },
+        { brand: 'Logitech', name: 'G Pro X Superlight 2', price: 159.99 },
+        { brand: 'Logitech', name: 'G502 X Lightspeed', price: 129.99 },
+        { brand: 'Logitech', name: 'G915 TKL Lightspeed', price: 199.99 },
+        { brand: 'Logitech', name: 'MX Keys S', price: 119.99 },
+        { brand: 'Logitech', name: 'G Pro Mechanical Keyboard', price: 129.99 },
+        { brand: 'Logitech', name: 'Lift Vertical Mouse', price: 69.99 },
+
+        { brand: 'Razer', name: 'DeathAdder V3 Gaming Mouse', price: 69.99 },
+        { brand: 'Razer', name: 'Basilisk V3 Pro', price: 169.99 },
+        { brand: 'Razer', name: 'Viper V3 Pro', price: 179.99 },
+        { brand: 'Razer', name: 'BlackWidow V4 Pro', price: 229.99 },
+        { brand: 'Razer', name: 'Huntsman V3 Pro TKL', price: 249.99 },
+        { brand: 'Razer', name: 'Ornata V3 X', price: 49.99 },
+
+        { brand: 'SteelSeries', name: 'Apex Pro TKL Mechanical Keyboard', price: 199.99 },
+        { brand: 'SteelSeries', name: 'Apex Pro Mini Wireless', price: 229.99 },
+        { brand: 'SteelSeries', name: 'Aerox 3 Wireless', price: 99.99 },
+        { brand: 'SteelSeries', name: 'Prime Mini Wireless', price: 89.99 },
+        { brand: 'SteelSeries', name: 'Rival 5 RGB Mouse', price: 59.99 },
+        { brand: 'SteelSeries', name: 'Apex 7 Red Switch', price: 159.99 },
+
+        { brand: 'Corsair', name: 'K95 RGB Platinum Mechanical', price: 199.99 },
+        { brand: 'Corsair', name: 'K70 RGB Pro', price: 169.99 },
+        { brand: 'Corsair', name: 'Dark Core RGB Pro SE', price: 109.99 },
+        { brand: 'Corsair', name: 'M65 RGB Ultra', price: 79.99 },
+        { brand: 'Corsair', name: 'K55 RGB Pro XT', price: 79.99 },
+        { brand: 'Razer', name: 'Naga V2 HyperSpeed', price: 109.99 },
+        { brand: 'Logitech', name: 'G305 Lightspeed', price: 49.99 },
+        { brand: 'SteelSeries', name: 'Arctis Nova 1X', price: 69.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(10000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `Périphérique ${model.brand} ${model.name} pour jeu et productivité`,
+            description: peripheralDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generateMonitorProducts() {
+    const models = [
+        { brand: 'ASUS', name: 'TUF Gaming VG27AQ 27" 1440p 165Hz', price: 329.99 },
+        { brand: 'ASUS', name: 'ROG Swift PG279QM 27" 240Hz', price: 699.99 },
+        { brand: 'ASUS', name: 'ProArt PA278QV 27" QHD', price: 289.99 },
+        { brand: 'ASUS', name: 'TUF Gaming VG249Q3A 24" 180Hz', price: 189.99 },
+        { brand: 'ASUS', name: 'ROG Strix XG27ACS 27" 180Hz', price: 279.99 },
+
+        { brand: 'Dell', name: 'S2721DGF 27" 1440p 165Hz', price: 299.99 },
+        { brand: 'Dell', name: 'G2724D 27" 1440p 165Hz', price: 269.99 },
+        { brand: 'Dell', name: 'U2723QE 27" 4K IPS Black', price: 529.99 },
+        { brand: 'Dell', name: 'P2422H 24" Full HD', price: 179.99 },
+        { brand: 'Dell', name: 'Alienware AW2723DF 27" 280Hz', price: 649.99 },
+
+        { brand: 'LG', name: '27GN950-B 4K 144Hz Nano IPS', price: 799.99 },
+        { brand: 'LG', name: '27GP850-B 27" 1440p 180Hz', price: 349.99 },
+        { brand: 'LG', name: '32GR93U-B 32" 4K 144Hz', price: 649.99 },
+        { brand: 'LG', name: '24GN65R-B 24" 144Hz IPS', price: 179.99 },
+        { brand: 'LG', name: '34GP83A-B 34" Ultrawide 160Hz', price: 699.99 },
+
+        { brand: 'Samsung', name: 'Odyssey G5 27" 1440p 165Hz', price: 249.99 },
+        { brand: 'Samsung', name: 'Odyssey G7 32" 1440p Curved 240Hz', price: 599.99 },
+        { brand: 'Samsung', name: 'Odyssey G8 OLED 34" Ultrawide', price: 1099.99 },
+        { brand: 'Samsung', name: 'ViewFinity S6 27" QHD', price: 269.99 },
+        { brand: 'Samsung', name: 'Odyssey Neo G7 43" 4K', price: 899.99 },
+
+        { brand: 'MSI', name: 'MAG 274QRF-QD E2 27" 180Hz', price: 329.99 },
+        { brand: 'MSI', name: 'G274QPX 27" 240Hz', price: 399.99 },
+        { brand: 'MSI', name: 'MP273A 27" Full HD', price: 149.99 },
+
+        { brand: 'Gigabyte', name: 'M27Q 27" 170Hz KVM', price: 299.99 },
+        { brand: 'Gigabyte', name: 'M32U 32" 4K 144Hz', price: 699.99 },
+        { brand: 'Gigabyte', name: 'GS27Q 27" 170Hz', price: 239.99 },
+    ];
+
+    return models.map((model, index) => {
+        const { thumbnail, images } = buildImageSet(11000 + index * 3);
+        return buildProduct({
+            ...model,
+            thumbnail,
+            images,
+            shortDescription: `Écran ${model.brand} ${model.name} pour gaming et productivité`,
+            description: monitorDescription(model.name, model.brand),
+        });
+    });
+}
+
+function generateProductsData() {
+    return {
+        'Processeurs': generateCpuProducts(),
+        'Cartes mères': generateMotherboardProducts(),
+        'Mémoire RAM': generateRamProducts(),
+        'Cartes graphiques': generateGpuProducts(),
+        'Disques durs': generateHddProducts(),
+        'SSD': generateSsdProducts(),
+        'Boîtiers': generateCaseProducts(),
+        'Alimentations': generatePsuProducts(),
+        'Périphériques': generatePeripheralProducts(),
+        'Écrans': generateMonitorProducts(),
+    };
+}
+
+const productsData = generateProductsData();
 
 async function main() {
     console.log('🌱 Début du seeding...');
 
-    // Nettoyer la base de données
     console.log('🧹 Nettoyage de la base de données...');
     await prisma.productAttributeValues.deleteMany({});
     await prisma.stocks.deleteMany({});
@@ -785,7 +681,6 @@ async function main() {
     console.log('🏷️ Création des marques...');
     const createdBrands = {};
 
-    // Créer les marques
     for (const brandData of brandsData) {
         const brand = await prisma.brands.create({
             data: {
@@ -794,6 +689,7 @@ async function main() {
                 logo: brandData.logo,
             },
         });
+
         createdBrands[brandData.name] = brand;
         console.log(`✅ Marque créée: ${brand.name} (${brand.slug})`);
     }
@@ -801,7 +697,6 @@ async function main() {
     console.log('📂 Création des catégories...');
     const createdCategories = {};
 
-    // Créer les catégories
     for (const categoryData of categoriesData) {
         const category = await prisma.categories.create({
             data: {
@@ -810,20 +705,20 @@ async function main() {
                 logo: categoryData.logo,
             },
         });
+
         createdCategories[categoryData.name] = category;
         console.log(`✅ Catégorie créée: ${category.name} (${category.slug})`);
     }
 
-    // Données des attributs par catégorie
     const attributesData = {
-        'Processeurs': [
+        Processeurs: [
             { name: 'Socket', type: 'TEXT', required: true },
             { name: 'Nombre de cœurs', type: 'NUMBER', required: true },
             { name: 'Nombre de threads', type: 'NUMBER', required: true },
             { name: 'Fréquence de base (GHz)', type: 'NUMBER', required: true },
             { name: 'Cache L3 (MB)', type: 'NUMBER', required: false },
             { name: 'TDP (W)', type: 'NUMBER', required: false },
-            { name: 'Graphiques intégrés', type: 'BOOLEAN', required: false }
+            { name: 'Graphiques intégrés', type: 'BOOLEAN', required: false },
         ],
         'Cartes mères': [
             { name: 'Socket', type: 'TEXT', required: true },
@@ -832,14 +727,14 @@ async function main() {
             { name: 'Slots mémoire', type: 'NUMBER', required: true },
             { name: 'Mémoire maximale (GB)', type: 'NUMBER', required: true },
             { name: 'WiFi intégré', type: 'BOOLEAN', required: false },
-            { name: 'Bluetooth intégré', type: 'BOOLEAN', required: false }
+            { name: 'Bluetooth intégré', type: 'BOOLEAN', required: false },
         ],
         'Mémoire RAM': [
             { name: 'Type DDR', type: 'SELECT', required: true },
             { name: 'Fréquence (MHz)', type: 'NUMBER', required: true },
             { name: 'Capacité (GB)', type: 'NUMBER', required: true },
             { name: 'Latence CAS', type: 'NUMBER', required: false },
-            { name: 'RGB', type: 'BOOLEAN', required: false }
+            { name: 'RGB', type: 'BOOLEAN', required: false },
         ],
         'Cartes graphiques': [
             { name: 'Chipset GPU', type: 'TEXT', required: true },
@@ -847,38 +742,38 @@ async function main() {
             { name: 'Type VRAM', type: 'TEXT', required: true },
             { name: 'Fréquence de base (MHz)', type: 'NUMBER', required: false },
             { name: 'Connecteurs d\'alimentation', type: 'TEXT', required: false },
-            { name: 'Ray Tracing', type: 'BOOLEAN', required: false }
+            { name: 'Ray Tracing', type: 'BOOLEAN', required: false },
         ],
         'Disques durs': [
             { name: 'Capacité (TB)', type: 'NUMBER', required: true },
             { name: 'Vitesse de rotation (RPM)', type: 'NUMBER', required: true },
             { name: 'Interface', type: 'TEXT', required: true },
-            { name: 'Cache (MB)', type: 'NUMBER', required: false }
+            { name: 'Cache (MB)', type: 'NUMBER', required: false },
         ],
-        'SSD': [
+        SSD: [
             { name: 'Capacité (GB)', type: 'NUMBER', required: true },
             { name: 'Interface', type: 'TEXT', required: true },
             { name: 'Lecture séquentielle (MB/s)', type: 'NUMBER', required: false },
             { name: 'Écriture séquentielle (MB/s)', type: 'NUMBER', required: false },
-            { name: 'Type de mémoire', type: 'TEXT', required: false }
+            { name: 'Type de mémoire', type: 'TEXT', required: false },
         ],
         'Boîtiers': [
             { name: 'Format', type: 'SELECT', required: true },
             { name: 'Matériau', type: 'TEXT', required: false },
             { name: 'Ventilateurs inclus', type: 'NUMBER', required: false },
-            { name: 'Panneau transparent', type: 'BOOLEAN', required: false }
+            { name: 'Panneau transparent', type: 'BOOLEAN', required: false },
         ],
-        'Alimentations': [
+        Alimentations: [
             { name: 'Puissance (W)', type: 'NUMBER', required: true },
             { name: 'Certification', type: 'TEXT', required: true },
             { name: 'Modulaire', type: 'BOOLEAN', required: false },
-            { name: 'Format', type: 'TEXT', required: false }
+            { name: 'Format', type: 'TEXT', required: false },
         ],
         'Périphériques': [
             { name: 'Type', type: 'SELECT', required: true },
             { name: 'Sans fil', type: 'BOOLEAN', required: false },
             { name: 'RGB', type: 'BOOLEAN', required: false },
-            { name: 'Interface', type: 'TEXT', required: false }
+            { name: 'Interface', type: 'TEXT', required: false },
         ],
         'Écrans': [
             { name: 'Taille (pouces)', type: 'NUMBER', required: true },
@@ -886,15 +781,14 @@ async function main() {
             { name: 'Taux de rafraîchissement (Hz)', type: 'NUMBER', required: true },
             { name: 'Type de dalle', type: 'TEXT', required: false },
             { name: 'Incurvé', type: 'BOOLEAN', required: false },
-            { name: 'G-Sync/FreeSync', type: 'TEXT', required: false }
-        ]
+            { name: 'G-Sync/FreeSync', type: 'TEXT', required: false },
+        ],
     };
 
     console.log('🏷️ Création des attributs et associations avec les catégories...');
     let totalAttributes = 0;
     let totalCategoryAttributes = 0;
 
-    // Créer les attributs et les associer aux catégories
     for (const [categoryName, attributes] of Object.entries(attributesData)) {
         const category = createdCategories[categoryName];
 
@@ -904,7 +798,6 @@ async function main() {
         }
 
         for (const [index, attributeData] of attributes.entries()) {
-            // Créer l'attribut
             const attribute = await prisma.attributes.create({
                 data: {
                     name: attributeData.name,
@@ -912,7 +805,6 @@ async function main() {
                 },
             });
 
-            // Associer l'attribut à la catégorie
             await prisma.categoryAttributes.create({
                 data: {
                     categoryId: category.id,
@@ -932,7 +824,6 @@ async function main() {
     let totalProducts = 0;
     const createdProducts = [];
 
-    // Créer les produits pour chaque catégorie
     for (const [categoryName, products] of Object.entries(productsData)) {
         const category = createdCategories[categoryName];
 
@@ -949,26 +840,40 @@ async function main() {
                 continue;
             }
 
-            // Créer le produit
+            const normalizedProductName = normalizeName(productData.name);
+            const identifiers = productIdentifiers[normalizedProductName] ?? null;
+
             const product = await prisma.products.create({
                 data: {
                     name: productData.name,
-                    slug: slugify(productData.name, { lower: true, strict: true, locale: 'fr' }),
-                    price: productData.price,
+                    slug: slugify(`${productData.brand}-${productData.name}`, {
+                        lower: true,
+                        strict: true,
+                        locale: 'fr',
+                    }),
                     thumbnail: productData.thumbnail,
                     images: productData.images,
                     shortDescription: productData.shortDescription,
                     description: productData.description,
+
+                    sku: buildSku({
+                        categoryName,
+                        brandName: productData.brand,
+                        productName: productData.name,
+                    }),
+                    mpn: identifiers?.mpn ?? null,
+                    ean13: identifiers?.ean13 ?? null,
+
+                    price: productData.price,
                     categoryId: category.id,
                     brandId: brand.id,
-                    active: productData.active
+                    active: productData.active,
                 },
             });
 
-            // Créer le stock pour ce produit
-            const randomStock = Math.floor(Math.random() * 50) + 1; // Stock entre 1 et 50
-            const randomMinStock = Math.floor(Math.random() * 30) + 1;
-            
+            const randomStock = Math.floor(Math.random() * 50) + 1;
+            const randomMinStock = Math.floor(Math.random() * 15) + 1;
+
             await prisma.stocks.create({
                 data: {
                     productId: product.id,
@@ -977,11 +882,11 @@ async function main() {
                 },
             });
 
-            // Stocker le produit créé pour les attributs
             createdProducts.push({
-                product: product,
-                categoryName: categoryName,
-                productData: productData
+                product,
+                categoryName,
+                brandName: productData.brand,
+                productData,
             });
 
             totalProducts++;
@@ -992,93 +897,87 @@ async function main() {
     console.log('🏷️ Création des valeurs d\'attributs pour les produits...');
     let totalProductAttributeValues = 0;
 
-    // Créer les valeurs d'attributs pour chaque produit
     for (const productInfo of createdProducts) {
-        const { product, categoryName } = productInfo;
-        
-        // Récupérer les attributs de cette catégorie
+        const { product, categoryName, brandName } = productInfo;
+
         const categoryAttributes = await prisma.categoryAttributes.findMany({
             where: {
                 category: {
-                    name: categoryName
-                }
+                    name: categoryName,
+                },
             },
             include: {
-                attribute: true
-            }
+                attribute: true,
+            },
         });
 
-        // Générer des valeurs d'attributs selon le type de produit
         for (const categoryAttribute of categoryAttributes) {
             const attribute = categoryAttribute.attribute;
             let value = '';
 
-            // Générer des valeurs réalistes selon la catégorie et l'attribut
             if (categoryName === 'Processeurs') {
                 if (attribute.name === 'Socket') {
-                    value = product.name.includes('Intel') ? (product.name.includes('13') ? 'LGA1700' : 'LGA1151') : 
-                           (product.name.includes('7000') ? 'AM5' : 'AM4');
+                    value = brandName === 'Intel' ? 'LGA1700' : 'AM5';
                 } else if (attribute.name === 'Nombre de cœurs') {
-                    value = product.name.includes('i9') || product.name.includes('7950') ? '16' :
-                           product.name.includes('i7') || product.name.includes('7800') ? '8' : '6';
+                    value = ['6', '8', '12', '16'][Math.floor(Math.random() * 4)];
                 } else if (attribute.name === 'Nombre de threads') {
-                    value = product.name.includes('i9') || product.name.includes('7950') ? '24' :
-                           product.name.includes('i7') || product.name.includes('7800') ? '16' : '12';
+                    value = ['12', '16', '24', '32'][Math.floor(Math.random() * 4)];
                 } else if (attribute.name === 'Fréquence de base (GHz)') {
-                    value = (3.0 + Math.random() * 2.0).toFixed(1);
+                    value = (3.2 + Math.random() * 2).toFixed(1);
                 } else if (attribute.name === 'Cache L3 (MB)') {
-                    value = product.name.includes('i9') || product.name.includes('7950') ? '36' : '24';
+                    value = ['24', '30', '32', '36', '64', '96'][Math.floor(Math.random() * 6)];
                 } else if (attribute.name === 'TDP (W)') {
-                    value = product.name.includes('i9') || product.name.includes('7950') ? '125' : '65';
+                    value = ['65', '105', '120', '125', '170'][Math.floor(Math.random() * 5)];
                 } else if (attribute.name === 'Graphiques intégrés') {
-                    value = product.name.includes('Intel') ? 'true' : 'false';
+                    value = Math.random() > 0.4 ? 'true' : 'false';
                 }
             } else if (categoryName === 'Cartes graphiques') {
                 if (attribute.name === 'Chipset GPU') {
-                    value = product.name.includes('RTX') ? product.name.split(' ')[1] + ' ' + product.name.split(' ')[2] :
-                           product.name.includes('RX') ? 'Radeon ' + product.name.split(' ')[1] + ' ' + product.name.split(' ')[2] : 'Unknown';
+                    value = ['RTX 4060', 'RTX 4070 Ti', 'RTX 4080', 'RTX 4090', 'RX 7800 XT', 'RX 7900 XTX'][Math.floor(Math.random() * 6)];
                 } else if (attribute.name === 'VRAM (GB)') {
-                    value = product.name.includes('4090') ? '24' :
-                           product.name.includes('4080') || product.name.includes('7900') ? '16' :
-                           product.name.includes('4070') || product.name.includes('7800') ? '12' : '8';
+                    value = ['8', '12', '16', '24'][Math.floor(Math.random() * 4)];
                 } else if (attribute.name === 'Type VRAM') {
-                    value = product.name.includes('RTX') ? 'GDDR6X' : 'GDDR6';
+                    value = Math.random() > 0.5 ? 'GDDR6' : 'GDDR6X';
                 } else if (attribute.name === 'Fréquence de base (MHz)') {
-                    value = (1500 + Math.random() * 700).toFixed(0);
+                    value = String(1500 + Math.floor(Math.random() * 800));
+                } else if (attribute.name === 'Connecteurs d\'alimentation') {
+                    value = ['1x8-pin', '2x8-pin', '12VHPWR'][Math.floor(Math.random() * 3)];
                 } else if (attribute.name === 'Ray Tracing') {
-                    value = product.name.includes('RTX') || product.name.includes('7900') || product.name.includes('7800') ? 'true' : 'false';
+                    value = 'true';
                 }
             } else if (categoryName === 'Mémoire RAM') {
                 if (attribute.name === 'Type DDR') {
-                    value = product.name.includes('DDR5') ? 'DDR5' : 'DDR4';
+                    value = Math.random() > 0.45 ? 'DDR5' : 'DDR4';
                 } else if (attribute.name === 'Fréquence (MHz)') {
-                    value = product.name.includes('DDR5') ? '6000' :
-                           product.name.includes('3600') ? '3600' : '3200';
+                    value = ['3200', '3600', '5200', '5600', '6000'][Math.floor(Math.random() * 5)];
                 } else if (attribute.name === 'Capacité (GB)') {
-                    value = product.name.includes('64GB') ? '64' :
-                           product.name.includes('32GB') ? '32' : '16';
+                    value = ['16', '32', '64'][Math.floor(Math.random() * 3)];
+                } else if (attribute.name === 'Latence CAS') {
+                    value = ['16', '18', '30', '32', '36'][Math.floor(Math.random() * 5)];
                 } else if (attribute.name === 'RGB') {
-                    value = product.name.includes('RGB') ? 'true' : 'false';
+                    value = Math.random() > 0.5 ? 'true' : 'false';
                 }
             } else if (categoryName === 'Écrans') {
                 if (attribute.name === 'Taille (pouces)') {
-                    value = product.name.includes('27') ? '27' :
-                           product.name.includes('32') ? '32' : '24';
+                    value = ['24', '27', '32', '34'][Math.floor(Math.random() * 4)];
                 } else if (attribute.name === 'Résolution') {
-                    value = product.name.includes('4K') ? '3840x2160' : '2560x1440';
+                    value = ['1920x1080', '2560x1440', '3840x2160'][Math.floor(Math.random() * 3)];
                 } else if (attribute.name === 'Taux de rafraîchissement (Hz)') {
-                    value = product.name.includes('240Hz') ? '240' :
-                           product.name.includes('165Hz') ? '165' :
-                           product.name.includes('144Hz') ? '144' : '60';
+                    value = ['75', '144', '165', '240'][Math.floor(Math.random() * 4)];
+                } else if (attribute.name === 'Type de dalle') {
+                    value = ['IPS', 'VA', 'Fast IPS', 'Nano IPS'][Math.floor(Math.random() * 4)];
                 } else if (attribute.name === 'Incurvé') {
-                    value = product.name.includes('Curved') ? 'true' : 'false';
+                    value = Math.random() > 0.65 ? 'true' : 'false';
+                } else if (attribute.name === 'G-Sync/FreeSync') {
+                    value = ['FreeSync', 'G-SYNC Compatible', 'Adaptive Sync'][Math.floor(Math.random() * 3)];
                 }
             } else {
-                // Valeurs génériques pour les autres catégories
                 if (attribute.type === 'BOOLEAN') {
                     value = Math.random() > 0.5 ? 'true' : 'false';
                 } else if (attribute.type === 'NUMBER') {
-                    value = (Math.random() * 100 + 1).toFixed(0);
+                    value = String(Math.floor(Math.random() * 100) + 1);
+                } else if (attribute.type === 'SELECT') {
+                    value = `Option ${Math.floor(Math.random() * 5) + 1}`;
                 } else {
                     value = `Valeur ${attribute.name}`;
                 }
@@ -1089,13 +988,14 @@ async function main() {
                     data: {
                         productId: product.id,
                         categoryAttributeId: categoryAttribute.id,
-                        value: value
-                    }
+                        value,
+                    },
                 });
+
                 totalProductAttributeValues++;
             }
         }
-        
+
         console.log(`✅ Attributs créés pour: ${product.name}`);
     }
 
@@ -1109,15 +1009,14 @@ async function main() {
     console.log(`🎯 Valeurs d'attributs créées: ${totalProductAttributeValues}`);
     console.log('\n🎉 Seeding terminé avec succès!');
 
-    // Afficher quelques statistiques
     console.log('\n📈 Statistiques par catégorie:');
     for (const categoryName of Object.keys(productsData)) {
-        const productCount = productsData[categoryName].length;
-        console.log(`  - ${categoryName}: ${productCount} produits`);
+        console.log(`  - ${categoryName}: ${productsData[categoryName].length} produits`);
     }
 
     console.log('\n🏷️ Statistiques par marque:');
     const brandStats = {};
+
     for (const products of Object.values(productsData)) {
         for (const product of products) {
             brandStats[product.brand] = (brandStats[product.brand] || 0) + 1;
@@ -1125,7 +1024,7 @@ async function main() {
     }
 
     Object.entries(brandStats)
-        .sort(([,a], [,b]) => b - a)
+        .sort(([, a], [, b]) => b - a)
         .forEach(([brand, count]) => {
             console.log(`  - ${brand}: ${count} produits`);
         });
