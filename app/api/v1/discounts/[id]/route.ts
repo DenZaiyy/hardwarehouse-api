@@ -6,6 +6,41 @@ interface RouteParams {
     params: Promise<{ id: string }>;
 }
 
+export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/discounts/[id]'>) {
+    try {
+        const { id } = await ctx.params;
+
+        const discount = await db.discounts.findUnique({
+            where: {
+                id
+            },
+            include: {
+                category: true,
+                product: true,
+            }
+        });
+
+
+        if (!discount) {
+            return NextResponse.json(
+                { error: 'Remise introuvable' },
+                { status: 404 }
+            );
+        }
+
+        return NextResponse.json(discount, {status: 200});
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error('[DISCOUNT] ', error.message)
+            return NextResponse.json(
+                { error: `[DISCOUNT] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
+                { status: 500 }
+            );
+        }
+    }
+}
+
+
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
     try {
         const { id } = await params;
