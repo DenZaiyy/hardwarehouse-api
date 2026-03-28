@@ -86,7 +86,7 @@ export function DiscountActions({ discountId, discountActive, onDelete, onToggle
                     <AlertDialogHeader>
                         <AlertDialogTitle>Supprimer la remise ?</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Cette action est irréversible. La remise avec l'ID {" "}
+                            Cette action est irréversible. La remise avec l&#39;ID {" "}
                             <strong>{discountId}</strong> sera définitivement supprimée.
                         </AlertDialogDescription>
                     </AlertDialogHeader>

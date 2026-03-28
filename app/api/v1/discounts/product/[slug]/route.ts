@@ -2,10 +2,6 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {handleApiError} from "@/lib/api/handle-api-error";
 
-interface RouteParams {
-    params: Promise<{ slug: string }>;
-}
-
 type RouteCtx = RouteContext<'/api/v1/discounts/product/[slug]'>;
 
 export async function GET(_req: NextRequest, ctx: RouteCtx) {
