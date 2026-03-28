@@ -180,6 +180,17 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
         }
     },
     {
+        accessorKey: "promote",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="En promo" />
+        ),
+        cell: ({ row }) => {
+            const promote = row.getValue('promote');
+
+            return <div className={`font-medium ${promote ? 'text-green-500' : 'text-red-500'}`}>{promote ? "Oui" : "Non"}</div>
+        }
+    },
+    {
         accessorKey: "brand",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Marque" />
