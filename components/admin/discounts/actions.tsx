@@ -26,14 +26,18 @@ import {
 
 type DiscountActionsProps = {
     discountId: string;
+    discountActive: boolean;
     onDelete: (id: string) => void;
+    onToggle: (id: string) => void;
 }
 
-export function DiscountActions({ discountId, onDelete }: DiscountActionsProps) {
+export function DiscountActions({ discountId, discountActive, onDelete, onToggle }: DiscountActionsProps) {
     const [open, setOpen] = useState(false)
+    const [openToggle, setOpenToggle] = useState(false)
 
     return (
         <>
+
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -65,6 +69,12 @@ export function DiscountActions({ discountId, onDelete }: DiscountActionsProps) 
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                         variant="destructive"
+                        onClick={() => setOpenToggle(true)}
+                    >
+                        {discountActive ? 'Désactiver' : 'Activer'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        variant="destructive"
                         onClick={() => setOpen(true)}
                     >
                         Supprimer
@@ -83,6 +93,22 @@ export function DiscountActions({ discountId, onDelete }: DiscountActionsProps) 
                     <AlertDialogFooter>
                         <AlertDialogCancel>Annuler</AlertDialogCancel>
                         <AlertDialogAction onClick={() => onDelete(discountId)}>
+                            Confirmer
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog open={openToggle} onOpenChange={setOpenToggle}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{discountActive ? 'Désactiver' : 'Activer'} la remise ?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Cette action {discountActive ? 'désactivera' : 'activera'} la remise sur le produit ou la catégorie de produits sélectionner.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => onToggle(discountId)}>
                             Confirmer
                         </AlertDialogAction>
                     </AlertDialogFooter>

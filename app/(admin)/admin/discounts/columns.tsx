@@ -5,13 +5,31 @@ import {Categories, Discounts, DiscountType} from "@prisma/client"
 import {formatDate} from "@/lib/utils"
 import {DataTableColumnHeader} from "@/components/data-table-column-header"
 import toast from "react-hot-toast"
-import {deleteDiscount} from "@/services/discount.service";
+import {deleteDiscount, getDiscount, updateDiscount} from "@/services/discount.service";
 import {DiscountActions} from "@/components/admin/discounts/actions";
 import Link from "next/link";
 
 async function handleConfirm(discountId: string) {
     await deleteDiscount(discountId)
     toast.success("Remise supprimée avec succès")
+    setTimeout(() => window.location.reload(), 1500)
+}
+
+async function handleToggle(id: string) {
+    const discount = await getDiscount(id);
+    if (!discount) {
+        toast.error('La remise n\'existe pas')
+    }
+    const data = {
+        'active': !discount.active
+    }
+
+    const result = await updateDiscount(id, data)
+
+    if (result) {
+        toast.success(`Remise ${discount.active ? "désactiver" : "activer"} avec succès`)
+    }
+
     setTimeout(() => window.location.reload(), 1500)
 }
 
@@ -120,7 +138,9 @@ export const columns: ColumnDef<Discounts>[] = [
     },
     {
         accessorKey: "updatedAt",
-        header: "Mise à jour le",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Mise à jour le" />
+        ),
         cell: ({ row }) => {
             const updatedAt: string = row.getValue("updatedAt")
             return <div>{formatDate(updatedAt)}</div>
@@ -134,7 +154,9 @@ export const columns: ColumnDef<Discounts>[] = [
             return (
                 <DiscountActions
                     discountId={discount.id}
+                    discountActive={discount.active}
                     onDelete={(id) => handleConfirm(id)}
+                    onToggle={(id) => handleToggle(id)}
                 />
             )
         },

@@ -1,22 +1,15 @@
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
+import {handleApiError} from "@/lib/api/handle-api-error";
 
-interface RouteParams {
-    params: Promise<{ slug: string }>;
-}
+type RouteCtx = RouteContext<'/api/v1/discounts/category/[slug]'>;
 
-export async function GET(_req: NextRequest, { params }: RouteParams) {
+
+export async function GET(_req: NextRequest, ctx: RouteCtx) {
     try {
-        const { slug } = await params;
+        const { slug } = await ctx.params;
 
         //return NextResponse.json(product, { status: 200 });
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[DISCOUNT CATEGORY] ', error.message)
-            return NextResponse.json(
-                { error: `[DISCOUNT CATEGORY] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
-                { status: 500 }
-            );
-        }
-
+        return handleApiError('DISCOUNT CATEGORY', error);
     }
 }

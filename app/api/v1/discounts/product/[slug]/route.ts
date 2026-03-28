@@ -1,13 +1,16 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
+import {handleApiError} from "@/lib/api/handle-api-error";
 
 interface RouteParams {
     params: Promise<{ slug: string }>;
 }
 
-export async function GET(_req: NextRequest, { params }: RouteParams) {
+type RouteCtx = RouteContext<'/api/v1/discounts/product/[slug]'>;
+
+export async function GET(_req: NextRequest, ctx: RouteCtx) {
     try {
-        const { slug } = await params;
+        const { slug } = await ctx.params;
 
         const product = await db.products.findUnique({
             select: {
@@ -48,13 +51,6 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
         return NextResponse.json(product, { status: 200 });
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[DISCOUNT PRODUCT] ', error.message)
-            return NextResponse.json(
-                { error: `[DISCOUNT PRODUCT] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
-                { status: 500 }
-            );
-        }
-
+        return handleApiError('DISCOUNT PRODUCT', error);
     }
 }
