@@ -3,6 +3,7 @@ import ProductsGetPayload = Prisma.ProductsGetPayload;
 import StocksGetPayload = Prisma.StocksGetPayload;
 import TransactionsGetPayload = Prisma.TransactionsGetPayload;
 import PurchaseOrdersGetPayload = Prisma.PurchaseOrderGetPayload;
+import DiscountsGetPayload = Prisma.DiscountsGetPayload;
 
 export type ProductsWithCategoryAndBrandAndAttributes = ProductsGetPayload<{ include: { category: true; brand: true; productAttributeValues: { include: { categoryAttribute: { include: { attribute: true } } } } } }>
 export type ProductsWithCategoryAndBrand = ProductsGetPayload<{ include: { category: true; brand: true; } }>
@@ -24,6 +25,8 @@ export type StocksWithProduct = StocksGetPayload<{ include: { product: true } }>
 
 export type TransactionsWithProduct = TransactionsGetPayload<{ include: { product: true } }>
 export type PurchaseOrdersWithProduct = PurchaseOrdersGetPayload<{ include: { product: true } }>
+
+export type DiscountsWithProductOrCategory = DiscountsGetPayload<{ include: { product: true, category: true }}>
 
 export interface TransactionsResponse {
     data: TransactionsWithProduct[];
@@ -49,18 +52,20 @@ export interface SortParams {
 export interface FilterParams {
     minPrice?: number;
     maxPrice?: number;
-    brandSlug?: string;
-    categorySlug?: string;
+    brandSlugs?: string[];
+    categorySlugs?: string[];
     search?: string;
     inStock?: boolean;
     active?: boolean;
+    productId?: string;
+    startDate?: string;
+    endDate?: string;
 }
 
 export interface PaginatedResponse<T> {
     data: T[];
     total: number;
     meta: {
-        total: number;
         page: number;
         limit: number;
         totalPages: number;

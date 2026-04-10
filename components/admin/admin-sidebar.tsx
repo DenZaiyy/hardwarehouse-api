@@ -1,4 +1,4 @@
-import {Boxes, FolderTree, Globe, LayoutDashboard, LogOutIcon, Package, Tags, User} from "lucide-react"
+import {Boxes, FolderTree, Globe, LayoutDashboard, LogOutIcon, Package, Percent, Tags, User} from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -53,6 +53,12 @@ const items = [
         title: "Stocks",
         url: "/admin/stocks",
         icon: Boxes,
+        role: "employee"
+    },
+    {
+        title: "Remises",
+        url: "/admin/discounts",
+        icon: Percent,
         role: "employee"
     },
     {

@@ -18,7 +18,13 @@ export async function GET(req: NextRequest) {
             id: true,
             name: true,
             slug: true,
+            sku: true,
+            mpn: true,
+            ean13: true,
             price: true,
+            discountPrice: true,
+            discountAmount: true,
+            promote: true,
             thumbnail: true,
             shortDescription: true,
             createdAt: true,
@@ -39,7 +45,7 @@ export async function GET(req: NextRequest) {
                     slug: true,
                     active: true
                 }
-            },
+            }
         }
 
         const queryOptions = {
@@ -86,7 +92,6 @@ export async function POST(req: NextRequest) {
     }
 
     try {
-        // Accepter JSON au lieu de FormData
         const body = await req.json();
         const {
             name,
