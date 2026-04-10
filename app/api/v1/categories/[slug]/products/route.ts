@@ -65,7 +65,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categorie
                 productsCount: product.brand._count.Products,
             },
             stock: {
-                quantity: product.stock.quantity
+                quantity: product.stock?.quantity
             }
         }))
 
