@@ -1,23 +1,39 @@
 model Products {
-  id                     String                   @id @default(auto()) @map("_id") @db.ObjectId
-  name                   String
-  slug                   String                   @unique
-  thumbnail              String?
-  images                 String[]
-  shortDescription       String?
-  description            String?
-  price                  Float
-  active                 Boolean                  @default(true)
-  categoryId             String                   @db.ObjectId
-  category               Categories               @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  stock                  Stocks?
-  brand                  Brands                   @relation(fields: [brandId], references: [id], onDelete: Cascade)
-  brandId                String                   @db.ObjectId
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  slug             String   @unique
+  thumbnail        String?
+  images           String[]
+  shortDescription String?
+  description      String?
+
+  sku   String? // SKU = Stock Keeping Unit (Référence interne de l'entreprise)
+  mpn   String? // MPN = MPN = Manufacturer Part Number (Référence fabricant)
+  ean13 String? // GTIN = Global Trade Item Number (Identifiant commercial standardisé au niveau international)
+
+  price          Float
+  discountPrice  Float?
+  discountAmount Float?
+  promote        Boolean @default(false)
+  active         Boolean @default(true)
+
+  categoryId String     @db.ObjectId
+  category   Categories @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  stock Stocks?
+
+  brand   Brands @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  brandId String @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   Transactions           Transactions[]
   PurchaseOrder          PurchaseOrder[]
   productAttributeValues ProductAttributeValues[]
+  discounts              Discounts[]
 
   @@index([categoryId, brandId])
+  @@index([mpn])
+  @@index([ean13])
 }

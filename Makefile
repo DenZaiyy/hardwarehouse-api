@@ -71,3 +71,7 @@ clean: ## Clean project dependencies (remove node_modules and next server)
 	rm -rf ./node_modules ./.next
 	$(call banner,$(INFO),Install dependencies...)
 	npm install
+
+.PHONY: ts
+ts: ## Check typescript
+	npx tsc --noEmit

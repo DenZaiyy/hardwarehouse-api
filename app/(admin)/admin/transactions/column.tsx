@@ -47,12 +47,22 @@ export const columns: ColumnDef<TransactionsWithProduct>[] = [
         header: ({column}) => (
             <DataTableColumnHeader column={column} title="Ancienne quantité"/>
         ),
+        cell: ({ row }) => {
+            const oldQtt: number = row.getValue('oldQtt');
+
+            return <div className="text-red-500">{oldQtt}</div>
+        }
     },
     {
         accessorKey: "newQtt",
         header: ({column}) => (
             <DataTableColumnHeader column={column} title="Nouvelle quantité"/>
         ),
+        cell: ({ row }) => {
+            const newQtt: number = row.getValue('newQtt');
+
+            return <div className="text-green-500">{newQtt}</div>
+        }
     },
     {
         accessorKey: "type",

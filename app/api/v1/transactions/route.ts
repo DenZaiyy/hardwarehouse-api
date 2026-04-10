@@ -4,11 +4,11 @@ import {auth, currentUser} from "@clerk/nextjs/server";
 import {rateLimiter} from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
-    const { userId } = await auth();
+    /*const { userId } = await auth();
 
     if (!userId) {
         return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-    }
+    }*/
 
     let remaining = 0;
     let reset = 0;

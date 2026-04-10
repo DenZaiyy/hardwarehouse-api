@@ -21,7 +21,12 @@ export async function GET(req: NextRequest) {
             logo: true,
             active: true,
             createdAt: true,
-            updatedAt: true
+            updatedAt: true,
+            _count: {
+                select: {
+                    Products: true
+                }
+            }
         }
 
         const queryOptions = {
@@ -36,8 +41,19 @@ export async function GET(req: NextRequest) {
             db.brands.count({ where })
         ]);
 
+        const formattedBrands = brands.map((brand) => ({
+            id: brand.id,
+            name: brand.name,
+            slug: brand.slug,
+            logo: brand.logo,
+            active: brand.active,
+            createdAt: brand.createdAt,
+            updatedAt: brand.updatedAt,
+            productsCount: brand._count.Products,
+        }));
+
         return NextResponse.json({
-            data: brands,
+            data: formattedBrands,
             total,
             ...(pagination && { meta: buildMeta(total, pagination) })
         }, { status: 200 });
