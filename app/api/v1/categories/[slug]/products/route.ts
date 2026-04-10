@@ -30,7 +30,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categorie
                     thumbnail: true,
                     shortDescription: true,
                     brand: {
-                        select: { id: true, name: true, slug: true }
+                        select: {id: true, name: true, slug: true, active: true, _count: {select: {Products: true}}}
                     },
                     stock: {
                         select: { quantity: true }
@@ -42,6 +42,32 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categorie
             }),
             db.products.count({ where })
         ]);
+
+        const formattedProducts = products.map((product) => ({
+            id: product.id,
+            name: product.name,
+            active: product.active,
+            sku: product.sku,
+            mpn: product.mpn,
+            ean13: product.ean13,
+            promote: product.promote,
+            discountPrice: product.discountPrice,
+            discountAmount: product.discountAmount,
+            slug: product.slug,
+            price: product.price,
+            thumbnail: product.thumbnail,
+            shortDescription: product.shortDescription,
+            brand: {
+                id: product.brand.id,
+                name: product.brand.name,
+                slug: product.brand.slug,
+                active: product.brand.active,
+                productsCount: product.brand._count.Products,
+            },
+            stock: {
+                quantity: product.stock.quantity
+            }
+        }))
 
         if (total === 0) {
             const exists = await db.categories.findUnique({
@@ -55,7 +81,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categorie
         }
 
         return NextResponse.json({
-            data: products,
+            data: formattedProducts,
             total,
             meta: buildMeta(total, pagination)
         }, { status: 200 });

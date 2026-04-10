@@ -52,8 +52,8 @@ export interface SortParams {
 export interface FilterParams {
     minPrice?: number;
     maxPrice?: number;
-    brandSlug?: string;
-    categorySlug?: string;
+    brandSlugs?: string[];
+    categorySlugs?: string[];
     search?: string;
     inStock?: boolean;
     active?: boolean;
