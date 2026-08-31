@@ -14,7 +14,7 @@ describe('productSchema', () => {
                 name: "Gaming Laptop",
                 price: 1299.99,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "computers"
             });
 
@@ -23,7 +23,7 @@ describe('productSchema', () => {
                 expect(result.data.name).toBe("Gaming Laptop");
                 expect(result.data.price).toBe(1299.99);
                 expect(result.data.active).toBe(true);
-                expect(result.data.brandId).toBe("brand-123");
+                expect(result.data.brandId).toBe("995d6f97b4f676380c69bac9");
                 expect(result.data.category).toBe("computers");
             }
         });
@@ -41,7 +41,7 @@ describe('productSchema', () => {
                 images: mockImages,
                 attributes: { "size": "27 inches", "resolution": "4K" },
                 active: true,
-                brandId: "brand-456",
+                brandId: "534e59cb9130eadec4cbfbea",
                 category: "monitors"
             });
 
@@ -53,7 +53,7 @@ describe('productSchema', () => {
                 name: "Wireless Mouse",
                 price: "49.99",
                 active: true,
-                brandId: "brand-789",
+                brandId: "19198da90842d5a6485dc27b",
                 category: "accessories"
             });
 
@@ -69,7 +69,7 @@ describe('productSchema', () => {
                 name: "Free Software",
                 price: 0,
                 active: true,
-                brandId: "brand-000",
+                brandId: "abd995f750bd1431a3d4c42c",
                 category: "software"
             });
 
@@ -82,7 +82,7 @@ describe('productSchema', () => {
                 price: 10.00,
                 attributes: {},
                 active: false,
-                brandId: "brand-111",
+                brandId: "1702bc3c685c6bfd7deb012f",
                 category: "other"
             });
 
@@ -97,7 +97,7 @@ describe('productSchema', () => {
                 price: 25.50,
                 thumbnail: mockThumbnail,
                 active: true,
-                brandId: "brand-222",
+                brandId: "41b41ee4839068e3c67dd76e",
                 category: "category1"
             });
 
@@ -116,7 +116,7 @@ describe('productSchema', () => {
                 price: 75.00,
                 images: mockImages,
                 active: true,
-                brandId: "brand-333",
+                brandId: "c58db8270320d06343fdf3a1",
                 category: "category2"
             });
 
@@ -130,7 +130,7 @@ describe('productSchema', () => {
                 name: "A",
                 price: 10,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -148,7 +148,7 @@ describe('productSchema', () => {
                 name: "",
                 price: 10,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -159,7 +159,7 @@ describe('productSchema', () => {
             const result = productSchema.safeParse({
                 price: 10,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -173,7 +173,7 @@ describe('productSchema', () => {
                 name: "Product",
                 price: -10,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -191,7 +191,7 @@ describe('productSchema', () => {
                 name: "Product",
                 price: "not-a-number",
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -202,7 +202,7 @@ describe('productSchema', () => {
             const result = productSchema.safeParse({
                 name: "Product",
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -218,7 +218,7 @@ describe('productSchema', () => {
                 price: 10,
                 shortDescription: longDescription,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -241,7 +241,7 @@ describe('productSchema', () => {
                 price: 10,
                 thumbnail: largeThumbnail,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -264,7 +264,7 @@ describe('productSchema', () => {
                 price: 10,
                 images: mockImages,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -282,7 +282,7 @@ describe('productSchema', () => {
                 price: 10,
                 thumbnail: "not-a-file",
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -295,7 +295,7 @@ describe('productSchema', () => {
                 price: 10,
                 images: ["not-a-file", "also-not-a-file"],
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -308,7 +308,7 @@ describe('productSchema', () => {
             const result = productSchema.safeParse({
                 name: "Product",
                 price: 10,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -320,7 +320,7 @@ describe('productSchema', () => {
                 name: "Product",
                 price: 10,
                 active: "true",
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -340,7 +340,7 @@ describe('productSchema', () => {
             if (!result.success) {
                 expect(result.error.issues.some(issue =>
                     issue.path.includes('brandId') &&
-                    issue.message.includes('requise')
+                    issue.message.includes('Identifiant invalide')
                 )).toBe(true);
             }
         });
@@ -361,7 +361,7 @@ describe('productSchema', () => {
                 name: "Product",
                 price: 10,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: ""
             });
 
@@ -379,7 +379,7 @@ describe('productSchema', () => {
                 name: "Product",
                 price: 10,
                 active: true,
-                brandId: "brand-123"
+                brandId: "995d6f97b4f676380c69bac9"
             });
 
             expect(result.success).toBe(false);
@@ -392,7 +392,7 @@ describe('productSchema', () => {
                 name: "PC",
                 price: 500,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "computers"
             });
 
@@ -406,7 +406,7 @@ describe('productSchema', () => {
                 price: 10,
                 shortDescription: maxShortDesc,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -423,7 +423,7 @@ describe('productSchema', () => {
                 images: null,
                 attributes: null,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -440,7 +440,7 @@ describe('productSchema', () => {
                 images: undefined,
                 attributes: undefined,
                 active: true,
-                brandId: "brand-123",
+                brandId: "995d6f97b4f676380c69bac9",
                 category: "cat1"
             });
 
@@ -455,7 +455,7 @@ describe('productSchema', () => {
                 price: 999,
                 description: "Gaming laptop",
                 active: true,
-                brandId: "brand-456",
+                brandId: "534e59cb9130eadec4cbfbea",
                 category: "computers"
             });
 
@@ -484,7 +484,7 @@ describe('productSchema', () => {
                     price: 1599.99,
                     description: "High-end graphics card for gaming and professional work",
                     active: true,
-                    brandId: "nvidia-001",
+                    brandId: "d7b7e3e8840c0348e483677a",
                     category: "graphics-cards"
                 },
                 {
@@ -492,7 +492,7 @@ describe('productSchema', () => {
                     price: 589.99,
                     shortDescription: "Latest generation Intel processor",
                     active: true,
-                    brandId: "intel-001",
+                    brandId: "8a866477847a2e162058dc9b",
                     category: "processors"
                 }
             ];

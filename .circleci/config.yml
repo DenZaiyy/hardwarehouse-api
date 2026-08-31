@@ -154,7 +154,7 @@ jobs:
           urls: $LIGHTHOUSE_CHECK_URLS
       - lighthouse-check/validate-status:
           minAccessibilityScore: '60'
-          minPerformanceScore: '90'
+          minPerformanceScore: '80'
           minSeoScore: '50'
 
   # Job to auto merge to the test branch

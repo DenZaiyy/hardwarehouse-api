@@ -4,6 +4,8 @@ import {db} from "@/lib/db";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {validateDiscountInput} from "@/lib/discounts/validate-discount-input";
 import {createDiscount} from "@/lib/discounts/create-discount";
+import {auth} from "@clerk/nextjs/server";
+import {ForbiddenError, UnauthorizedError} from "@/lib/api/errors";
 
 export async function GET(req: NextRequest) {
     try {
@@ -65,8 +67,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
-        /*const { userId } = await auth();
-        if (!userId) throw new UnauthorizedError();*/
+        const { userId, sessionClaims } = await auth();
+        if (!userId) throw new UnauthorizedError();
+        if (sessionClaims?.publicMetadata?.role !== "admin") throw new ForbiddenError();
 
         const body = await req.json();
         const input = validateDiscountInput(body);

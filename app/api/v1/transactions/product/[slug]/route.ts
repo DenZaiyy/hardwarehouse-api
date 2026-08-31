@@ -1,14 +1,14 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {NotFoundError} from "@/lib/api/errors";
 
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/transactions/product/[slug]'>) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-       /* const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }*/
-
         const { slug } = await ctx.params;
 
         const existingProduct = await db.products.findUnique({
@@ -16,9 +16,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/transact
             select: { slug: true }
         });
 
-        if (!existingProduct) {
-            throw new Error("PRODUCT_NOT_FOUND");
-        }
+        if (!existingProduct) throw new NotFoundError("Produit");
 
         const transactions = await db.transactions.findMany({
             where: {
@@ -26,18 +24,11 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/transact
             },
         });
 
-        if (!transactions) {
-            return new NextResponse('Transactions not found', { status: 404 });
-        }
-
-
-
         return NextResponse.json({
             data: transactions,
             total: transactions.length,
         }, { status: 200 });
     } catch (error) {
-        console.error('[PRODUCT TRANSACTIONS] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        return handleApiError("PRODUCT TRANSACTIONS", error);
     }
 }

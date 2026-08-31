@@ -2,13 +2,14 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {auth, currentUser} from "@clerk/nextjs/server";
 import {rateLimiter} from "@/lib/utils";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {NotFoundError} from "@/lib/api/errors";
+import {transactionCreateSchema} from "@/lib/validators/transactionSchema";
 
 export async function GET(req: NextRequest) {
-    /*const { userId } = await auth();
-
-    if (!userId) {
-        return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-    }*/
+    const { response } = await requireAdmin();
+    if (response) return response;
 
     let remaining = 0;
     let reset = 0;
@@ -58,26 +59,13 @@ export async function GET(req: NextRequest) {
             }
         });
 
-        if (transactions.length > 0) {
-            console.log("plus de 1");
-        } else {
-
-        }
-
         const res = NextResponse.json(transactions, { status: 200 });
         res.headers.set('X-RateLimit-Remaining', remaining.toString());
         res.headers.set('X-RateLimit-Reset', reset.toString());
 
         return res;
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[TRANSACTIONS] allo', error.message)
-
-            return NextResponse.json(
-                {error: `[TRANSACTIONS] Erreur interne : ${error ? error.message : 'Erreur inconnue'}`},
-                {status: 500}
-            );
-        }
+        return handleApiError("TRANSACTIONS GET", error);
     }
 }
 
@@ -89,15 +77,10 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
         }
 
-        const { type, finalQuantity, oldQtt, newQtt, productId } = await req.json();
-        console.error(type)
+        const { type, finalQuantity, oldQtt, productId } = transactionCreateSchema.parse(await req.json());
         const user = await currentUser()
 
-        let userFullName = "Undefined User"
-
-        if (user && user.fullName) userFullName = user.fullName
-
-        if (!oldQtt && !newQtt && !productId) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
+        const userFullName = user?.fullName ?? "Undefined User"
 
         const existingProduct = await db.products.findUnique({
             where: {
@@ -105,11 +88,7 @@ export async function POST(req: NextRequest) {
             }
         })
 
-        if (!existingProduct) {
-            return NextResponse.json({
-                error: "Le produit n'existe pas"
-            }, { status: 400 })
-        }
+        if (!existingProduct) throw new NotFoundError("Produit");
 
         const transaction = await db.transactions.create({
             data: {
@@ -143,10 +122,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(transaction, { status: 200 })
 
-    } catch (e) {
-        if (e instanceof  Error) {
-            console.error(e.message);
-            return NextResponse.json({ error: "[TRANSACTION POST] Une erreur est survenue lors de la création d'une transaction" }, { status: 500 })
-        }
+    } catch (error) {
+        return handleApiError("TRANSACTION POST", error);
     }
 }

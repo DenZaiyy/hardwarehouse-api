@@ -1,20 +1,14 @@
 import {NextRequest, NextResponse} from "next/server";
-import {auth, clerkClient} from "@clerk/nextjs/server";
+import {clerkClient} from "@clerk/nextjs/server";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {userSchema} from "@/lib/validators/userSchema";
 
 export async function GET() {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId, sessionClaims } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
-        // Check if user has admin role
-        const userRole = sessionClaims?.publicMetadata?.role;
-        if (userRole !== "admin") {
-            return NextResponse.json({ error: "Forbidden - Admin access required", statusCode: 403 }, { status: 403 });
-        }
-
         const client = await clerkClient();
         const users = await client.users.getUserList()
 
@@ -23,54 +17,31 @@ export async function GET() {
             total: users.totalCount
         }, { status: 200 });
     } catch(error) {
-        if (error instanceof  Error) {
-            console.error(error.message);
-            return NextResponse.json({ error: "[USERS] Une erreur est survenue lors de la récupération d'utilisateurs" })
-        }
+        return handleApiError("USERS GET", error);
     }
 }
 
 export async function POST(req: NextRequest) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId, sessionClaims } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
-        // Check if user has admin role
-        const userRole = sessionClaims?.publicMetadata?.role;
-        if (userRole !== "admin") {
-            return NextResponse.json({ error: "Forbidden - Admin access required", statusCode: 403 }, { status: 403 });
-        }
-
-        const { username, email, password, passwordConfirm, firstname, lastname, isAdmin } = await req.json()
+        const { username, email, password, firstName, lastName, isAdmin } = userSchema.parse(await req.json());
         const client = await clerkClient()
 
-        if (!username && !email && !password && !passwordConfirm && !firstname && !lastname) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
-
         const createdUser = await client.users.createUser({
-            firstName: firstname,
-            lastName: lastname,
-            username: username,
+            firstName,
+            lastName,
+            username,
             emailAddress: [email],
-            password: password,
+            password,
             publicMetadata: {
                 'role': isAdmin ? 'admin' : 'employee'
             }
         })
 
-        if (!createdUser) {
-            return NextResponse.json({
-                error: "L'utilisateur n'a pas été crée"
-            }, { status: 500 })
-        }
-
-        return NextResponse.json(createdUser)
-    } catch(err) {
-        if (err instanceof Error) {
-            console.error(err.message);
-            return new NextResponse(`[USERS] Une erreur est survenue lors de la création d'un utilisateur : ${err}`, { status: 500 });
-        }
+        return NextResponse.json(createdUser, { status: 201 });
+    } catch(error) {
+        return handleApiError("USERS POST", error);
     }
 }

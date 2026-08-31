@@ -7,17 +7,25 @@ const optionalDate = z
     .nullable()
     .transform((val) => (val && val !== "" ? new Date(val) : undefined));
 
+const objectIdFormat = /^[0-9a-fA-F]{24}$/;
+
 const optionalId = z
     .string()
     .nullable()
     .optional()
-    .transform((val) => (val === "" ? null : val));
+    .transform((val) => (val === "" ? null : val))
+    .refine((val) => val == null || objectIdFormat.test(val), {
+        message: "Identifiant invalide",
+    });
 
 const optionalIdForForm = z
     .string()
     .optional()
     .nullable()
-    .transform((val) => (val === "" ? null : val));
+    .transform((val) => (val === "" ? null : val))
+    .refine((val) => val == null || objectIdFormat.test(val), {
+        message: "Identifiant invalide",
+    });
 
 const optionalDateString = z
     .string()

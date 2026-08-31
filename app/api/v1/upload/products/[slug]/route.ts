@@ -1,6 +1,8 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {ImageUploadService} from '@/services/image-upload.service';
 import {db} from '@/lib/db';
+import {requireAuth} from '@/lib/auth/require-role';
+import {isSafeSlug, rateLimiter} from '@/lib/utils';
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
@@ -17,14 +19,23 @@ interface RouteParams {
  * - images?: File[] (remplace toutes les images de galerie existantes)
  */
 export async function POST(request: NextRequest, { params }: RouteParams) {
+  const { response } = await requireAuth();
+  if (response) return response;
+
   try {
     const { slug } = await params;
 
-    if (!slug) {
+    if (!slug || !isSafeSlug(slug)) {
       return NextResponse.json(
         { success: false, error: 'Slug requis', code: 'INVALID_TYPE' },
         { status: 400 }
       );
+    }
+
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '127.0.0.1';
+    const { success: withinLimit } = await rateLimiter.limit(ip);
+    if (!withinLimit) {
+      return NextResponse.json({ success: false, error: 'Trop de demandes', code: 'RATE_LIMITED' }, { status: 429 });
     }
 
     // Vérifier que le produit existe
@@ -111,10 +122,13 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
  * Supprime toutes les images d'un produit et met à jour le produit en DB
  */
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+  const { response } = await requireAuth();
+  if (response) return response;
+
   try {
     const { slug } = await params;
 
-    if (!slug) {
+    if (!slug || !isSafeSlug(slug)) {
       return NextResponse.json(
         { success: false, error: 'Slug requis', code: 'INVALID_TYPE' },
         { status: 400 }

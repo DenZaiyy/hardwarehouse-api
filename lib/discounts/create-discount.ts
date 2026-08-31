@@ -61,9 +61,8 @@ export async function createDiscount(tx: PrismaTx, input: DiscountInput) {
         include: { category: { select: { id: true, name: true, slug: true } } },
     });
 
-    for (const product of category.Products) {
-        await refreshProductDiscount(tx, product.id);
-    }
+    // Promise.all évite le N+1 séquentiel (1 aller-retour DB par produit de la catégorie).
+    await Promise.all(category.Products.map((product) => refreshProductDiscount(tx, product.id)));
 
     return discount;
 }

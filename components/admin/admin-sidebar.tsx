@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/sidebar"
 import React from "react";
 import {ThemeSwitcher} from "@/components/theme-switcher";
-import Link from "next/link";
 import {Show, SignOutButton} from "@clerk/nextjs";
 import {auth, currentUser} from "@clerk/nextjs/server";
 
@@ -97,10 +96,15 @@ export async function AdminSidebar({ ...props }: React.ComponentProps<typeof Sid
                             {items.filter(item => userRole === "admin" || item.role === "employee" ).map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
-                                        <Link href={item.url} prefetch={false}>
+                                        {/* <a> natif plutôt que next/link Link : le double asChild/Slot (SidebarMenuButton)
+                                        + Link (son propre component-boundary avec ref/effects) produit un mismatch
+                                        d'hydratation reproductible sous React 19, indépendant du bundler et de la
+                                        version de @radix-ui/react-slot (testé). Le prefetch était déjà désactivé,
+                                        donc Link n'apportait ici que la navigation SPA. */}
+                                        <a href={item.url}>
                                             <item.icon/>
                                             <span>{item.title}</span>
-                                        </Link>
+                                        </a>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
@@ -123,10 +127,10 @@ export async function AdminSidebar({ ...props }: React.ComponentProps<typeof Sid
                     </Show>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild>
-                            <Link href="/" target="_blank">
+                            <a href="/" target="_blank" rel="noopener noreferrer">
                                 <Globe />
                                 <span>Voir le site</span>
-                            </Link>
+                            </a>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

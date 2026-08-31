@@ -20,12 +20,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
         <html lang="fr" suppressHydrationWarning>
             <body className={`antialiased`}>
                 <ClerkProvider localization={frFR}>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="system"
-                        enableSystem
-                        disableTransitionOnChange
-                    >
+                    <ThemeProvider>
                         <Header />
                         <main className="p-2 md:p-4">
                             <Toaster position={"bottom-right"} />

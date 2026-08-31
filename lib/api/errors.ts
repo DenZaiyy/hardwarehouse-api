@@ -22,6 +22,12 @@ export class UnauthorizedError extends ApiError {
     }
 }
 
+export class ForbiddenError extends ApiError {
+    constructor(message = "Accès réservé aux administrateurs") {
+        super(message, 403, "FORBIDDEN");
+    }
+}
+
 export class BadRequestError extends ApiError {
     constructor(message = "Requête invalide") {
         super(message, 400, "BAD_REQUEST");

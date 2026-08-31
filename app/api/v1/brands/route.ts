@@ -3,6 +3,9 @@ import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
 import {buildBrandWhere, buildMeta, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {ConflictError} from "@/lib/api/errors";
+import {brandSchema} from "@/lib/validators/brandSchema";
 
 export async function GET(req: NextRequest) {
     try {
@@ -58,13 +61,7 @@ export async function GET(req: NextRequest) {
             ...(pagination && { meta: buildMeta(total, pagination) })
         }, { status: 200 });
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[BRANDS] ', error.message)
-            return NextResponse.json(
-                { error: `[BRANDS] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
-                { status: 500 }
-            );
-        }
+        return handleApiError("BRANDS GET", error);
     }
 }
 
@@ -84,11 +81,7 @@ export async function POST(req: NextRequest) {
 
     try {
         const body = await req.json();
-        const { name, active = true } = body;
-
-        if (!name || typeof name !== 'string') {
-            return NextResponse.json({ error: "Le nom est requis" }, { status: 400 });
-        }
+        const { name, active = true } = brandSchema.parse(body);
 
         const slug = slugifyName(name);
 
@@ -99,7 +92,7 @@ export async function POST(req: NextRequest) {
                 select: { id: true }
             });
 
-            if (existingBrand) throw new Error("BRAND_EXISTS")
+            if (existingBrand) throw new ConflictError("La marque existe déjà");
 
             // Create brand (sans logo - sera ajouté via endpoint d'upload séparé)
             const brand = await tx.brands.create({
@@ -123,17 +116,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(result, { status: 201 });
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[BRAND] ', error.message)
-            
-            if (error.message === "BRAND_EXISTS") {
-                return NextResponse.json({ error: "La marque existe déjà" }, { status: 400 });
-            }
-            
-            return NextResponse.json(
-                { error: `[BRAND] Erreur interne : ${error.message}` },
-                { status: 500 }
-            );
-        }
+        return handleApiError("BRAND POST", error);
     }
 }

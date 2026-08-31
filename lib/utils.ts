@@ -17,6 +17,18 @@ export function slugifyName(name: string): string {
     })
 }
 
+const SAFE_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/**
+ * Valide qu'un slug ne contient que des caractères attendus (a-z, 0-9, tirets).
+ * Utilisé aux frontières des routes qui construisent des chemins fichiers à partir
+ * d'un slug (upload/suppression d'images) pour empêcher toute tentative de path traversal,
+ * indépendamment de la garantie indirecte apportée par un lookup en base.
+ */
+export function isSafeSlug(slug: string): boolean {
+    return SAFE_SLUG_PATTERN.test(slug);
+}
+
 export function formatDate(date: Date|string): string {
     return format(new Date(date), "dd/MM/yyyy HH:mm:ss") ?? "Date not available"
 }

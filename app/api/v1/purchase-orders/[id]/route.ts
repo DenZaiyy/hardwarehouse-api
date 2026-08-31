@@ -1,8 +1,13 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {auth} from "@clerk/nextjs/server";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {NotFoundError} from "@/lib/api/errors";
 
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/purchase-orders/[id]'>) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
         const { id } = await ctx.params;
 
@@ -11,29 +16,31 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/purchase
                 id: id
             },
             include: {
-                product: true,
+                product: {
+                    select: {
+                        id: true,
+                        name: true,
+                        slug: true,
+                        price: true,
+                        thumbnail: true
+                    }
+                },
             }
         });
 
-        if (!purchaseOrder) {
-            return new NextResponse('Purchase order not found', { status: 404 });
-        }
+        if (!purchaseOrder) throw new NotFoundError("Bon de commande");
 
         return NextResponse.json(purchaseOrder, {status: 200});
     } catch (error) {
-        console.error('[PURCHASE ORDER] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        return handleApiError("PURCHASE ORDER GET", error);
     }
 }
 
 export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/purchase-orders/[id]'>) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
         const { id } = await ctx.params;
         const purchaseOrder = await db.purchaseOrder.findUnique({
             where: {
@@ -41,9 +48,7 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/purch
             }
         });
 
-        if (!purchaseOrder) {
-            return new NextResponse('Purchase order not found', { status: 404 });
-        }
+        if (!purchaseOrder) throw new NotFoundError("Bon de commande");
 
         await db.purchaseOrder.delete({
             where: {
@@ -53,7 +58,6 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/purch
 
         return new NextResponse(`Purchase order with id ${id} deleted`, { status: 200 });
     } catch (error) {
-        console.error('[PURCHASE ORDER DELETE] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        return handleApiError("PURCHASE ORDER DELETE", error);
     }
 }

@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {objectIdSchema} from "@/lib/validators/common";
 
 export const productSchema = z.object({
     name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
@@ -13,6 +14,21 @@ export const productSchema = z.object({
         .optional(),
     attributes: z.record(z.string(), z.string()).optional(),
     active: z.boolean(),
-    brandId: z.string().min(1, "La marque est requise"),
+    // brandId référence Brands._id (ObjectId) ; category référence Categories.slug (pas un id)
+    brandId: objectIdSchema,
     category: z.string().min(1, "La catégorie est requise"),
 })
+
+export type Product = z.infer<typeof productSchema>;
+
+// thumbnail/images passent par l'endpoint d'upload dédié (FormData), jamais en JSON ici.
+export const productCreateSchema = productSchema.omit({ thumbnail: true, images: true });
+
+// Ici thumbnail/images sont déjà des URLs uploadées (string), plus des File.
+export const productPatchSchema = productSchema
+    .omit({ thumbnail: true, images: true })
+    .extend({
+        thumbnail: z.string().optional(),
+        images: z.array(z.string()).optional(),
+    })
+    .partial();

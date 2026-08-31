@@ -1,60 +1,46 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {auth} from "@clerk/nextjs/server";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {NotFoundError} from "@/lib/api/errors";
 
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/transactions/[id]'>) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
         const { id } = await ctx.params;
-        /*const ip = _req.headers.get('x-forwarded-for') || _req.headers.get('x-real-ip') || '127.0.0.1';
-        const { success, remaining, reset } = await rateLimiter.limit(ip);
-
-        if (!success) {
-            return NextResponse.json(
-                { error: "Trop de demandes" },
-                { status: 429 }
-            );
-        }*/
 
         const transaction = await db.transactions.findUnique({
             where: {
                 id: id
             },
             include: {
-                product: true,
+                product: {
+                    select: {
+                        id: true,
+                        name: true,
+                        slug: true,
+                        price: true,
+                        thumbnail: true
+                    }
+                },
             }
         });
 
-        if (!transaction) {
-            return new NextResponse('Transaction not found', { status: 404 });
-        }
+        if (!transaction) throw new NotFoundError("Transaction");
 
         return NextResponse.json(transaction, { status: 200 });
-
-        /*const res = NextResponse.json(transaction, { status: 200 });
-        res.headers.set('X-RateLimit-Remaining', remaining.toString());
-        res.headers.set('X-RateLimit-Reset', reset.toString());
-
-        return res;*/
     } catch (error) {
-        console.error('[TRANSACTION] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        return handleApiError("TRANSACTION GET", error);
     }
 }
 
 export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/transactions/[id]'>) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
         const { id } = await ctx.params;
         const transaction = await db.transactions.findUnique({
             where: {
@@ -62,9 +48,7 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/trans
             }
         });
 
-        if (!transaction) {
-            return new NextResponse('Transaction not found', { status: 404 });
-        }
+        if (!transaction) throw new NotFoundError("Transaction");
 
         await db.transactions.delete({
             where: {
@@ -74,7 +58,6 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/trans
 
         return new NextResponse(`Transaction with id ${id} deleted`, { status: 200 });
     } catch (error) {
-        console.error('[TRANSACTION DELETE] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        return handleApiError("TRANSACTION DELETE", error);
     }
 }
