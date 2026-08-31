@@ -218,7 +218,10 @@ jobs:
     steps:
       # Check out the code from the repository
       - checkout
-      - attach-workspace
+      # ci-on-main n'a aucun job en amont pour peupler le workspace,
+      # il faut installer les dépendances ici (sinon npx récupère
+      # un prisma arbitraire depuis le tag "latest" du registre).
+      - npm-ci
       # Génération explicite du client Prisma
       - run:
           name: Generate Prisma Client
