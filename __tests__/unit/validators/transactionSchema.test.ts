@@ -8,7 +8,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: 50,
                 newQtt: 75,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(true);
@@ -16,7 +16,7 @@ describe('transactionSchema', () => {
                 expect(result.data.type).toBe(true);
                 expect(result.data.oldQtt).toBe(50);
                 expect(result.data.newQtt).toBe(75);
-                expect(result.data.productId).toBe("product-123");
+                expect(result.data.productId).toBe("0f3efc8447d5cc5b8dc71fc3");
             }
         });
 
@@ -25,7 +25,7 @@ describe('transactionSchema', () => {
                 type: false,
                 oldQtt: 75,
                 newQtt: 50,
-                productId: "product-456"
+                productId: "a49d44e0fe1acaa21e653581"
             });
 
             expect(result.success).toBe(true);
@@ -41,7 +41,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: 0,
                 newQtt: 0,
-                productId: "product-789"
+                productId: "9f41e7a50c9310eaac011a43"
             });
 
             expect(result.success).toBe(true);
@@ -52,7 +52,7 @@ describe('transactionSchema', () => {
                 type: false,
                 oldQtt: "100",
                 newQtt: "75",
-                productId: "product-string"
+                productId: "da9f63f5e916f89932aa4814"
             });
 
             expect(result.success).toBe(true);
@@ -69,25 +69,21 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: 10000,
                 newQtt: 15000,
-                productId: "product-bulk"
+                productId: "357a9415926073846b8648d6"
             });
 
             expect(result.success).toBe(true);
         });
 
-        test("should accept decimal quantities (coerced to numbers)", () => {
+        test("should reject decimal quantities (oldQtt/newQtt are integers in the DB)", () => {
             const result = transactionSchema.safeParse({
                 type: true,
                 oldQtt: "25.5",
                 newQtt: "30.75",
-                productId: "product-decimal"
+                productId: "7096a15860e3dfa96c70d951"
             });
 
-            expect(result.success).toBe(true);
-            if (result.success) {
-                expect(result.data.oldQtt).toBe(25.5);
-                expect(result.data.newQtt).toBe(30.75);
-            }
+            expect(result.success).toBe(false);
         });
     });
 
@@ -96,7 +92,7 @@ describe('transactionSchema', () => {
             const result = transactionSchema.safeParse({
                 oldQtt: 50,
                 newQtt: 75,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -107,7 +103,7 @@ describe('transactionSchema', () => {
                 type: "true",
                 oldQtt: 50,
                 newQtt: 75,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -118,7 +114,7 @@ describe('transactionSchema', () => {
                 type: null,
                 oldQtt: 50,
                 newQtt: 75,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -129,7 +125,7 @@ describe('transactionSchema', () => {
                 type: 1,
                 oldQtt: 50,
                 newQtt: 75,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -142,7 +138,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: -10,
                 newQtt: 50,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -159,7 +155,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: "not-a-number",
                 newQtt: 50,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -169,7 +165,7 @@ describe('transactionSchema', () => {
             const result = transactionSchema.safeParse({
                 type: true,
                 newQtt: 50,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -180,7 +176,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: null,
                 newQtt: 50,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(true);
@@ -196,7 +192,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: 50,
                 newQtt: -25,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -213,7 +209,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: 50,
                 newQtt: "invalid-number",
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -223,7 +219,7 @@ describe('transactionSchema', () => {
             const result = transactionSchema.safeParse({
                 type: true,
                 oldQtt: 50,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(false);
@@ -234,7 +230,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: 50,
                 newQtt: null,
-                productId: "product-123"
+                productId: "0f3efc8447d5cc5b8dc71fc3"
             });
 
             expect(result.success).toBe(true);
@@ -290,15 +286,15 @@ describe('transactionSchema', () => {
     });
 
     describe('Edge cases', () => {
-        test("should handle very small positive numbers", () => {
+        test("should reject non-integer positive numbers", () => {
             const result = transactionSchema.safeParse({
                 type: true,
                 oldQtt: 0.01,
                 newQtt: 0.02,
-                productId: "product-small"
+                productId: "376de78adbd43cb156da7607"
             });
 
-            expect(result.success).toBe(true);
+            expect(result.success).toBe(false);
         });
 
         test("should handle very large numbers", () => {
@@ -306,7 +302,7 @@ describe('transactionSchema', () => {
                 type: false,
                 oldQtt: 999999,
                 newQtt: 888888,
-                productId: "product-large"
+                productId: "a37d0cab3b74bbedabf12b72"
             });
 
             expect(result.success).toBe(true);
@@ -317,7 +313,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: "1e3",
                 newQtt: "2e3",
-                productId: "product-scientific"
+                productId: "206b4067d193df1039b8edd9"
             });
 
             expect(result.success).toBe(true);
@@ -332,13 +328,13 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: 50,
                 newQtt: 50,
-                productId: "product-same"
+                productId: "a8024f7e0ddfd7b34827a42e"
             });
 
             expect(result.success).toBe(true);
         });
 
-        test("should handle UUID-like productId", () => {
+        test("should reject UUID-like productId (not a valid Mongo ObjectId)", () => {
             const result = transactionSchema.safeParse({
                 type: false,
                 oldQtt: 100,
@@ -346,10 +342,10 @@ describe('transactionSchema', () => {
                 productId: "550e8400-e29b-41d4-a716-446655440000"
             });
 
-            expect(result.success).toBe(true);
+            expect(result.success).toBe(false);
         });
 
-        test("should handle productId with special characters", () => {
+        test("should reject productId with special characters (not a valid Mongo ObjectId)", () => {
             const result = transactionSchema.safeParse({
                 type: true,
                 oldQtt: 25,
@@ -357,7 +353,7 @@ describe('transactionSchema', () => {
                 productId: "product-123_v2.0"
             });
 
-            expect(result.success).toBe(true);
+            expect(result.success).toBe(false);
         });
     });
 
@@ -365,15 +361,15 @@ describe('transactionSchema', () => {
         test("should coerce string numbers correctly", () => {
             const result = transactionSchema.safeParse({
                 type: false,
-                oldQtt: "100.5",
-                newQtt: "85.25",
-                productId: "product-coercion"
+                oldQtt: "100",
+                newQtt: "85",
+                productId: "836d41e282636db48ff13b1d"
             });
 
             expect(result.success).toBe(true);
             if (result.success) {
-                expect(result.data.oldQtt).toBe(100.5);
-                expect(result.data.newQtt).toBe(85.25);
+                expect(result.data.oldQtt).toBe(100);
+                expect(result.data.newQtt).toBe(85);
             }
         });
 
@@ -382,7 +378,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: " 50 ",
                 newQtt: " 75 ",
-                productId: "product-whitespace"
+                productId: "30852d6eab16df04da99758d"
             });
 
             expect(result.success).toBe(true);
@@ -397,7 +393,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: "50abc",
                 newQtt: 75,
-                productId: "product-mixed"
+                productId: "80e3e2d3c35d502147309d11"
             });
 
             expect(result.success).toBe(false);
@@ -410,7 +406,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: 40,
                 newQtt: 60,
-                productId: "product-typed"
+                productId: "607234302c41e91325147cf6"
             });
 
             if (result.success) {
@@ -449,7 +445,7 @@ describe('transactionSchema', () => {
                 type: true, // stock in
                 oldQtt: 25,
                 newQtt: 50,
-                productId: "product-restock"
+                productId: "17b2b2000bf51f07f14d86fb"
             });
 
             expect(result.success).toBe(true);
@@ -460,7 +456,7 @@ describe('transactionSchema', () => {
                 type: false, // stock out
                 oldQtt: 100,
                 newQtt: 75,
-                productId: "product-sale"
+                productId: "dfcb11b814b2519efc3577c8"
             });
 
             expect(result.success).toBe(true);
@@ -471,7 +467,7 @@ describe('transactionSchema', () => {
                 type: false,
                 oldQtt: 50,
                 newQtt: 0,
-                productId: "product-adjustment"
+                productId: "f151d086d1add3aadd825ffd"
             });
 
             expect(result.success).toBe(true);
@@ -482,7 +478,7 @@ describe('transactionSchema', () => {
                 type: true,
                 oldQtt: 0,
                 newQtt: 25,
-                productId: "product-restore"
+                productId: "8ff613893b8771b5f5f6c316"
             });
 
             expect(result.success).toBe(true);
@@ -496,19 +492,19 @@ describe('transactionSchema', () => {
                     type: true, // receiving new stock
                     oldQtt: 10,
                     newQtt: 60,
-                    productId: "gpu-rtx4090-001"
+                    productId: "3e3dfa7391082eeb22dbd463"
                 },
                 {
                     type: false, // customer purchase
                     oldQtt: 50,
                     newQtt: 48,
-                    productId: "cpu-i9-13900k-002"
+                    productId: "74617a8588bb442c5e862991"
                 },
                 {
                     type: false, // bulk order
                     oldQtt: 200,
                     newQtt: 150,
-                    productId: "ram-ddr5-32gb-003"
+                    productId: "9fee17c42cedbefbf90a2b04"
                 }
             ];
 
@@ -523,7 +519,7 @@ describe('transactionSchema', () => {
                 type: true, // stock returned
                 oldQtt: 45,
                 newQtt: 46,
-                productId: "returned-product-001"
+                productId: "57674f62713fda8b9e46c7e8"
             });
 
             expect(result.success).toBe(true);
