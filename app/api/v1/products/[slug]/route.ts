@@ -2,6 +2,10 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {NotFoundError} from "@/lib/api/errors";
+import {productPatchSchema} from "@/lib/validators/productSchema";
 
 interface UpdateProductData {
     name?: string;
@@ -95,19 +99,11 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
             }
         });
 
-        if (!product) {
-            return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
-        }
+        if (!product) throw new NotFoundError("Produit");
 
         return NextResponse.json(product, {status: 200});
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[PRODUCT] ', error.message)
-            return NextResponse.json(
-                {error: `[PRODUCT] Erreur interne : ${error ? error.message : 'Erreur inconnue'}`},
-                {status: 500}
-            );
-        }
+        return handleApiError("PRODUCT GET", error);
     }
 }
 
@@ -122,7 +118,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { slug } = await params;
         const body = await req.json();
-        const { name, price, description, shortDescription, active, thumbnail, images, category, brandId, attributes } = body;
+        const { name, price, description, shortDescription, active, thumbnail, images, category, brandId, attributes } = productPatchSchema.parse(body);
 
         // Vérifier qu'au moins un champ est fourni
         if (name === undefined && price === undefined && description === undefined &&
@@ -146,9 +142,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
             where: { slug }
         })
 
-        if (!product) {
-            return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
-        }
+        if (!product) throw new NotFoundError("Produit");
 
         const productId = product.id;
 
@@ -196,14 +190,37 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
             updateData.brandId = brandId;
         }
 
-        console.log('[PRODUCT PATCH] updateData:', updateData);
-        console.log('[PRODUCT PATCH] attributes:', attributes);
-
         const updatedProduct = await db.$transaction(async (tx) => {
-            // Update product
-            const product = await tx.products.update({
+            // Pas de select ici : si les attributs changent juste après, ce serait déjà obsolète.
+            await tx.products.update({
                 where: { slug },
                 data: updateData,
+            });
+
+            // Update attribute values if provided
+            if (attributes) {
+                // Delete and recreate in same transaction
+                await tx.productAttributeValues.deleteMany({
+                    where: { productId }
+                });
+
+                const attributeValueData = Object.entries(attributes)
+                    .filter(([, value]) => value && String(value).trim() !== '')
+                    .map(([categoryAttributeId, value]) => ({
+                        productId,
+                        categoryAttributeId: categoryAttributeId,
+                        value: String(value)
+                    }));
+
+                if (attributeValueData.length > 0) {
+                    await tx.productAttributeValues.createMany({
+                        data: attributeValueData
+                    });
+                }
+            }
+
+            return tx.products.findUniqueOrThrow({
+                where: { slug },
                 select: {
                     id: true,
                     name: true,
@@ -257,30 +274,6 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
                     }
                 }
             });
-
-            // Update attribute values if provided
-            if (attributes) {
-                // Delete and recreate in same transaction
-                await tx.productAttributeValues.deleteMany({
-                    where: { productId }
-                });
-
-                const attributeValueData = Object.entries(attributes)
-                    .filter(([, value]) => value && String(value).trim() !== '')
-                    .map(([categoryAttributeId, value]) => ({
-                        productId,
-                        categoryAttributeId: categoryAttributeId,
-                        value: String(value)
-                    }));
-
-                if (attributeValueData.length > 0) {
-                    await tx.productAttributeValues.createMany({
-                        data: attributeValueData
-                    });
-                }
-            }
-
-            return product;
         });
 
         const res = NextResponse.json(updatedProduct, { status: 200 })
@@ -289,33 +282,22 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 
         return res;
     } catch(error) {
-        if (error instanceof Error) {
-            console.error('[PRODUCT PATCH] ', error.message)
-            return NextResponse.json(
-                { error: `[PRODUCT PATCH] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
-                { status: 500 }
-            );
-        }
+        return handleApiError("PRODUCT PATCH", error);
     }
 }
 
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 });
-        }
-
         const { slug } = await params;
 
         const product = await db.products.findUnique({
             where: { slug }
         })
 
-        if (!product) {
-            return NextResponse.json({ error: 'Produit introuvable' }, { status: 404 });
-        }
+        if (!product) throw new NotFoundError("Produit");
 
         const productId = product.id;
 
@@ -327,12 +309,6 @@ export async function DELETE(_req: NextRequest, { params }: RouteParams) {
 
         return new NextResponse(`Product with id ${productId} deleted`, { status: 200 });
     } catch(error) {
-        if (error instanceof Error) {
-            console.error('[PRODUCT DELETE] ', error.message)
-            return NextResponse.json(
-                { error: `[PRODUCT DELETE] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
-                { status: 500 }
-            )
-        }
+        return handleApiError("PRODUCT DELETE", error);
     }
 }

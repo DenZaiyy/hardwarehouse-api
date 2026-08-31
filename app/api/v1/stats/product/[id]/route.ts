@@ -1,6 +1,8 @@
 import {NextRequest, NextResponse} from "next/server";
 import {rateLimiter} from "@/lib/utils";
 import {db} from "@/lib/db";
+import {requireAuth} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
 
 type TStockItems = {
     quantity: number;
@@ -9,6 +11,9 @@ type TStockItems = {
 }
 
 export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/stats/product/[id]'>) {
+    const { response } = await requireAuth();
+    if (response) return response;
+
     try {
         const { id } = await ctx.params;
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
@@ -55,10 +60,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/stats/pro
         res.headers.set('X-RateLimit-Reset', reset.toString());
 
         return res
-    } catch (err) {
-        if (err instanceof Error) {
-            console.error('[STATS PRODUCT] ', err.message)
-            return NextResponse.json('Internal Error', { status: 500 });
-        }
+    } catch (error) {
+        return handleApiError("STATS PRODUCT", error);
     }
 }

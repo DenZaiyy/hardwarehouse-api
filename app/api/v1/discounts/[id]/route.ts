@@ -2,7 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {auth} from "@clerk/nextjs/server";
 import {handleApiError} from "@/lib/api/handle-api-error";
-import {BadRequestError, NotFoundError, UnauthorizedError} from "@/lib/api/errors";
+import {BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError} from "@/lib/api/errors";
 import {getDiscountWithRelations} from "@/lib/discounts/get-discount-with-relations";
 import {refreshDiscountRelations} from "@/lib/discounts/refresh-discount-relations";
 
@@ -14,7 +14,10 @@ export async function GET(_req: NextRequest, ctx: RouteCtx) {
 
         const discount = await db.discounts.findUnique({
             where: { id },
-            include: { category: true, product: true },
+            include: {
+                category: { select: { id: true, name: true, slug: true } },
+                product: { select: { id: true, name: true, slug: true, price: true, thumbnail: true } },
+            },
         });
 
         if (!discount) throw new NotFoundError("Remise");
@@ -27,8 +30,9 @@ export async function GET(_req: NextRequest, ctx: RouteCtx) {
 
 export async function PATCH(req: NextRequest, ctx: RouteCtx) {
     try {
-        const { userId } = await auth();
+        const { userId, sessionClaims } = await auth();
         if (!userId) throw new UnauthorizedError();
+        if (sessionClaims?.publicMetadata?.role !== "admin") throw new ForbiddenError();
 
         const { id } = await ctx.params;
         const { active } = await req.json();
@@ -59,8 +63,9 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
 
 export async function DELETE(_req: NextRequest, ctx: RouteCtx ) {
     try {
-        const { userId } = await auth();
+        const { userId, sessionClaims } = await auth();
         if (!userId) throw new UnauthorizedError();
+        if (sessionClaims?.publicMetadata?.role !== "admin") throw new ForbiddenError();
 
         const { id } = await ctx.params;
 

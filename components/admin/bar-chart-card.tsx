@@ -57,7 +57,7 @@ export function BarChartCard<T extends { date: string } & Record<string, number 
                             >
                                 <span className="text-muted-foreground text-xs">{config[chart].label}</span>
                                 <span className="text-lg leading-none font-bold sm:text-3xl">
-                  {totals[chart].toLocaleString()}
+                  {totals[chart].toLocaleString('fr-FR')}
                 </span>
                             </button>
                         )

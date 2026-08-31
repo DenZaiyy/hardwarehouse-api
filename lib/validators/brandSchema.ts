@@ -9,3 +9,8 @@ export const brandSchema = z.object({
 });
 
 export type Brand = z.infer<typeof brandSchema>;
+
+// logo est une URL déjà uploadée (endpoint dédié), absente du schéma de base.
+export const brandPatchSchema = brandSchema
+    .extend({ logo: z.string().optional() })
+    .partial();

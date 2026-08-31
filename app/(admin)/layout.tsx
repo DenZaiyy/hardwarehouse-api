@@ -34,12 +34,7 @@ export default async function DashboardLayout({ children}: { children: React.Rea
         <html lang="fr" suppressHydrationWarning>
             <body className="antialiased">
                 <ClerkProvider>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="system"
-                        enableSystem
-                        disableTransitionOnChange
-                    >
+                    <ThemeProvider>
                         <SidebarProvider defaultOpen={defaultOpen}>
                             <AdminSidebar />
                             <main className="p-4 flex-1">

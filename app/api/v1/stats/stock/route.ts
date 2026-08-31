@@ -1,6 +1,8 @@
 import {NextRequest, NextResponse} from "next/server";
 import {rateLimiter} from "@/lib/utils";
 import {db} from "@/lib/db";
+import {requireAuth} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
 
 type TStockDataItem = {
     quantity: number;
@@ -10,6 +12,9 @@ type TStockDataItem = {
 }
 
 export async function GET(req: NextRequest) {
+    const { response } = await requireAuth();
+    if (response) return response;
+
     try {
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
@@ -63,11 +68,7 @@ export async function GET(req: NextRequest) {
         res.headers.set('X-RateLimit-Reset', reset.toString());
 
         return res
-    } catch (e) {
-        if (e instanceof Error) {
-            console.error('[STATS STOCK] ', e.message)
-            return NextResponse.json('Internal Error', { status: 500 });
-        }
+    } catch (error) {
+        return handleApiError("STATS STOCK", error);
     }
-    return new Response('Statistic endpoint for stock data', { status: 200 });
 }

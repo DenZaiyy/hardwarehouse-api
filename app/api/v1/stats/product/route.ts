@@ -1,8 +1,13 @@
 import {NextRequest, NextResponse} from "next/server";
 import {rateLimiter} from "@/lib/utils";
 import {db} from "@/lib/db";
+import {requireAuth} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
 
 export async function GET(req: NextRequest) {
+    const { response } = await requireAuth();
+    if (response) return response;
+
     try {
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { success, remaining, reset } = await rateLimiter.limit(ip);
@@ -38,10 +43,7 @@ export async function GET(req: NextRequest) {
         res.headers.set('X-RateLimit-Reset', reset.toString());
 
         return res
-    } catch (err) {
-        if (err instanceof Error) {
-            console.error('[STATS PRODUCT] ', err.message)
-            return NextResponse.json('Internal Error', { status: 500 });
-        }
+    } catch (error) {
+        return handleApiError("STATS PRODUCT", error);
     }
 }

@@ -9,3 +9,8 @@ export const categorySchema = z.object({
 });
 
 export type Category = z.infer<typeof categorySchema>;
+
+// logo est une URL déjà uploadée (endpoint dédié), absente du schéma de base.
+export const categoryPatchSchema = categorySchema
+    .extend({ logo: z.string().optional() })
+    .partial();

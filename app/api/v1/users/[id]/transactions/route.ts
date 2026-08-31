@@ -1,26 +1,21 @@
 import {NextRequest, NextResponse} from "next/server";
-import {auth, clerkClient} from "@clerk/nextjs/server";
+import {clerkClient} from "@clerk/nextjs/server";
 import {db} from "@/lib/db";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {NotFoundError} from "@/lib/api/errors";
 
 export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]/transactions'>) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
         const { id } = await ctx.params;
         const client = await clerkClient()
 
         const user = await client.users.getUser(id)
 
-        if (!user) {
-            return NextResponse.json(
-                { error: "User not found" },
-                { status: 404 }
-            )
-        }
+        if (!user) throw new NotFoundError("Utilisateur");
 
         // 🚀 OPTIMIZATION 8: Selective fields in transaction query (FIXED)
         // Use select instead of include to reduce data transfer
@@ -52,10 +47,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id
         ])
 
         return NextResponse.json({ data: transactions, count: totalTransactions }, { status: 200 })
-    } catch(err) {
-        if (err instanceof Error) {
-            console.error(`[USER TRANSACTIONS ERROR] ${err.message}`);
-            return new NextResponse(`[USER TRANSACTIONS ERROR] ${err.message}`, { status: 500 });
-        }
+    } catch(error) {
+        return handleApiError("USER TRANSACTIONS", error);
     }
 }

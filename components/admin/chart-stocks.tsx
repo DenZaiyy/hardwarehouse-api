@@ -149,7 +149,7 @@ export function ChartBarInteractive() {
                                   {chartConfig[chart].label}
                                 </span>
                                 <span className="text-lg leading-none font-bold sm:text-3xl">
-                                  {total[key as keyof typeof total].toLocaleString()}
+                                  {total[key as keyof typeof total].toLocaleString('fr-FR')}
                                 </span>
                             </button>
                         )
