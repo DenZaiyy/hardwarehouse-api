@@ -3,6 +3,9 @@ import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
 import {buildCategoryWhere, parseFilters, parseSort} from "@/lib/api/filters";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {ConflictError} from "@/lib/api/errors";
+import {categorySchema} from "@/lib/validators/categorySchema";
 
 export async function GET(req: NextRequest) {
     try {
@@ -54,13 +57,7 @@ export async function GET(req: NextRequest) {
             total,
         }, { status: 200 });
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[CATEGORIES] ', error.message)
-            return NextResponse.json(
-                { error: `[CATEGORIES] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
-                { status: 500 }
-            );
-        }
+        return handleApiError("CATEGORIES GET", error);
     }
 }
 
@@ -81,11 +78,7 @@ export async function POST(req: NextRequest) {
     try {
         // Accepter JSON au lieu de FormData
         const body = await req.json();
-        const { name, active = true } = body;
-
-        if (!name || typeof name !== 'string') {
-            return NextResponse.json({ error: "Le nom est requis" }, { status: 400 });
-        }
+        const { name, active = true } = categorySchema.parse(body);
 
         const slug = slugifyName(name);
 
@@ -96,7 +89,7 @@ export async function POST(req: NextRequest) {
                 select: { id: true }
             });
 
-            if (existingCategory) throw new Error("CATEGORY_EXISTS")
+            if (existingCategory) throw new ConflictError("La catégorie existe déjà");
 
             // Create category
             const category = await tx.categories.create({
@@ -120,17 +113,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(result, { status: 201 });
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[CATEGORY] ', error.message)
-            
-            if (error.message === "CATEGORY_EXISTS") {
-                return NextResponse.json({ error: "La catégorie existe déjà" }, { status: 400 });
-            }
-            
-            return NextResponse.json(
-                { error: `[CATEGORY] Erreur interne : ${error.message}` },
-                { status: 500 }
-            );
-        }
+        return handleApiError("CATEGORY POST", error);
     }
 }

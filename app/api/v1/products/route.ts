@@ -3,6 +3,9 @@ import {db} from "@/lib/db";
 import {rateLimiter, slugifyName} from "@/lib/utils";
 import {auth} from "@clerk/nextjs/server";
 import {buildMeta, buildProductWhere, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {ConflictError, NotFoundError} from "@/lib/api/errors";
+import {productCreateSchema} from "@/lib/validators/productSchema";
 
 export async function GET(req: NextRequest) {
     try {
@@ -66,14 +69,7 @@ export async function GET(req: NextRequest) {
             ...(pagination && { meta: buildMeta(total, pagination) })
         }, { status: 200 });
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[PRODUCTS] ', error.message)
-            return NextResponse.json(
-                { error: `[PRODUCTS] Erreur interne : ${error ? error.message : 'Erreur inconnue'}` },
-                { status: 500 }
-            );
-        }
-
+        return handleApiError("PRODUCTS GET", error);
     }
 }
 
@@ -98,26 +94,11 @@ export async function POST(req: NextRequest) {
             description,
             shortDescription,
             price,
-            active = true,
+            active,
             category,
             brandId,
             attributes
-        } = body;
-
-        console.log('[PRODUCTS POST] Request data:', { 
-            name, 
-            description, 
-            shortDescription, 
-            price, 
-            active, 
-            category,
-            brandId, 
-            attributes
-        });
-
-        if (!name || price === undefined || isNaN(Number(price)) || !category || !brandId) {
-            return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400});
-        }
+        } = productCreateSchema.parse(body);
 
         const slug = slugifyName(name);
 
@@ -139,25 +120,12 @@ export async function POST(req: NextRequest) {
             ]);
 
             // Validation checks
-            if (existingProduct) throw new Error("PRODUCT_EXISTS");
-            if (!existingCategory) throw new Error("CATEGORY_NOT_FOUND");
-            if (!existingBrand) throw new Error("BRAND_NOT_FOUND");
+            if (existingProduct) throw new ConflictError("Le produit existe déjà");
+            if (!existingCategory) throw new NotFoundError("Catégorie");
+            if (!existingBrand) throw new NotFoundError("Marque");
 
-            // Create product with basic data (sans images)
+            // Pas d'include ici : les productAttributeValues n'existent pas encore, ce serait vide.
             const product = await tx.products.create({
-                include: {
-                    category: true,
-                    brand: true,
-                    productAttributeValues: {
-                        include: {
-                            categoryAttribute: {
-                                include: {
-                                    attribute: true
-                                }
-                            }
-                        }
-                    }
-                },
                 data: {
                     name: name,
                     slug: slug,
@@ -187,43 +155,27 @@ export async function POST(req: NextRequest) {
                 }
             }
 
-            return product;
+            return tx.products.findUniqueOrThrow({
+                where: { id: product.id },
+                include: {
+                    category: true,
+                    brand: true,
+                    productAttributeValues: {
+                        include: {
+                            categoryAttribute: {
+                                include: {
+                                    attribute: true
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         });
 
         return NextResponse.json(result, { status: 201 });
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[PRODUCTS POST]', error.message);
-            
-            // Handle specific validation errors
-            switch (error.message) {
-                case "PRODUCT_EXISTS":
-                    return NextResponse.json(
-                        { error: "Le produit existe déjà" },
-                        { status: 400 }
-                    );
-                case "CATEGORY_NOT_FOUND":
-                    return NextResponse.json(
-                        { error: "Catégorie inexistante" },
-                        { status: 400 }
-                    );
-                case "BRAND_NOT_FOUND":
-                    return NextResponse.json(
-                        { error: "La marque n'existe pas" },
-                        { status: 404 }
-                    );
-                default:
-                    return NextResponse.json(
-                        { error: `[PRODUCTS POST] Erreur interne : ${error.message}` },
-                        { status: 500 }
-                    );
-            }
-        }
-
-        return NextResponse.json(
-            { error: "Erreur inconnue" },
-            { status: 500 }
-        );
+        return handleApiError("PRODUCTS POST", error);
     }
 }
 

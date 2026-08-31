@@ -1,6 +1,8 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {ImageUploadService} from '@/services/image-upload.service';
 import {db} from '@/lib/db';
+import {requireAuth} from '@/lib/auth/require-role';
+import {isSafeSlug} from '@/lib/utils';
 
 interface RouteParams {
   params: Promise<{ slug: string; filename: string }>;
@@ -15,10 +17,13 @@ interface RouteParams {
  * - DELETE /api/upload/products/clavier-rgb/image-2
  */
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+  const { response } = await requireAuth();
+  if (response) return response;
+
   try {
     const { slug, filename } = await params;
 
-    if (!slug || !filename) {
+    if (!slug || !filename || !isSafeSlug(slug)) {
       return NextResponse.json(
         { success: false, error: 'Slug et filename requis', code: 'INVALID_TYPE' },
         { status: 400 }

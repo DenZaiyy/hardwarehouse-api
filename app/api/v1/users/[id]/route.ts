@@ -1,7 +1,11 @@
 import {NextRequest, NextResponse} from "next/server";
-import {auth, clerkClient, currentUser} from "@clerk/nextjs/server";
+import {clerkClient} from "@clerk/nextjs/server";
 import {db} from "@/lib/db";
 import {rateLimiter} from "@/lib/utils";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {NotFoundError} from "@/lib/api/errors";
+import {userPatchSchema} from "@/lib/validators/userSchema";
 
 interface UpdateUserData {
     username?: string;
@@ -13,47 +17,31 @@ interface UpdateUserData {
 }
 
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]'>) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
         const { id } = await ctx.params;
         const client = await clerkClient()
 
         const user = await client.users.getUser(id)
 
-        if (!user) {
-            return NextResponse.json(
-                { error: "User not found" },
-                { status: 404 }
-            )
-        }
+        if (!user) throw new NotFoundError("Utilisateur");
 
         return NextResponse.json(user)
-    } catch(err) {
-        if (err instanceof Error) {
-            console.error(`[USER ERROR] ${err.message}`);
-            return new NextResponse(`[USER ERROR] ${err.message}`, { status: 500 });
-        }
+    } catch(error) {
+        return handleApiError("USER GET", error);
     }
 }
 
 export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]'>) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
         const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
         const { id } = await ctx.params;
-        const { username, emailAddress, firstName, lastName, password, locked } = await req.json();
-
-        console.log("Locked status: ", locked);
+        const { username, emailAddress, firstName, lastName, password, locked } = userPatchSchema.parse(await req.json());
 
         // Vérifier qu'au moins un champ est fourni
         if (!username && !emailAddress && !firstName && !lastName && !password && locked === undefined) {
@@ -73,9 +61,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/users/[
         const client = await clerkClient();
         const user = await client.users.getUser(id);
 
-        if (!user) {
-            return NextResponse.json({ error: 'Utilisateur introuvable' }, { status: 404 });
-        }
+        if (!user) throw new NotFoundError("Utilisateur");
 
         // Mettre à jour le pseudo seulement s'il change
         if (username && username !== user.username) {
@@ -120,48 +106,22 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/users/[
 
         return res;
     } catch(error) {
-        if (error instanceof Error) {
-            console.error('[USER PATCH] ', error.message);
-            return NextResponse.json(
-                { error: `[USER PATCH] Erreur interne : ${error.message}` },
-                { status: 500 }
-            );
-        }
+        return handleApiError("USER PATCH", error);
     }
 }
 
 export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/users/[id]'>) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId, isAuthenticated } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
         const { id } = await ctx.params;
         const client = await clerkClient()
-
-        // Protect the route by checking if the user is signed in
-        if (!isAuthenticated) {
-            return new NextResponse('Unauthorized', { status: 401 })
-        }
-
-        // Use `currentUser()` to get the Backend API User object
-        const currUser = await currentUser()
-
-        if (currUser && currUser.publicMetadata.role) {
-
-        }
 
         // check if userId exists in clerk
         const user = await client.users.getUser(id)
 
-        if (!user) {
-            return NextResponse.json(
-                { error: "User not found" },
-                { status: 404 }
-            )
-        }
+        if (!user) throw new NotFoundError("Utilisateur");
 
         //check and anonymize userdata in db
         await db.transactions.updateMany({
@@ -188,7 +148,6 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/users
 
         return new NextResponse(`User with id ${id} deleted and anonymized`, { status: 200 });
     } catch (error) {
-        console.error('[USER DELETE] ', error)
-        return new NextResponse('Internal Error', { status: 500 });
+        return handleApiError("USER DELETE", error);
     }
 }

@@ -1,9 +1,16 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {auth, currentUser} from "@clerk/nextjs/server";
+import {currentUser} from "@clerk/nextjs/server";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {NotFoundError} from "@/lib/api/errors";
+import {purchaseOrderSchema} from "@/lib/validators/purchaseOrderSchema";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_req: NextRequest) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
     try {
         const purchases = await db.purchaseOrder.findMany({
             include: {
@@ -22,29 +29,19 @@ export async function GET(_req: NextRequest) {
 
         return NextResponse.json(purchases, {status: 200});
     } catch (error) {
-        if (error instanceof Error) {
-            console.error('[TRANSACTIONS] ', error.message)
-        }
-        return new NextResponse('Internal Error', { status: 500 });
+        return handleApiError("PURCHASE ORDERS GET", error);
     }
 }
 
 export async function POST(req: NextRequest) {
+    const { userId, response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
-        const { quantity, productId } = await req.json();
+        const { quantity, productId } = purchaseOrderSchema.parse(await req.json());
         const user = await currentUser()
 
-        let userFullName = "Undefined User"
-
-        if (user && user.fullName) userFullName = user.fullName
-
-        if (!quantity && !productId) return NextResponse.json({ error: "Champs obligatoires manquants" }, { status: 400 })
+        const userFullName = user?.fullName ?? "Undefined User"
 
         const existingProduct = await db.products.findUnique({
             where: {
@@ -52,11 +49,7 @@ export async function POST(req: NextRequest) {
             }
         })
 
-        if (!existingProduct) {
-            return NextResponse.json({
-                error: "Le produit n'existe pas"
-            }, { status: 400 })
-        }
+        if (!existingProduct) throw new NotFoundError("Produit");
 
         const purchaseOrder = await db.purchaseOrder.create({
             data: {
@@ -78,10 +71,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(purchaseOrder, { status: 200 })
 
-    } catch (e) {
-        if (e instanceof  Error) {
-            console.error(e.message);
-            return NextResponse.json({ error: "[TRANSACTION POST] Une erreur est survenue lors de la création d'une transaction" })
-        }
+    } catch (error) {
+        return handleApiError("PURCHASE ORDER POST", error);
     }
 }
