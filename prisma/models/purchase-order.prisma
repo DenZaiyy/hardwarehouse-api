@@ -8,4 +8,5 @@ model PurchaseOrder {
   userFullName String?
 
   @@index([productId])
+  @@index([userId])
 }

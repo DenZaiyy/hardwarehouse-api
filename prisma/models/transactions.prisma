@@ -10,4 +10,5 @@ model Transactions {
   userFullName String?
 
   @@index([productId])
+  @@index([userId])
 }
