@@ -15,9 +15,10 @@ export async function refreshDiscountRelations(
     }
 
     if (discount.categoryId && discount.category) {
-        for (const product of discount.category.Products) {
-            await refreshProductDiscount(tx, product.id);
-        }
+        // Promise.all évite le N+1 séquentiel (1 aller-retour DB par produit de la catégorie).
+        await Promise.all(
+            discount.category.Products.map((product) => refreshProductDiscount(tx, product.id))
+        );
         return {
             type: "category",
             message: `Discount for category "${discount.category.name}" ${action}`,
