@@ -64,10 +64,11 @@ jobs:
       - run:
           name: Install jq
           command: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends jq
-      # Run npm audit to check for vulnerabilities
+      # Run npm audit on the production dependencies: those shipped with the API. Development tooling
+      # (ESLint, Jest) can carry advisories without a fixed version that never reach production.
       - run:
           name: Run npm audit
-          command: npm audit --audit-level=high --json | jq -e '.metadata.vulnerabilities.high == 0 and .metadata.vulnerabilities.critical == 0'
+          command: npm audit --audit-level=high --omit=dev --json | jq -e '.metadata.vulnerabilities.high == 0 and .metadata.vulnerabilities.critical == 0'
 
   # Job to lint the node project
   lint-node:
