@@ -8,6 +8,8 @@ model Transactions {
   product      Products @relation(fields: [productId], references: [id])
   userId       String?
   userFullName String?
+  // Commande de la boutique à l'origine d'une sortie de stock (POST /api/v1/stock-exits)
+  orderReference String?
 
   @@index([productId])
   @@index([userId])

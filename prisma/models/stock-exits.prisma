@@ -1,0 +1,8 @@
+// Sortie de stock d'une commande payée de la boutique. L'index unique sur la référence rend
+// l'enregistrement idempotent : une commande ne sort du stock qu'une fois, même si la boutique
+// réessaie après une panne (à créer en base avec `npm run db:push`).
+model StockExits {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderReference String   @unique
+  createdAt      DateTime @default(now())
+}

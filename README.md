@@ -117,6 +117,7 @@ authenticated session belongs to a staff member. Two levels therefore coexist:
 | Public | none | catalogue reads consumed by the Symfony storefront |
 | Staff | `requireAuth()` / `auth()` | create and update brands, categories, products; manage stocks; uploads; analytics |
 | Admin | `requireAdmin()` | **deletions**, discounts, stock movements, users, purchase orders |
+| Storefront (server to server) | `requireShop()` | stock exits of paid orders (`POST /api/v1/stock-exits`) |
 
 The rule of thumb: staff feed the catalogue, administrators handle destructive or sensitive
 operations. `proxy.ts` mirrors it in the UI by restricting `/admin/users` and
@@ -126,6 +127,17 @@ Writing a stock movement (`POST /api/v1/transactions`) requires the `admin` role
 history it feeds — otherwise a direct API call would bypass the UI restriction.
 
 This contract is covered end to end by `cypress/e2e/10-authorization-model.cy.ts`.
+
+### Stock exits of paid orders
+
+The Symfony storefront records the stock exit of each paid order with
+`POST /api/v1/stock-exits` (`orderReference` and one line per product). The call is
+authenticated by a token shared by both applications, `SHOP_API_TOKEN`, sent as
+`Authorization: Bearer` and compared in constant time; without it configured, every call is
+refused. The stock and its movements are written in a single transaction, a quantity never goes
+below zero (the whole exit is refused with 409 and the storefront alerts an administrator), and
+the exit is idempotent: a `StockExits` document with a unique `orderReference` records each order
+once, so retries after an outage are safe. The unique index is created by `npm run db:push`.
 
 ### Admin Permissions
 - Create, read, update, delete brands
