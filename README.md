@@ -139,6 +139,9 @@ below zero (the whole exit is refused with 409 and the storefront alerts an admi
 the exit is idempotent: a `StockExits` document with a unique `orderReference` records each order
 once, so retries after an outage are safe. The unique index is created by `npm run db:push`.
 
+The movement history cannot be deleted through the API: a wrong movement is corrected by an
+opposite one.
+
 ### Admin Permissions
 - Create, read, update, delete brands
 - Manage product categories and hierarchies
