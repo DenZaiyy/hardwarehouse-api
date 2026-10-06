@@ -35,29 +35,3 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/transact
         return handleApiError("TRANSACTION GET", error);
     }
 }
-
-export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/transactions/[id]'>) {
-    const { response } = await requireAdmin();
-    if (response) return response;
-
-    try {
-        const { id } = await ctx.params;
-        const transaction = await db.transactions.findUnique({
-            where: {
-                id
-            }
-        });
-
-        if (!transaction) throw new NotFoundError("Transaction");
-
-        await db.transactions.delete({
-            where: {
-                id
-            }
-        });
-
-        return new NextResponse(`Transaction with id ${id} deleted`, { status: 200 });
-    } catch (error) {
-        return handleApiError("TRANSACTION DELETE", error);
-    }
-}

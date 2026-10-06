@@ -15,6 +15,12 @@
 
 # testing
 /coverage
+/cypress/screenshots
+/cypress/videos
+/cypress/downloads
+
+# cypress local credentials (never commit)
+cypress.env.json
 
 # next.js
 /.next/
