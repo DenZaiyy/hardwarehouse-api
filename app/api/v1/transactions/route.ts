@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {auth, currentUser} from "@clerk/nextjs/server";
+import {currentUser} from "@clerk/nextjs/server";
 import {rateLimiter} from "@/lib/utils";
 import {requireAdmin} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
@@ -70,13 +70,14 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+    // Un mouvement de stock alimente un historique réservé aux administrateurs
+    // (GET de cette route, /transactions/[id], et la page /admin/transactions
+    // filtrée par proxy.ts). L'écriture exige donc le même rôle que la lecture,
+    // sans quoi l'API contournerait le contrôle appliqué par l'interface.
+    const { userId, response } = await requireAdmin();
+    if (response) return response;
+
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
-
         const { type, finalQuantity, oldQtt, productId } = transactionCreateSchema.parse(await req.json());
         const user = await currentUser()
 
