@@ -107,6 +107,26 @@ hardwarehouse-api/
 2. **Protected Routes**: All admin routes require authentication
 3. **API Access**: External API calls from Symfony app (may require API key authentication)
 
+### Authorization model
+
+Clerk sign-ups are **restricted**: accounts are created by an administrator only, so any
+authenticated session belongs to a staff member. Two levels therefore coexist:
+
+| Level | Guard | Scope |
+|---|---|---|
+| Public | none | catalogue reads consumed by the Symfony storefront |
+| Staff | `requireAuth()` / `auth()` | create and update brands, categories, products; manage stocks; uploads; analytics |
+| Admin | `requireAdmin()` | **deletions**, discounts, stock movements, users, purchase orders |
+
+The rule of thumb: staff feed the catalogue, administrators handle destructive or sensitive
+operations. `proxy.ts` mirrors it in the UI by restricting `/admin/users` and
+`/admin/transactions` to the `admin` role.
+
+Writing a stock movement (`POST /api/v1/transactions`) requires the `admin` role, like the
+history it feeds — otherwise a direct API call would bypass the UI restriction.
+
+This contract is covered end to end by `cypress/e2e/10-authorization-model.cy.ts`.
+
 ### Admin Permissions
 - Create, read, update, delete brands
 - Manage product categories and hierarchies
@@ -263,13 +283,46 @@ npm run dev
 | `npm run build` | Build for production |
 | `npm start` | Start production server |
 | `npm run lint` | Code quality checks |
-| `npm run test` | Run unit tests |
-| `npm run cypress:open` | Open E2E testing |
+| `npm run test` | Run unit tests (Jest) |
+| `npm run cypress:open` | Open the Cypress runner |
+| `npm run cypress:run` | Run the end-to-end suite headlessly |
+| `npm run test:e2e` | Alias of `cypress:run`, for CI |
 | `npm run db:generate` | Generate Prisma client |
 | `npm run db:push` | Update database schema |
 | `npm run db:studio` | Open database GUI |
 | `npm run db:seed` | Populate test data |
 | `npm run db:reset` | Reset database completely |
+
+## 🧪 Testing
+
+### Unit tests
+
+Jest covers the Zod validators under `__tests__/unit/`. They need no database and no
+network access:
+
+```bash
+npm run test
+```
+
+### End-to-end tests
+
+Cypress drives the admin back-office and the `/api/v1` contract. The suite expects the
+application to be running, a seeded database, and the two dedicated Clerk test accounts:
+
+```bash
+npm run dev          # in one terminal
+npm run cypress:run  # in another
+```
+
+Credentials live in `cypress.env.json`, which is git-ignored. In CI, provide them as
+`CYPRESS_`-prefixed environment variables together with `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+and `CLERK_SECRET_KEY`, which `clerkSetup()` uses to fetch a Clerk Testing Token.
+
+Because write endpoints call the Upstash rate limiter before anything else, a reachable
+Redis instance is required for the write scenarios to pass.
+
+See [`cypress/README.md`](cypress/README.md) for the account setup, the sign-in flow
+(this Clerk instance requires an `email_code` second factor) and the known limitations.
 
 ## 🔄 Background Processing
 
