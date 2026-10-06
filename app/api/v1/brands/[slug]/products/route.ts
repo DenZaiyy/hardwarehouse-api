@@ -49,6 +49,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/brands/[s
 
         return NextResponse.json({
             data: products,
+            total,
             meta: buildMeta(total, pagination)
         }, { status: 200 });
     } catch (error) {

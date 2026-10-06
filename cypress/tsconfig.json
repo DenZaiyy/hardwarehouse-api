@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Cypress s'appuie sur les globales de Mocha/Chai (describe, it, expect).
+    // Le tsconfig racine charge les types Jest, dont les signatures entrent en
+    // conflit sur ces mêmes globales : on isole donc les types ici.
+    "types": ["cypress", "node"],
+    "isolatedModules": false,
+    "noEmit": true
+  },
+  "include": ["**/*.ts", "../types/**/*.ts"]
+}

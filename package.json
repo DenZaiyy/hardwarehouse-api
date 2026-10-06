@@ -14,7 +14,9 @@
     "db:reset": "prisma db push --force-reset && npm run db:seed",
     "test": "jest",
     "test:watch": "jest --watch",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run --e2e",
+    "test:e2e": "cypress run --e2e"
   },
   "dependencies": {
     "@clerk/localizations": "^3.34.0",
@@ -53,6 +55,7 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.28.5",
+    "@clerk/testing": "^2.2.33",
     "@eslint/eslintrc": "^3",
     "@jest/globals": "^30.2.0",
     "@tailwindcss/postcss": "^4",
