@@ -1,27 +1,19 @@
+// PM2 en production : l'API tourne depuis le lien current, que chaque déploiement fait pointer sur une nouvelle
+// version (deploy/receive-release.sh). Démarrage initial et migration depuis l'ancien dossier : deploy/README.md.
 module.exports = {
     apps: [
         {
-            name: "hardwarehouse-next",
-            script: "npm run",
-            args: "start",
+            name: "next-api",
+            cwd: `${process.env.HOME}/hardwarehouse-api/current`,
+            script: "server.js",
             env: {
                 NODE_ENV: "production",
                 PORT: 3000,
+                // IPv4 et IPv6 sur toutes les interfaces, comme next start : les services appellent localhost, qui
+                // se résout d'abord en ::1, et avec 127.0.0.1 seul le middleware de Clerk relaie chaque requête vers
+                // localhost sans qu'elle aboutisse. Le pare-feu d'OVH ne laisse passer que 22, 80 et 443.
+                HOSTNAME: "::",
             },
-        },
-        {
-            name: "hardwarehouse-cron",
-            script: "scripts/sync-discounts.ts",
-            interpreter: "node",
-            interpreter_args: "--import tsx",  // pour exécuter le TS directement
-            env: {
-                NODE_ENV: "production",
-            },
-            // Redémarre max 5 fois si crash, puis stop
-            max_restarts: 5,
-            restart_delay: 5000,
-            error_file: "./logs/cron-error.log",
-            out_file: "./logs/cron-out.log",
         },
     ],
 };

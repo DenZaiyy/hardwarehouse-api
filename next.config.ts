@@ -1,6 +1,8 @@
 import type {NextConfig} from "next";
 
 const nextConfig: NextConfig = {
+    // Serveur autonome construit par CircleCI et déposé sur le VPS, sans npm install (deploy/README.md)
+    output: "standalone",
     images: {
         remotePatterns: [
             { protocol: 'https', hostname: 'images.unsplash.com' },

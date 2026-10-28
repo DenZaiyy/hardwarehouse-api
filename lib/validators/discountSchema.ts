@@ -15,7 +15,7 @@ const optionalId = z
     .optional()
     .transform((val) => (val === "" ? null : val))
     .refine((val) => val == null || objectIdFormat.test(val), {
-        message: "Identifiant invalide",
+        error: "Identifiant invalide",
     });
 
 const optionalIdForForm = z
@@ -24,7 +24,7 @@ const optionalIdForForm = z
     .nullable()
     .transform((val) => (val === "" ? null : val))
     .refine((val) => val == null || objectIdFormat.test(val), {
-        message: "Identifiant invalide",
+        error: "Identifiant invalide",
     });
 
 const optionalDateString = z
@@ -57,7 +57,7 @@ export const discountInputSchema = z.object({
             return (hasProduct && !hasCategory) || (!hasProduct && hasCategory);
         },
         {
-            message: "Il faut renseigner soit un produit, soit une catégorie, mais pas les deux.",
+            error: "Il faut renseigner soit un produit, soit une catégorie, mais pas les deux.",
             path: ["productId"],
         }
     )
@@ -69,7 +69,7 @@ export const discountInputSchema = z.object({
             return true;
         },
         {
-            message: "Une remise en pourcentage doit être comprise entre 1 et 100.",
+            error: "Une remise en pourcentage doit être comprise entre 1 et 100.",
             path: ["discountAmount"],
         }
     )
@@ -83,7 +83,7 @@ export const discountInputSchema = z.object({
             return true;
         },
         {
-            message: "La date de fin doit être postérieure à la date de début.",
+            error: "La date de fin doit être postérieure à la date de début.",
             path: ["endDate"],
         }
     );
@@ -112,7 +112,7 @@ export const discountSchema = z.object({
             return (hasProduct && !hasCategory) || (!hasProduct && hasCategory);
         },
         {
-            message: "Il faut renseigner soit un produit, soit une catégorie, mais pas les deux.",
+            error: "Il faut renseigner soit un produit, soit une catégorie, mais pas les deux.",
             path: ["productId"],
         }
     )
@@ -124,7 +124,7 @@ export const discountSchema = z.object({
             return true;
         },
         {
-            message: "Une remise en pourcentage doit être comprise entre 1 et 100.",
+            error: "Une remise en pourcentage doit être comprise entre 1 et 100.",
             path: ["discountAmount"],
         }
     )
@@ -136,7 +136,7 @@ export const discountSchema = z.object({
             return true;
         },
         {
-            message: "La date de fin doit être postérieure à la date de début.",
+            error: "La date de fin doit être postérieure à la date de début.",
             path: ["endDate"],
         }
     );
