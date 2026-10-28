@@ -6,7 +6,11 @@ commands:
       - node/install-packages:
           pkg-manager: npm
           cache-version: v1
-          override-ci-command: npm ci
+          # Le npm livré avec Node.js 24.13.0 (11.6.2) refuse ce lock : il veut un picomatch 4 à la racine pour la
+          # dépendance paire optionnelle de fdir, ce que npm 11.11 et suivants n'exigent plus. L'installation passe
+          # donc par le npm qui tient le lock. Comme lui, elle saute les scripts d'installation des dépendances :
+          # aucun job n'en a besoin (prisma generate est lancé à part, les binaires viennent des paquets optionnels).
+          override-ci-command: npx --yes npm@11.19.0 ci
       - persist_to_workspace:
           root: .
           paths:
