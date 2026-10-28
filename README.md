@@ -31,7 +31,7 @@ This application is **not a public store** - it's an internal management system 
 ## 🚀 Tech Stack
 
 ### Core Framework
-- **Next.js 16.1.7** - React framework with App Router for admin interface and API routes
+- **Next.js 16.4.3** - React framework with App Router for admin interface and API routes
 - **React 19.2.3** - UI library for admin dashboard
 - **TypeScript 5** - Type-safe development
 
@@ -51,7 +51,7 @@ This application is **not a public store** - it's an internal management system 
 - **TanStack Table 8.21.3** - Advanced data table management
 
 ### API & Data Management
-- **React Hook Form 7.64.0 + Zod 4.1.12** - Form handling and validation in admin
+- **React Hook Form 7.64.0 + Zod 4.6.7** - Form handling and validation in admin
 - **SWR** - Data fetching and caching
 
 ## 📁 Project Structure
