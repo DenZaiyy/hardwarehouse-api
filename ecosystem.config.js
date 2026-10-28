@@ -6,6 +6,9 @@ module.exports = {
             name: "next-api",
             cwd: `${process.env.HOME}/hardwarehouse-api/current`,
             script: "server.js",
+            // Une seule instance (la valeur par défaut) : la limitation de débit garde ses compteurs en mémoire
+            // (lib/rate-limit.ts). Plusieurs instances exigeraient un stockage partagé, comme Redis sur le VPS.
+            instances: 1,
             env: {
                 NODE_ENV: "production",
                 PORT: 3000,

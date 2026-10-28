@@ -2,7 +2,8 @@ import {NextRequest, NextResponse} from 'next/server';
 import {ImageUploadService} from '@/services/image-upload.service';
 import {db} from '@/lib/db';
 import {requireAuth} from '@/lib/auth/require-role';
-import {isSafeSlug, rateLimiter} from '@/lib/utils';
+import {isSafeSlug} from '@/lib/utils';
+import {clientIp, rateLimiter} from '@/lib/rate-limit';
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+    const ip = clientIp(req);
     const { success: withinLimit } = await rateLimiter.limit(ip);
     if (!withinLimit) {
       return NextResponse.json({ success: false, error: 'Trop de demandes', code: 'RATE_LIMITED' }, { status: 429 });

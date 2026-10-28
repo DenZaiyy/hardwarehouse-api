@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {currentUser} from "@clerk/nextjs/server";
-import {rateLimiter} from "@/lib/utils";
+import {clientIp, rateLimiter} from "@/lib/rate-limit";
 import {requireAdmin} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {NotFoundError} from "@/lib/api/errors";
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     let remaining = 0;
     let reset = 0;
 
-    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+    const ip = clientIp(req);
 
 
     try {
