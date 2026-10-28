@@ -1,13 +1,12 @@
 # Configuration CI/CD avec CircleCI pour Next.js
-Le détail de la configuration CircleCI pour le déploiement de l'application Next.js est géré dans le fichier [`.circleci/config.yml`](config.yml). Ce fichier contient les étapes nécessaires pour construire, tester et déployer l'application sur Vercel.
+Le détail de la configuration CircleCI pour le déploiement de l'application Next.js est géré dans le fichier [`.circleci/config.yml`](config.yml). Ce fichier contient les étapes nécessaires pour construire, tester et déployer l'application sur le VPS de production.
 
 ## Les prérequis
 Avant de commencer, assurez-vous que les prérequis suivants sont en place :
-- **Node.js** : Version LTS minimum.
+- **Node.js** : tous les jobs tournent sous Node.js 24.13.0 (image `cimg/node:24.13.0`, exécuteur `node-prod`), la version du VPS. À changer en même temps que celle du serveur.
 - **NPM** : Version compatible avec Node.js.
 - **Prisma** : Configuré avec un client pour la base de données.
-- **Vercel** : Un compte et un projet configuré pour votre application.
-- **CircleCI** : Un compte et un projet configuré pour votre dépôt Git.
+- **CircleCI** : Un compte et un projet configuré pour votre dépôt Git, avec la clé SSH de déploiement et les variables `VPS_HOST`, `VPS_USER`, `VPS_KNOWN_HOSTS` et `DATABASE_URL` (voir [`deploy/README.md`](../deploy/README.md)).
 - **Git** : Utilisé pour la gestion de version et les Pull Requests.
 
 ## 📁 Structure du pipeline
@@ -31,10 +30,12 @@ La pipeline est organisée par branche et comprend plusieurs jobs pour chaque é
     - **create-pr** : Crée un Pull Request vers `main` si les jobs précédents ont réussi.
 
 ### 🚀 Branche `main`
-- **Objectifs** : Déployer l'application en production sur Vercel.
+- **Objectifs** : Déployer l'application en production sur le VPS, sans rien compiler sur le serveur.
 - **Jobs exécutés** :
-    - **main-deployment** : Installe les dépendances, génère le client Prisma, met à jour la base de données, construit l'application Next.js, installe la CLI Vercel et déploie l'application sur Vercel.
-- **Conditions** : Ce job est exécuté uniquement si la Pull Request a été acceptée et fusionnée dans la branche `main`.
+    - **typescript-check**, **lint-node**, **audit-node**, **test-node** : les mêmes contrôles que sur `dev`.
+    - **build-release** : construit la sortie `standalone` de Next.js et l'archive avec `public/`, `.next/static` et `ecosystem.config.js`. Les valeurs publiques figées au build (`NEXT_PUBLIC_API_URL`, clé publique Clerk) sont dans ce job.
+    - **deploy-vps** : synchronise le schéma MongoDB (`prisma db push`), puis envoie l'archive au VPS par SSH. Le script `deploy/receive-release.sh`, seule commande que la clé permet, teste la version, bascule le lien `current`, recharge PM2 et revient en arrière si elle ne répond pas.
+- **Conditions** : Ces jobs sont exécutés uniquement si la Pull Request a été acceptée et fusionnée dans la branche `main`. Un seul `deploy-vps` tourne à la fois (`serial-group`) : celui d'un pipeline plus ancien est sauté si un plus récent attend.
 
 ## ⚙️ Exemple de structure du fichier config.yml
 L'indentation et la structure du fichier `.circleci/config.yml` sont cruciales pour le bon fonctionnement des jobs. Voici un exemple de la structure de base :

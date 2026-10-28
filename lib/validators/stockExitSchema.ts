@@ -10,7 +10,7 @@ export const stockExitSchema = z.object({
     })).min(1, "Au moins une ligne").max(100),
 }).refine(
     ({lines}) => new Set(lines.map((line) => line.productId)).size === lines.length,
-    {message: "Un produit ne peut apparaître qu'une fois", path: ["lines"]},
+    {error: "Un produit ne peut apparaître qu'une fois", path: ["lines"]},
 );
 
 export type StockExit = z.infer<typeof stockExitSchema>;
