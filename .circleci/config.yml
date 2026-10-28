@@ -19,9 +19,16 @@ commands:
 orbs:
   node: circleci/node@7.1.0 # Node.js orb for CircleCI
   lighthouse-check: foo-software/lighthouse-check@0.0.13
+executors:
+  # Même version de Node.js que le VPS de production (v24.13.0, relevée le 27 octobre 2026) : la version construite
+  # par la CI y tourne telle quelle. Grande machine par défaut, comme l'exécuteur de l'orbe qu'il remplace.
+  node-prod:
+    docker:
+      - image: cimg/node:24.13.0
+    resource_class: large
 jobs:
   install-dependencies:
-    executor: node/default
+    executor: node-prod
     resource_class: small
     steps:
       - checkout
@@ -30,7 +37,7 @@ jobs:
   # Job to run tests with jest-junit and store results to /test-results
   test-node:
     # Install node dependencies and run tests
-    executor: node/default
+    executor: node-prod
     resource_class: medium
     parallelism: 4
     environment:
@@ -55,7 +62,7 @@ jobs:
 
   # Job to audit the node project
   audit-node:
-    executor: node/default
+    executor: node-prod
     # Define the steps to run in this job
     steps:
       - checkout
@@ -72,7 +79,7 @@ jobs:
 
   # Job to lint the node project
   lint-node:
-    executor: node/default
+    executor: node-prod
     resource_class: small
     # Define the steps to run in this job
     steps:
@@ -85,7 +92,7 @@ jobs:
 
   # Job to check TypeScript types
   typescript-check:
-    executor: node/default
+    executor: node-prod
     steps:
       - checkout
       - attach-workspace  # Use cached node_modules
@@ -105,7 +112,7 @@ jobs:
   build-node:
     # Build node project
     # Executor to use for the build job, using the same node image as the test job
-    executor: node/default
+    executor: node-prod
     # Define the steps to run in this job
     steps:
       # Check out the code from the repository
@@ -161,7 +168,7 @@ jobs:
   # Job to auto merge to the test branch
   auto-merge-to-test:
     # Use the same node image as the test job
-    executor: node/default
+    executor: node-prod
     # Define the steps to run in this job
     steps:
       # Check out the code from the repository
@@ -188,7 +195,7 @@ jobs:
   # Job to create a pull request to the main branch if tests are successful
   create-pr:
     # Use the same node image as the test job
-    executor: node/default
+    executor: node-prod
     # Define the steps to run in this job
     steps:
       # Check out the code from the repository
@@ -211,50 +218,72 @@ jobs:
             gh pr list --base main --head $(git rev-parse --abbrev-ref HEAD) | grep -q . || \
             gh pr create --base main --head $(git rev-parse --abbrev-ref HEAD) --title "Auto-PR from CircleCI" --body "This PR is created automatically by CircleCI after running tests and successfully."
 
-  # Job to deploy the project on prod (vercel in this case)
-  main-deployment:
-    # Deploy the project using Vercel
-    executor: node/default
-    # Define the steps to run in this job
+  # Construit la version de production : sortie standalone de Next.js, fichiers statiques et configuration PM2.
+  # Le VPS ne compile rien, il reçoit cette archive (deploy/README.md).
+  build-release:
+    executor: node-prod
+    environment:
+      # Valeurs figées dans le code par le build, identiques au .env.local du VPS. Les secrets restent sur le serveur.
+      # NEXT_PUBLIC_API_URL n'est lu que par les services "use server" : les appels du back-office restent sur la machine.
+      NEXT_PUBLIC_API_URL: http://localhost:3000/api/v1
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_live_Y2xlcmsuYXBpLmhhcmR3YXJlaG91c2UuZnIk
     steps:
-      # Check out the code from the repository
       - checkout
-      # ci-on-main n'a aucun job en amont pour peupler le workspace,
-      # il faut installer les dépendances ici (sinon npx récupère
-      # un prisma arbitraire depuis le tag "latest" du registre).
-      - npm-ci
-      # Génération explicite du client Prisma
+      - attach-workspace  # Use cached node_modules
       - run:
           name: Generate Prisma Client
           command: npx prisma generate
-      # Restaurer le cache du build Next.js
       - restore_cache:
           keys:
             - next-cache-v1-{{ .Branch }}-{{ .Revision }}
             - next-cache-v1-{{ .Branch }}
             - next-cache-v1
-      # Synchronisation du schéma avec MongoDB
-      - run:
-          name: Prisma db push
-          command: npx prisma db push
-      # Test de build localement
       - run:
           name: Build Next.js application
           command: npm run build
-      # Save the cache for the Next.js build
       - save_cache:
           key: next-cache-v1-{{ .Branch }}-{{ .Revision }}
           paths:
             - .next/cache
-      # Install Vercel CLI globally
+      # server.js ne sert public/ et .next/static que s'ils sont copiés à côté de lui
       - run:
-          name: Install Vercel CLI
-          command: npm install --save-dev vercel
-      # Deploy the project using Vercel CI
-      - run:
-          name: Deploy to Vercel
+          name: Package the release
           command: |
-            npx vercel deploy --token=$VERCEL_TOKEN --prod --yes --debug --name=$VERCEL_PROJECT_NAME --scope=$VERCEL_SCOPE
+            cp -r public .next/standalone/
+            cp -r .next/static .next/standalone/.next/
+            cp ecosystem.config.js .next/standalone/
+            tar -czf release.tar.gz -C .next/standalone .
+            ls -lh release.tar.gz
+      - persist_to_workspace:
+          root: .
+          paths:
+            - release.tar.gz
+
+  # Synchronise le schéma MongoDB, puis envoie la version au VPS, qui la teste, la bascule et recharge PM2.
+  # La clé SSH de ce job ne peut lancer que deploy/receive-release.sh sur le serveur (command= de authorized_keys).
+  deploy-vps:
+    executor: node-prod
+    resource_class: small
+    steps:
+      - checkout
+      - attach-workspace  # node_modules (CLI Prisma) et release.tar.gz
+      - run:
+          name: Prisma db push
+          command: npx prisma db push
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:oTwJw+C9Q0QwoBA+ns9mjiEMjnJuo7i1NmFVf69GEcE"
+      # Clé d'hôte du VPS épinglée (deploy/README.md, étape 2) : avec StrictHostKeyChecking=yes, ssh refuse tout
+      # serveur qui en présente une autre, quelle que soit la configuration SSH de l'image.
+      - run:
+          name: Trust the VPS host key
+          command: |
+            test -n "$VPS_KNOWN_HOSTS" || { echo "Variable VPS_KNOWN_HOSTS absente (deploy/README.md)"; exit 1; }
+            install -d -m 700 ~/.ssh
+            echo "$VPS_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy to the VPS
+          command: ssh -o StrictHostKeyChecking=yes -p "${VPS_PORT:-22}" "$VPS_USER@$VPS_HOST" "deploy $CIRCLE_SHA1" < release.tar.gz
 
 workflows:
   ci-on-dev:
@@ -308,8 +337,31 @@ workflows:
       - create-pr:
           requires:
             - lighthouse-audit
+  # Mêmes contrôles que sur dev et test, puis construction et déploiement sur le VPS
   ci-on-main:
     when:
       equal: [ main, << pipeline.git.branch >> ]
     jobs:
-      - main-deployment
+      - install-dependencies
+      - typescript-check:
+          requires:
+            - install-dependencies
+      - lint-node:
+          requires:
+            - install-dependencies
+      - audit-node:
+          requires:
+            - install-dependencies
+      - test-node:
+          requires:
+            - typescript-check
+            - lint-node
+      - build-release:
+          requires:
+            - test-node
+            - audit-node
+      # Un seul déploiement à la fois : celui d'un pipeline plus ancien est sauté si un plus récent attend
+      - deploy-vps:
+          serial-group: << pipeline.project.slug >>/deploy-vps
+          requires:
+            - build-release

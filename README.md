@@ -70,6 +70,7 @@ hardwarehouse-api/
 │   │   │   ├── transactions/      # Transaction tracking
 │   │   │   └── users/             # User management
 │   │   └── (site)/                # Public auth pages
+│   ├── api/health/                # Health probe used by the deployment
 │   └── api/v1/                    # Versioned REST API endpoints
 │       ├── brands/                # Brand API routes
 │       ├── categories/            # Category API routes
@@ -96,7 +97,8 @@ hardwarehouse-api/
 ├── scripts/                      # Background scripts
 │   └── sync-discounts.ts        # Discount sync cron job
 ├── prisma/                      # Database schema and seeds
-├── ecosystem.config.js          # PM2 configuration for cron jobs
+├── deploy/                      # VPS deployment script, its tests and runbook
+├── ecosystem.config.js          # PM2 configuration of the production server (VPS)
 └── middleware.ts               # Clerk auth middleware
 ```
 
@@ -344,15 +346,10 @@ See [`cypress/README.md`](cypress/README.md) for the account setup, the sign-in 
 ### Discount Sync Service
 The application includes an automated background service that manages discount lifecycle:
 
-#### PM2 Configuration
-```bash
-# Start both the main app and cron job
-pm2 start ecosystem.config.js
-
-# Monitor processes
-pm2 status
-pm2 logs
-```
+#### Running it
+The service is not part of the PM2 production configuration yet: as written, it would turn a discount disabled
+by hand back on within a minute. It is being reworked before PM2 runs it alongside the API. Until then, run it
+manually (see below).
 
 #### What the Discount Sync Does
 - **Automatic Activation**: Activates discounts when their start date is reached
@@ -367,12 +364,24 @@ pm2 logs
 npx tsx scripts/sync-discounts.ts
 ```
 
-#### Logs
-- **Error logs**: `./logs/cron-error.log`
-- **Output logs**: `./logs/cron-out.log`
-- **Sync frequency**: Every 1 minute (configurable)
+#### Frequency
+- **Sync frequency**: Every 1 minute (`INTERVAL_MS` in the script)
 
 ## 🐳 Production Deployment
+
+### VPS deployment (CircleCI)
+Production runs on the OVH VPS, under PM2, behind Nginx. On `main`, CircleCI runs the same checks as on `dev`
+(lint, types, tests, audit), builds the app with Node.js 24.13.0 (`output: "standalone"`: the Node server and only
+the dependencies it uses), runs `prisma db push`, then sends the archive to the VPS over SSH. The server compiles
+and installs nothing:
+
+1. `deploy/receive-release.sh`, the only command the CI key may run, unpacks the release into
+   `~/hardwarehouse-api/releases/` and links the shared `.env.local` and uploaded images;
+2. it starts the release on a spare port and waits for `GET /api/health`;
+3. it switches the `current` symlink, reloads PM2 and checks `/api/health` again;
+4. it falls back to the previous release if the new one does not answer, and keeps the last three.
+
+One-time server setup, manual rollback and script tests: **[deploy/README.md](deploy/README.md)**.
 
 ### Quick Start with Docker
 ```bash
