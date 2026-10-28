@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {rateLimiter} from "@/lib/utils";
+import {clientIp, rateLimiter} from "@/lib/rate-limit";
 import {auth} from "@clerk/nextjs/server";
 
 export async function GET(
@@ -9,7 +9,7 @@ export async function GET(
 ) {
     try {
         // Rate limiting
-        const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+        const ip = clientIp(req);
         const { success, remaining } = await rateLimiter.limit(ip);
         
         if (!success) {

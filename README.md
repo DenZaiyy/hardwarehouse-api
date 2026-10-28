@@ -335,8 +335,8 @@ Credentials live in `cypress.env.json`, which is git-ignored. In CI, provide the
 `CYPRESS_`-prefixed environment variables together with `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 and `CLERK_SECRET_KEY`, which `clerkSetup()` uses to fetch a Clerk Testing Token.
 
-Because write endpoints call the Upstash rate limiter before anything else, a reachable
-Redis instance is required for the write scenarios to pass.
+Write endpoints share an in-memory limit of 10 requests per minute per IP (`lib/rate-limit.ts`):
+no external service is needed, but a run that sends more than ten writes within a minute gets 429 responses.
 
 See [`cypress/README.md`](cypress/README.md) for the account setup, the sign-in flow
 (this Clerk instance requires an `email_code` second factor) and the known limitations.

@@ -1,5 +1,5 @@
 import {NextRequest, NextResponse} from "next/server";
-import {rateLimiter} from "@/lib/utils";
+import {clientIp, rateLimiter} from "@/lib/rate-limit";
 import {db} from "@/lib/db";
 import {requireAuth} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/stats/pro
 
     try {
         const { id } = await ctx.params;
-        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+        const ip = clientIp(req);
         const { success, remaining, reset } = await rateLimiter.limit(ip);
 
         if (!success) {

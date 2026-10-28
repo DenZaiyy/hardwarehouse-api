@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {rateLimiter} from "@/lib/utils";
+import {clientIp, rateLimiter} from "@/lib/rate-limit";
 import {requireAuth} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {ConflictError, NotFoundError} from "@/lib/api/errors";
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     if (response) return response;
 
     try {
-        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+        const ip = clientIp(req);
         const { success } = await rateLimiter.limit(ip);
 
         if (!success) {

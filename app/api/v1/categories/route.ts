@@ -1,6 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {rateLimiter, slugifyName} from "@/lib/utils";
+import {slugifyName} from "@/lib/utils";
+import {clientIp, rateLimiter} from "@/lib/rate-limit";
 import {auth} from "@clerk/nextjs/server";
 import {buildCategoryWhere, parseFilters, parseSort} from "@/lib/api/filters";
 import {handleApiError} from "@/lib/api/handle-api-error";
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
     }
 
-    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+    const ip = clientIp(req);
     const { success } = await rateLimiter.limit(ip);
 
     if (!success) {
