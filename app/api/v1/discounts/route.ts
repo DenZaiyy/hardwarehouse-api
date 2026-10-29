@@ -6,11 +6,12 @@ import {validateDiscountInput} from "@/lib/discounts/validate-discount-input";
 import {createDiscount} from "@/lib/discounts/create-discount";
 import {auth} from "@clerk/nextjs/server";
 import {ForbiddenError, UnauthorizedError} from "@/lib/api/errors";
+import {isInternalRequest} from "@/lib/api/internal-request";
 
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = req.nextUrl;
-        const isInternal = req.headers.get("x-internal-request") === process.env.INTERNAL_API_SECRET;
+        const isInternal = isInternalRequest(req);
 
         const sort = parseSort(searchParams);
         const filters = parseFilters(searchParams);

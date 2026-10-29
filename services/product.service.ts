@@ -8,6 +8,7 @@ import {
     ProductsWithStocks
 } from "@/types/types";
 import {cookies} from "next/headers";
+import {internalRequestHeaders} from "@/lib/api/internal-request";
 import toast from "react-hot-toast";
 
 export async function getProducts(): Promise<PaginatedResponse<ProductsWithCategoryAndBrand>> {
@@ -19,7 +20,7 @@ export async function getProducts(): Promise<PaginatedResponse<ProductsWithCateg
             method: "GET",
             headers: {
                 Cookie: cookieHeader.toString(),
-                'x-internal-request': process.env.INTERNAL_API_SECRET!
+                ...internalRequestHeaders()
             },
             cache: "no-store"
         }
