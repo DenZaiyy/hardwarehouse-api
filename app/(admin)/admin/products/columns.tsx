@@ -4,7 +4,7 @@ import {ColumnDef} from "@tanstack/react-table"
 import {ProductsWithCategoryAndBrand} from "@/types/types";
 import {Brands, Categories} from "@prisma/client";
 import {formatDate, formatPrice} from "@/lib/utils";
-import Image from "next/image";
+import {CatalogImage} from "@/components/admin/catalog-image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import toast from "react-hot-toast";
@@ -71,7 +71,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                             <Dialog>
                                 <DialogTrigger asChild>
                                     <div className="cursor-pointer relative w-16 h-16 rounded-md overflow-hidden border">
-                                        <Image 
+                                        <CatalogImage 
                                             src={thumbnail} 
                                             alt={`Image de ${product.name}`} 
                                             fill 
@@ -85,7 +85,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                                         <div>
                                             <h4 className="font-medium mb-2">Image principale</h4>
                                             <div className="relative w-full h-64">
-                                                <Image 
+                                                <CatalogImage 
                                                     src={thumbnail} 
                                                     alt={`Image de ${product.name}`} 
                                                     fill 
@@ -99,7 +99,7 @@ export const columns: ColumnDef<ProductsWithCategoryAndBrand>[] = [
                                                 <div className="grid grid-cols-3 gap-2">
                                                     {product.images.map((img: string, index: number) => (
                                                         <div key={index} className="relative w-full h-20">
-                                                            <Image 
+                                                            <CatalogImage 
                                                                 src={img} 
                                                                 alt={`Image ${index + 1} de ${product.name}`} 
                                                                 fill 

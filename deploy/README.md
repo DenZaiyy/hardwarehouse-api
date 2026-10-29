@@ -218,6 +218,43 @@ validés, `~/api` peut être supprimé (plus de 1 Go).
 - **Modifier `ecosystem.config.js`** : `pm2 reload` ne relit pas ce fichier. Après le déploiement, `pm2 delete
   next-api`, `pm2 start ~/hardwarehouse-api/current/ecosystem.config.js`, puis `pm2 save`.
 
+## Images du catalogue
+
+Le serveur `standalone` de Next.js ne sert que les fichiers de `public/` présents à son démarrage : une image envoyée
+depuis le back-office resterait introuvable (404) jusqu'au déploiement suivant. Nginx sert donc lui-même `/images/`,
+directement depuis `shared/images`. Dans le bloc `server` de `api.hardwarehouse.fr`, à côté de `location /` (`^~`
+écarte les `location` à expression régulière, qui l'emporteraient sinon sur un simple préfixe) :
+
+```nginx
+location ^~ /images/ {
+    alias /home/hwh/hardwarehouse-api/shared/images/;
+    expires 1d;
+    access_log off;
+}
+```
+
+Un envoi depuis le back-office remplace l'image sous le même nom (`thumbnail.webp`) : l'expiration d'un jour borne le
+temps pendant lequel un navigateur ou Cloudflare montre encore l'ancienne. Au-delà, le navigateur revalide, et Nginx
+répond `304` si le fichier n'a pas changé.
+
+```bash
+sudo nginx -t
+```
+```bash
+sudo systemctl reload nginx
+```
+
+Contrôle depuis ton poste, qui doit répondre `200` avec `content-type: image/webp` (remplace le slug par celui d'un
+produit qui a des images) :
+
+```bash
+curl -sI https://api.hardwarehouse.fr/images/products/amd-ryzen-5-5600/thumbnail.webp
+```
+
+Un `403` signifie que Nginx (`www-data`) ne peut pas traverser les dossiers de `hwh` : `namei -l
+/home/hwh/hardwarehouse-api/shared/images` montre lequel. `chmod o+x` sur ce dossier autorise la traversée sans
+permettre d'en lister le contenu.
+
 ## Tester le script
 
 ```bash

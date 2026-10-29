@@ -3,7 +3,7 @@
 import {ColumnDef} from "@tanstack/react-table"
 import {Brands} from "@prisma/client"
 import {formatDate} from "@/lib/utils"
-import Image from "next/image"
+import {CatalogImage} from "@/components/admin/catalog-image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header"
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog"
 import toast from "react-hot-toast"
@@ -38,7 +38,7 @@ export const columns: ColumnDef<Brands>[] = [
                     {image ? (
                         <Dialog>
                             <DialogTrigger>
-                                <Image
+                                <CatalogImage
                                     src={image}
                                     alt={`Logo de la marque : ${brand.name}`}
                                     fill
@@ -47,7 +47,7 @@ export const columns: ColumnDef<Brands>[] = [
                             </DialogTrigger>
                             <DialogContent className="w-full">
                                 <DialogTitle>{brand.name}</DialogTitle>
-                                <Image
+                                <CatalogImage
                                     src={image}
                                     alt={`Logo de la marque : ${brand.name}`}
                                     width={500}

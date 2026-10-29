@@ -3,7 +3,7 @@
 import {ColumnDef} from "@tanstack/react-table"
 import {Categories} from "@prisma/client";
 import {formatDate} from "@/lib/utils";
-import Image from "next/image";
+import {CatalogImage} from "@/components/admin/catalog-image";
 import {DataTableColumnHeader} from "@/components/data-table-column-header";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import toast from "react-hot-toast";
@@ -38,11 +38,11 @@ export const columns: ColumnDef<Categories>[] = [
                     {image ? (
                         <Dialog>
                             <DialogTrigger>
-                                <Image src={image} alt={`Logo of category : ${category.name}`} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="absolute inset-0 cursor-pointer" />
+                                <CatalogImage src={image} alt={`Logo of category : ${category.name}`} fill sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" className="absolute inset-0 cursor-pointer" />
                             </DialogTrigger>
                             <DialogContent className="w-full">
                                 <DialogTitle>{category.name}</DialogTitle>
-                                <Image src={image} alt={`Logo of category : ${category.name}`} width={500} height={500} />
+                                <CatalogImage src={image} alt={`Logo of category : ${category.name}`} width={500} height={500} />
                             </DialogContent>
                         </Dialog>
                     ) : (
