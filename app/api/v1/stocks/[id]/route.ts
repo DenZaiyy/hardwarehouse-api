@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {currentUser} from "@clerk/nextjs/server";
-import {requireAdmin, requireAuth} from "@/lib/auth/require-role";
+import {requireStaff} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {NotFoundError} from "@/lib/api/errors";
 import {stockPatchSchema} from "@/lib/validators/stockSchema";
@@ -12,7 +12,7 @@ interface UpdateStockData {
 }
 
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[id]'>) {
-    const { response } = await requireAuth();
+    const { response } = await requireStaff();
     if (response) return response;
 
     try {
@@ -44,7 +44,7 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[
 }
 
 export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[id]'>) {
-    const { userId, response } = await requireAuth();
+    const { userId, response } = await requireStaff();
     if (response) return response;
 
     try {
@@ -103,7 +103,7 @@ export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks
 }
 
 export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[id]'>) {
-    const { response } = await requireAdmin();
+    const { response } = await requireStaff();
     if (response) return response;
 
     try {

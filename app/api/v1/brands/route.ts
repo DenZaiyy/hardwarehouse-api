@@ -2,12 +2,12 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {slugifyName} from "@/lib/utils";
 import {clientIp, rateLimiter} from "@/lib/rate-limit";
-import {auth} from "@clerk/nextjs/server";
 import {buildBrandWhere, buildMeta, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {ConflictError} from "@/lib/api/errors";
 import {isInternalRequest} from "@/lib/api/internal-request";
 import {brandSchema} from "@/lib/validators/brandSchema";
+import {requireStaff} from "@/lib/auth/require-role";
 
 export async function GET(req: NextRequest) {
     try {
@@ -68,11 +68,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const { userId } = await auth();
-
-    if (!userId) {
-        return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-    }
+    const { response } = await requireStaff();
+    if (response) return response;
 
     const ip = clientIp(req);
     const { success } = await rateLimiter.limit(ip);
