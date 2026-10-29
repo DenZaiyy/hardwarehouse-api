@@ -111,6 +111,22 @@ cp -r ~/api/public/images/. ~/hardwarehouse-api/shared/images/
 
 La dernière commande reprend les images déjà envoyées. Une erreur « No such file » signifie qu'il n'y en a pas.
 
+`shared/.env.local` est le seul fichier de variables que lit l'API en production. Il doit contenir :
+
+- `DATABASE_URL` : base MongoDB de production ;
+- `CLERK_SECRET_KEY` : clé secrète de Clerk ;
+- `INTERNAL_API_SECRET` : secret des appels du back-office à ses propres routes. Sans lui, les listes de produits,
+  de marques et de remises s'arrêtent à 25 éléments. Une valeur aléatoire suffit (`openssl rand -hex 32`) ;
+- `SHOP_API_TOKEN` : jeton des sorties de stock, même valeur que dans la boutique.
+
+Contrôle, qui n'affiche que les noms des variables présentes :
+
+```bash
+grep -o -E '^(DATABASE_URL|CLERK_SECRET_KEY|INTERNAL_API_SECRET|SHOP_API_TOKEN)=' ~/hardwarehouse-api/shared/.env.local
+```
+
+Après une modification de ce fichier, `pm2 reload next-api` relance l'API, qui le relit.
+
 ### 4. Script et clé autorisée
 
 Depuis ton poste, à la racine du dépôt :

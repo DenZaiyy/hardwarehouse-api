@@ -6,12 +6,13 @@ import {auth} from "@clerk/nextjs/server";
 import {buildBrandWhere, buildMeta, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {ConflictError} from "@/lib/api/errors";
+import {isInternalRequest} from "@/lib/api/internal-request";
 import {brandSchema} from "@/lib/validators/brandSchema";
 
 export async function GET(req: NextRequest) {
     try {
         const { searchParams } = req.nextUrl;
-        const isInternal = req.headers.get('x-internal-request') === process.env.INTERNAL_API_SECRET;
+        const isInternal = isInternalRequest(req);
 
         const sort = parseSort(searchParams);
         const filters = parseFilters(searchParams);

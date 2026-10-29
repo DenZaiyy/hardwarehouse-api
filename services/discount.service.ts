@@ -3,6 +3,7 @@
 import {Discounts} from "@prisma/client";
 import {cookies} from "next/headers";
 import {DiscountsWithProductOrCategory, PaginatedResponse} from "@/types/types";
+import {internalRequestHeaders} from "@/lib/api/internal-request";
 
 export async function getDiscounts(): Promise<PaginatedResponse<Discounts>> {
     const cookieHeader = await cookies();
@@ -13,7 +14,7 @@ export async function getDiscounts(): Promise<PaginatedResponse<Discounts>> {
             method: "GET",
             headers: {
                 Cookie: cookieHeader.toString(),
-                'x-internal-request': process.env.INTERNAL_API_SECRET!
+                ...internalRequestHeaders()
             },
             cache: "no-store"
         }
