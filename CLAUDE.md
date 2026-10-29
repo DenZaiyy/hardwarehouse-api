@@ -5,10 +5,14 @@ This file contains development patterns, code style guidelines, and functionalit
 ## 🏗️ Project Architecture
 
 ### Framework & Structure
-- **Next.js 15.5.2** with App Router architecture
+- **Next.js 16** with App Router architecture (16.4.3 installed, `^16.4.3` in `package.json`) — React 19.2.3
 - **TypeScript** for type safety across all files
-- **MongoDB** with Prisma ORM (client generated in `app/generated/prisma/client`)
+- **MongoDB** with Prisma ORM 6.19 (default client, imported from `@prisma/client` through `lib/db.ts`)
 - **Clerk Authentication** for admin-only access
+
+This app is the admin backend of `hardwarehouse.fr`. The public storefront is a **separate Symfony repository** (`hardwarehouse-sf`) that consumes `/api/v1` read endpoints over HTTP. Any change to a response shape under `app/api/v1/` is a public contract change for that storefront.
+
+Production runs on the OVH VPS: CircleCI builds the `standalone` output on `main` and `deploy/receive-release.sh` swaps it in under PM2 (single instance, behind Nginx and Cloudflare). Runtime variables live in `~/hardwarehouse-api/shared/.env.local` on the server — see `deploy/README.md`.
 
 ### Directory Structure
 ```
@@ -16,42 +20,61 @@ app/
 ├── (admin)/           # Admin dashboard pages (protected)
 │   ├── admin/         # Admin management pages
 │   └── layout.tsx     # Admin layout with auth protection
-├── (site)/            # Public-facing pages (minimal)
+├── (site)/            # Public-facing pages (sign-in / sign-up only)
 ├── api/v1/            # REST API endpoints
-├── generated/         # Generated Prisma client
 └── globals.css        # Global styles
+
+proxy.ts               # Clerk middleware (Next.js 16 renamed middleware.ts -> proxy.ts)
 
 components/
 ├── admin/             # Admin-specific components
 └── ui/                # Reusable UI components (Radix UI + shadcn/ui)
 
 lib/
-├── db.ts              # Database connection
-├── utils.ts           # Utility functions
-└── ...
+├── api/               # parseFilters / parsePagination / buildMeta, error classes, handleApiError, internal-request
+├── auth/              # requireAuth / requireAdmin
+├── discounts/         # Discount computation and relation refresh
+├── validators/        # Zod schemas, one per entity
+├── db.ts              # Prisma client singleton
+├── rate-limit.ts      # In-memory rate limiter (rateLimiter) and its key (clientIp)
+└── utils.ts           # Utility functions
 
-services/              # Business logic services
-prisma/               # Database schema and migrations
+services/              # Business logic services (one per entity)
+hooks/                 # React hooks
+types/                 # Shared types (incl. Clerk session claims)
+scripts/               # sync-discounts.ts (not scheduled in production: it re-enables discounts disabled by hand)
+deploy/                # VPS release script, its tests and the deployment runbook
+prisma/
+├── schema.prisma      # generator + datasource only
+├── models/*.prisma    # One file per model (split schema)
+└── seed.js            # Seed script
+__tests__/             # Jest unit tests (Zod validators, shop token guard, rate limiter, internal requests)
+cypress/               # E2E tests
 ```
 
 ## 📋 Core Functionality
 
 ### Entity Management
-The system manages these core entities:
+The system manages these core entities (Prisma models in `prisma/models/`):
 - **Products** - Hardware inventory items
 - **Categories** - Product categorization
 - **Brands** - Product manufacturers
 - **Stocks** - Inventory levels
-- **Purchase Orders** - Procurement management
 - **Transactions** - Stock movements
-- **Users** - Admin user management
+- **PurchaseOrder** - Procurement (supplier restocking), **not** customer orders — customer orders live in the Symfony app's PostgreSQL database
+- **Discounts** - Promotions applied to products/categories
+- **Attributes / CategoryAttributes / ProductAttributeValues** - Typed product specs per category
+
+**Users are not a Prisma model.** Admin users live in Clerk and are read through `clerkClient()`; `db.purchaseOrder`/`db.transactions` reference them by `userId` string only.
 
 ### API Patterns
-All API routes follow consistent patterns:
-- **Rate limiting** via Upstash Redis (10 requests/minute)
-- **Authentication** via Clerk for protected endpoints
-- **Error handling** with consistent JSON responses
-- **CRUD operations** with proper HTTP status codes
+API routes follow these conventions:
+- **Authentication** via `requireAuth()` / `requireAdmin()` from `lib/auth/require-role.ts`
+- **Validation** via Zod schemas in `lib/validators/`
+- **Error handling** via `handleApiError()` — maps `ZodError` to 400, `ApiError` subclasses to their own status, anything else to a generic 500
+- **Rate limiting** in memory (`lib/rate-limit.ts`: sliding window, 10 requests/minute per client IP) — applied **per route, opt-in**, currently on 14 admin handlers (writes, image uploads, stats, transactions, category attributes); the public catalogue reads are not limited. It is not global middleware: a new route gets no rate limiting unless it calls `rateLimiter.limit(clientIp(req))` explicitly. `clientIp()` reads `X-Real-IP`, which Nginx sets from `CF-Connecting-IP`; never key on `X-Forwarded-For`, whose start the client chooses. The counters live in the process, so PM2 must run a single instance.
+- **Pagination** via `parsePagination()` (default 25, max 50) + `buildMeta()`
+- **Internal calls**: `products`, `brands` and `discounts` collection routes skip pagination when `isInternalRequest(req)` recognises `x-internal-request: <INTERNAL_API_SECRET>` (`lib/api/internal-request.ts`). Only the back-office services send it, through `internalRequestHeaders()`, which throws when the secret is missing instead of letting the lists stop at 25. The Symfony storefront never sends it and stays paginated like any client.
 
 ## 🎨 Code Style Guidelines
 
@@ -77,50 +100,69 @@ const EntityPage = () => {
 
 ### API Route Conventions
 ```typescript
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { rateLimiter } from "@/lib/utils";
-import { auth } from "@clerk/nextjs/server";
+import {NextRequest, NextResponse} from "next/server";
+import {db} from "@/lib/db";
+import {clientIp, rateLimiter} from "@/lib/rate-limit";
+import {requireAdmin} from "@/lib/auth/require-role";
+import {buildMeta, parsePagination} from "@/lib/api/filters";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {NotFoundError} from "@/lib/api/errors";
+import {entityCreateSchema} from "@/lib/validators/entitySchema";
 
 export async function GET(req: NextRequest) {
     try {
-        // Rate limiting
-        const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
-        const { success, remaining } = await rateLimiter.limit(ip);
-        
-        if (!success) {
-            return NextResponse.json(
-                { error: "Trop de demandes", data: null },
-                { status: 429 }
-            );
-        }
+        // Rate limiting (opt-in, per route)
+        const { success } = await rateLimiter.limit(clientIp(req));
+        if (!success) return new NextResponse('Too Many Requests', { status: 429 });
 
-        // Business logic here
-        const data = await db.entity.findMany();
-        
-        const res = NextResponse.json(data, { status: 200 });
-        res.headers.set('X-RateLimit-Remaining', remaining.toString());
-        return res;
-        
+        const pagination = parsePagination(req.nextUrl.searchParams);
+
+        const [items, total] = await Promise.all([
+            db.entity.findMany({ skip: pagination.skip, take: pagination.limit }),
+            db.entity.count()
+        ]);
+
+        return NextResponse.json({
+            data: items,
+            total,
+            meta: buildMeta(total, pagination)
+        }, { status: 200 });
     } catch (error) {
-        return NextResponse.json(
-            { error: "Erreur serveur", data: null },
-            { status: 500 }
-        );
+        return handleApiError("ENTITY GET", error);
+    }
+}
+
+export async function POST(req: NextRequest) {
+    const { response } = await requireAdmin();
+    if (response) return response;
+
+    try {
+        const body = entityCreateSchema.parse(await req.json());
+        const created = await db.entity.create({ data: body });
+
+        return NextResponse.json({ data: created }, { status: 201 });
+    } catch (error) {
+        return handleApiError("ENTITY POST", error);
     }
 }
 ```
+
+A few older routes still call `auth()` from `@clerk/nextjs/server` directly instead of the `require-role` helpers. Prefer the helpers for new code — `requireAdmin()` also enforces the `publicMetadata.role === "admin"` claim, which a bare `auth()` check does not.
 
 ### Database Patterns
 ```typescript
 // Always use the shared db instance
 import { db } from "@/lib/db";
 
-// Include relations when needed
+// Include relations when needed — note the exact relation names on Products:
+// category (Categories), brand (Brands), stock (Stocks?), discounts (Discounts[]),
+// productAttributeValues, Transactions, PurchaseOrder
 const products = await db.products.findMany({
     include: {
         category: true,
-        discount: true
+        brand: true,
+        stock: true,
+        discounts: true
     },
     orderBy: {
         createdAt: 'desc'
@@ -128,11 +170,15 @@ const products = await db.products.findMany({
 });
 ```
 
+Prefer `select` over `include` on collection endpoints — the `/api/v1/products` route does this to keep the storefront payload small.
+
 ### Utility Functions
 - `cn()` - Tailwind class merging utility
 - `slugifyName()` - French-localized URL slugification
+- `isSafeSlug()` - Validates a slug before it is used to build a file path (path traversal guard on upload routes)
 - `formatDate()` - Consistent date formatting (dd/MM/yyyy HH:mm:ss)
-- `rateLimiter` - Upstash-based rate limiting
+- `formatPrice()` - `fr-FR` currency formatting (EUR)
+- Rate limiting is not in `lib/utils.ts`: `rateLimiter` and `clientIp()` live in `lib/rate-limit.ts`
 
 ## 🛠️ Development Commands
 
@@ -143,7 +189,7 @@ npm run dev              # Start development server
 
 # Database
 npm run db:generate      # Generate Prisma client (ALWAYS run after schema changes)
-npm run db:push          # Push schema changes to database
+npm run db:push          # Push schema changes to database (MongoDB: no migration files)
 npm run db:studio        # Open Prisma Studio
 npm run db:seed          # Seed database with initial data
 npm run db:reset         # Reset database and reseed
@@ -159,59 +205,61 @@ npm run cypress:open     # E2E testing
 ```
 
 ### Critical Development Notes
-1. **Always run `npm run db:generate`** after any Prisma schema changes
-2. **Rate limiting is enabled** on all API routes (10 req/min per IP)
-3. **Admin authentication required** for all admin routes
-4. **French localization** used throughout the application
-5. **Server components by default** - use 'use client' only when necessary
+1. **Always run `npm run db:generate`** after any Prisma schema change — models live in `prisma/models/*.prisma`, not in `schema.prisma`
+2. **MongoDB via Prisma has no migrations** — schema changes are applied with `db:push`, so plan for existing documents yourself
+3. **Rate limiting is per route**, not global — add it explicitly on new public endpoints
+4. **Admin authentication required** for all admin routes
+5. **French localization** used throughout the application
+6. **Server components by default** - use 'use client' only when necessary
 
 ## 🔒 Authentication & Authorization
 
 ### Clerk Integration
 - **Admin-only access** - no public user registration
-- **Protected routes** in `(admin)` route group
-- **API protection** via `auth()` from `@clerk/nextjs/server`
+- **Protected routes** in `(admin)` route group, enforced by `proxy.ts`
+- **API protection** via `requireAuth()` / `requireAdmin()` (`lib/auth/require-role.ts`)
+- The `admin` role is read from `sessionClaims.publicMetadata.role`, which requires the custom session token to be configured in the Clerk Dashboard (Configure > Sessions). Without it the check fails closed for everyone.
 
 ### Route Protection Pattern
 ```typescript
-import { auth } from "@clerk/nextjs/server";
+import { requireAdmin } from "@/lib/auth/require-role";
 
 // In API routes
-const { userId } = await auth();
-if (!userId) {
-    return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-}
+const { userId, response } = await requireAdmin();
+if (response) return response;   // 401 if signed out, 403 if not admin
 ```
 
 ## 📊 Data Patterns
 
 ### Response Format
 ```typescript
-// Success responses
-return NextResponse.json(data, { status: 200 });
+// Collection responses
+return NextResponse.json({ data: items, total, meta }, { status: 200 });
 
-// Error responses
-return NextResponse.json(
-    { error: "Message d'erreur", data: null },
-    { status: 400 }
-);
+// Single-resource responses
+return NextResponse.json({ data: item }, { status: 200 });
+
+// Error responses — always produced by handleApiError()
+// { error: "Message d'erreur", code: "VALIDATION_ERROR" | "INTERNAL_ERROR" | <ApiError code> }
+return handleApiError("ENTITY GET", error);
 ```
+
+`buildMeta()` returns `{ page, limit, totalPages, hasNext, hasPrev }`.
 
 ### Common Includes
 ```typescript
 // Products with relations
 include: {
     category: true,
-    discount: true,
-    stocks: true
+    brand: true,
+    stock: true,
+    discounts: true
 }
 
-// Orders with relations
+// Purchase orders (single product per order line)
 include: {
-    products: {
-        include: {
-            product: true
-        }
+    product: {
+        select: { id: true, name: true, slug: true, price: true, thumbnail: true }
     }
 }
 ```
@@ -225,11 +273,12 @@ include: {
 4. **Validate with `npm run build`** before committing
 5. **Use TypeScript strictly** - no `any` types
 6. **French language** for user-facing content
-7. **Consistent error handling** with proper status codes
+7. **Consistent error handling** through `handleApiError()`
+8. **Watch the storefront contract** - changing an `/api/v1` response shape breaks `hardwarehouse-sf`
 
 ### Common tasks:
-- **Adding new entities**: Create model in schema → generate → create API routes → create admin pages
-- **API modifications**: Always maintain rate limiting and auth patterns
+- **Adding new entities**: Create model in `prisma/models/` → `db:generate` → Zod validator → service → API routes → admin pages
+- **API modifications**: Keep the auth, validation and error-handling helpers; add rate limiting on public reads
 - **UI changes**: Use existing Radix UI components and Tailwind classes
 - **Database queries**: Use Prisma with proper type safety and relations
 
