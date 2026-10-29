@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {clerkClient} from "@clerk/nextjs/server";
 import {db} from "@/lib/db";
-import {rateLimiter} from "@/lib/utils";
+import {clientIp, rateLimiter} from "@/lib/rate-limit";
 import {requireAdmin} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {NotFoundError} from "@/lib/api/errors";
@@ -39,7 +39,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/users/[
     if (response) return response;
 
     try {
-        const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+        const ip = clientIp(req);
         const { id } = await ctx.params;
         const { username, emailAddress, firstName, lastName, password, locked } = userPatchSchema.parse(await req.json());
 
