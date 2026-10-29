@@ -255,6 +255,33 @@ Un `403` signifie que Nginx (`www-data`) ne peut pas traverser les dossiers de `
 /home/hwh/hardwarehouse-api/shared/images` montre lequel. `chmod o+x` sur ce dossier autorise la traversée sans
 permettre d'en lister le contenu.
 
+### Catalogue resserré et images officielles
+
+Deux scripts ont préparé le catalogue en octobre 2026 : `scripts/curate-catalogue.mjs` désactive les produits absents de
+`scripts/catalogue-selection.json` (15 par catégorie, rien n'est supprimé), et `scripts/import-catalogue-images.ts`
+installe les images officielles listées dans `scripts/catalogue-images.json`. Les images sont générées sur un poste
+(`public/images/products`), puis copiées sur le VPS. Tous deux simulent par défaut et n'écrivent qu'avec `--apply`.
+
+L'ordre compte : la boutique doit savoir afficher un chemin relatif (filtre `catalog_image`) avant que la base de
+production n'en contienne, et Nginx doit servir les fichiers avant que la base n'y renvoie.
+
+1. Déployer la boutique qui contient le filtre `catalog_image`.
+2. Ajouter le bloc Nginx ci-dessus.
+3. Depuis ton poste, à la racine du dépôt, une fois les images générées en local :
+   ```bash
+   rsync -av public/images/products/ hwh@<IP>:hardwarehouse-api/shared/images/products/
+   ```
+4. Toujours depuis ton poste, avec la base de production dans un fichier hors du dépôt (`chmod 600`), pour qu'aucun
+   commit ne puisse l'emporter. Il ne contient que `DATABASE_URL`. Chaque commande se lance d'abord sans `--apply` :
+   ```bash
+   node --env-file=$HOME/.hardwarehouse/api-production.env scripts/curate-catalogue.mjs
+   ```
+   ```bash
+   node --env-file=$HOME/.hardwarehouse/api-production.env --import tsx scripts/import-catalogue-images.ts --db-only
+   ```
+   `--db-only` ne télécharge rien : il reporte en base les chemins des fichiers copiés à l'étape 3, avec le MPN et
+   l'EAN du manifeste.
+
 ## Tester le script
 
 ```bash
