@@ -1,8 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {slugifyName} from "@/lib/utils";
-import {auth} from "@clerk/nextjs/server";
-import {requireAdmin} from "@/lib/auth/require-role";
+import {requireStaff} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {NotFoundError} from "@/lib/api/errors";
 import {categoryPatchSchema} from "@/lib/validators/categorySchema";
@@ -43,11 +42,8 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/categori
 
 export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/categories/[slug]'>) {
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
+        const { response } = await requireStaff();
+        if (response) return response;
 
         const { slug } = await ctx.params;
         const body = await req.json();
@@ -96,7 +92,7 @@ export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/categor
 }
 
 export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/categories/[slug]'>) {
-    const { response } = await requireAdmin();
+    const { response } = await requireStaff();
     if (response) return response;
 
     const { slug } = await ctx.params;

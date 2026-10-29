@@ -1,6 +1,6 @@
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import Link from "next/link";
-import Image from "next/image";
+import {CatalogImage} from "@/components/admin/catalog-image";
 import {Separator} from "@/components/ui/separator";
 import {formatDate} from "@/lib/utils";
 import {BarChartCard} from "@/components/admin/bar-chart-card";
@@ -193,7 +193,7 @@ const ProductDetails = async ({ params }: ProductParams) => {
                                 <h3 className="text-sm font-medium mb-3">Thumbnail</h3>
                                 {product.thumbnail ? (
                                     <div className="relative w-48 h-48 rounded-lg overflow-hidden border">
-                                        <Image
+                                        <CatalogImage
                                             src={product.thumbnail}
                                             alt={`Thumbnail de ${product.name}`}
                                             fill
@@ -218,7 +218,7 @@ const ProductDetails = async ({ params }: ProductParams) => {
                                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                                         {product.images.map((imageUrl, index) => (
                                             <div key={index} className="relative aspect-square rounded-lg overflow-hidden border">
-                                                <Image
+                                                <CatalogImage
                                                     src={imageUrl}
                                                     alt={`Image ${index + 1} de ${product.name}`}
                                                     fill

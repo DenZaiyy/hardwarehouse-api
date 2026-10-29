@@ -20,7 +20,7 @@ app/
 ├── (admin)/           # Admin dashboard pages (protected)
 │   ├── admin/         # Admin management pages
 │   └── layout.tsx     # Admin layout with auth protection
-├── (site)/            # Public-facing pages (sign-in / sign-up only)
+├── (site)/            # Public-facing pages (sign-in only: accounts are created by an administrator)
 ├── api/v1/            # REST API endpoints
 └── globals.css        # Global styles
 
@@ -32,7 +32,7 @@ components/
 
 lib/
 ├── api/               # parseFilters / parsePagination / buildMeta, error classes, handleApiError, internal-request
-├── auth/              # requireAuth / requireAdmin
+├── auth/              # roles (employee, admin), requireStaff / requireAdmin, requireShop
 ├── discounts/         # Discount computation and relation refresh
 ├── validators/        # Zod schemas, one per entity
 ├── db.ts              # Prisma client singleton
@@ -42,7 +42,8 @@ lib/
 services/              # Business logic services (one per entity)
 hooks/                 # React hooks
 types/                 # Shared types (incl. Clerk session claims)
-scripts/               # sync-discounts.ts (not scheduled in production: it re-enables discounts disabled by hand)
+scripts/               # sync-discounts.ts (not scheduled in production: it re-enables discounts disabled by hand),
+                       # curate-catalogue.mjs and import-catalogue-images.ts (one-off catalogue data, dry run unless --apply)
 deploy/                # VPS release script, its tests and the deployment runbook
 prisma/
 ├── schema.prisma      # generator + datasource only
@@ -69,7 +70,7 @@ The system manages these core entities (Prisma models in `prisma/models/`):
 
 ### API Patterns
 API routes follow these conventions:
-- **Authentication** via `requireAuth()` / `requireAdmin()` from `lib/auth/require-role.ts`
+- **Authorization** via `requireStaff()` (roles `employee` and `admin`: catalogue, discounts, stocks, uploads, analytics) and `requireAdmin()` (plus users, stock movements, purchase orders) from `lib/auth/require-role.ts`. A signed-in account without a role gets 403. `__tests__/unit/auth/routeGuards.test.ts` holds the expected guard of every route handler: update it when adding a route.
 - **Validation** via Zod schemas in `lib/validators/`
 - **Error handling** via `handleApiError()` — maps `ZodError` to 400, `ApiError` subclasses to their own status, anything else to a generic 500
 - **Rate limiting** in memory (`lib/rate-limit.ts`: sliding window, 10 requests/minute per client IP) — applied **per route, opt-in**, currently on 14 admin handlers (writes, image uploads, stats, transactions, category attributes); the public catalogue reads are not limited. It is not global middleware: a new route gets no rate limiting unless it calls `rateLimiter.limit(clientIp(req))` explicitly. `clientIp()` reads `X-Real-IP`, which Nginx sets from `CF-Connecting-IP`; never key on `X-Forwarded-For`, whose start the client chooses. The counters live in the process, so PM2 must run a single instance.
@@ -147,7 +148,7 @@ export async function POST(req: NextRequest) {
 }
 ```
 
-A few older routes still call `auth()` from `@clerk/nextjs/server` directly instead of the `require-role` helpers. Prefer the helpers for new code — `requireAdmin()` also enforces the `publicMetadata.role === "admin"` claim, which a bare `auth()` check does not.
+Never protect a route with a bare `auth()` or a session check: Clerk would accept any signed-in account, including one without a role. Use `requireStaff()` or `requireAdmin()`, which also read `publicMetadata.role`.
 
 ### Database Patterns
 ```typescript
@@ -215,18 +216,18 @@ npm run cypress:open     # E2E testing
 ## 🔒 Authentication & Authorization
 
 ### Clerk Integration
-- **Admin-only access** - no public user registration
-- **Protected routes** in `(admin)` route group, enforced by `proxy.ts`
-- **API protection** via `requireAuth()` / `requireAdmin()` (`lib/auth/require-role.ts`)
-- The `admin` role is read from `sessionClaims.publicMetadata.role`, which requires the custom session token to be configured in the Clerk Dashboard (Configure > Sessions). Without it the check fails closed for everyone.
+- **Staff-only access** - no public user registration (Clerk access mode: Invite-only, no `/sign-up` page)
+- **Protected routes** in `(admin)` route group, enforced by `proxy.ts`: a staff role for `/admin`, `admin` for users, transactions and purchase orders
+- **API protection** via `requireStaff()` / `requireAdmin()` (`lib/auth/require-role.ts`, roles in `lib/auth/roles.ts`)
+- The role is read from `sessionClaims.publicMetadata.role`, which requires the custom session token to be configured in the Clerk Dashboard (Configure > Sessions). Without it the check fails closed for everyone.
 
 ### Route Protection Pattern
 ```typescript
-import { requireAdmin } from "@/lib/auth/require-role";
+import { requireStaff } from "@/lib/auth/require-role";
 
-// In API routes
-const { userId, response } = await requireAdmin();
-if (response) return response;   // 401 if signed out, 403 if not admin
+// In API routes (requireAdmin() for users, transactions and purchase orders)
+const { userId, response } = await requireStaff();
+if (response) return response;   // 401 if signed out, 403 without the employee or admin role
 ```
 
 ## 📊 Data Patterns

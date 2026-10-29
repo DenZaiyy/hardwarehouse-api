@@ -1,10 +1,10 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {auth} from "@clerk/nextjs/server";
 import {handleApiError} from "@/lib/api/handle-api-error";
-import {BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError} from "@/lib/api/errors";
+import {BadRequestError, NotFoundError} from "@/lib/api/errors";
 import {getDiscountWithRelations} from "@/lib/discounts/get-discount-with-relations";
 import {refreshDiscountRelations} from "@/lib/discounts/refresh-discount-relations";
+import {requireStaff} from "@/lib/auth/require-role";
 
 type RouteCtx = RouteContext<'/api/v1/discounts/[id]'>;
 
@@ -30,9 +30,8 @@ export async function GET(_req: NextRequest, ctx: RouteCtx) {
 
 export async function PATCH(req: NextRequest, ctx: RouteCtx) {
     try {
-        const { userId, sessionClaims } = await auth();
-        if (!userId) throw new UnauthorizedError();
-        if (sessionClaims?.publicMetadata?.role !== "admin") throw new ForbiddenError();
+        const { response } = await requireStaff();
+        if (response) return response;
 
         const { id } = await ctx.params;
         const { active } = await req.json();
@@ -63,9 +62,8 @@ export async function PATCH(req: NextRequest, ctx: RouteCtx) {
 
 export async function DELETE(_req: NextRequest, ctx: RouteCtx ) {
     try {
-        const { userId, sessionClaims } = await auth();
-        if (!userId) throw new UnauthorizedError();
-        if (sessionClaims?.publicMetadata?.role !== "admin") throw new ForbiddenError();
+        const { response } = await requireStaff();
+        if (response) return response;
 
         const { id } = await ctx.params;
 

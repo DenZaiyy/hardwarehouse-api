@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {clientIp, rateLimiter} from "@/lib/rate-limit";
-import {auth} from "@clerk/nextjs/server";
+import {requireStaff} from "@/lib/auth/require-role";
 
 export async function GET(
     req: NextRequest,
@@ -19,14 +19,8 @@ export async function GET(
             );
         }
 
-        // Authentication check for admin routes
-        const { userId } = await auth();
-        if (!userId) {
-            return NextResponse.json(
-                { error: "Non autorisé", data: null },
-                { status: 401 }
-            );
-        }
+        const { response } = await requireStaff();
+        if (response) return response;
 
         const { slug } = await params;
 

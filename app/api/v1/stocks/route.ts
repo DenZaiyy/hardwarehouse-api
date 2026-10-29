@@ -1,14 +1,14 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {clientIp, rateLimiter} from "@/lib/rate-limit";
-import {requireAuth} from "@/lib/auth/require-role";
+import {requireStaff} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {ConflictError, NotFoundError} from "@/lib/api/errors";
 import {stockSchema} from "@/lib/validators/stockSchema";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_req: NextRequest) {
-    const { response } = await requireAuth();
+    const { response } = await requireStaff();
     if (response) return response;
 
     try {
@@ -41,7 +41,7 @@ export async function GET(_req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const { response } = await requireAuth();
+    const { response } = await requireStaff();
     if (response) return response;
 
     try {

@@ -218,6 +218,70 @@ validés, `~/api` peut être supprimé (plus de 1 Go).
 - **Modifier `ecosystem.config.js`** : `pm2 reload` ne relit pas ce fichier. Après le déploiement, `pm2 delete
   next-api`, `pm2 start ~/hardwarehouse-api/current/ecosystem.config.js`, puis `pm2 save`.
 
+## Images du catalogue
+
+Le serveur `standalone` de Next.js ne sert que les fichiers de `public/` présents à son démarrage : une image envoyée
+depuis le back-office resterait introuvable (404) jusqu'au déploiement suivant. Nginx sert donc lui-même `/images/`,
+directement depuis `shared/images`. Dans le bloc `server` de `api.hardwarehouse.fr`, à côté de `location /` (`^~`
+écarte les `location` à expression régulière, qui l'emporteraient sinon sur un simple préfixe) :
+
+```nginx
+location ^~ /images/ {
+    alias /home/hwh/hardwarehouse-api/shared/images/;
+    expires 1d;
+    access_log off;
+}
+```
+
+Un envoi depuis le back-office remplace l'image sous le même nom (`thumbnail.webp`) : l'expiration d'un jour borne le
+temps pendant lequel un navigateur ou Cloudflare montre encore l'ancienne. Au-delà, le navigateur revalide, et Nginx
+répond `304` si le fichier n'a pas changé.
+
+```bash
+sudo nginx -t
+```
+```bash
+sudo systemctl reload nginx
+```
+
+Contrôle depuis ton poste, qui doit répondre `200` avec `content-type: image/webp` (remplace le slug par celui d'un
+produit qui a des images) :
+
+```bash
+curl -sI https://api.hardwarehouse.fr/images/products/amd-ryzen-5-5600/thumbnail.webp
+```
+
+Un `403` signifie que Nginx (`www-data`) ne peut pas traverser les dossiers de `hwh` : `namei -l
+/home/hwh/hardwarehouse-api/shared/images` montre lequel. `chmod o+x` sur ce dossier autorise la traversée sans
+permettre d'en lister le contenu.
+
+### Catalogue resserré et images officielles
+
+Deux scripts ont préparé le catalogue en octobre 2026 : `scripts/curate-catalogue.mjs` désactive les produits absents de
+`scripts/catalogue-selection.json` (15 par catégorie, rien n'est supprimé), et `scripts/import-catalogue-images.ts`
+installe les images officielles listées dans `scripts/catalogue-images.json`. Les images sont générées sur un poste
+(`public/images/products`), puis copiées sur le VPS. Tous deux simulent par défaut et n'écrivent qu'avec `--apply`.
+
+L'ordre compte : la boutique doit savoir afficher un chemin relatif (filtre `catalog_image`) avant que la base de
+production n'en contienne, et Nginx doit servir les fichiers avant que la base n'y renvoie.
+
+1. Déployer la boutique qui contient le filtre `catalog_image`.
+2. Ajouter le bloc Nginx ci-dessus.
+3. Depuis ton poste, à la racine du dépôt, une fois les images générées en local :
+   ```bash
+   rsync -av public/images/products/ hwh@<IP>:hardwarehouse-api/shared/images/products/
+   ```
+4. Toujours depuis ton poste, avec la base de production dans un fichier hors du dépôt (`chmod 600`), pour qu'aucun
+   commit ne puisse l'emporter. Il ne contient que `DATABASE_URL`. Chaque commande se lance d'abord sans `--apply` :
+   ```bash
+   node --env-file=$HOME/.hardwarehouse/api-production.env scripts/curate-catalogue.mjs
+   ```
+   ```bash
+   node --env-file=$HOME/.hardwarehouse/api-production.env --import tsx scripts/import-catalogue-images.ts --db-only
+   ```
+   `--db-only` ne télécharge rien : il reporte en base les chemins des fichiers copiés à l'étape 3, avec le MPN et
+   l'EAN du manifeste.
+
 ## Tester le script
 
 ```bash

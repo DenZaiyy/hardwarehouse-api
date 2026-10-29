@@ -94,8 +94,10 @@ hardwarehouse-api/
 ├── services/                     # Service layer for API calls
 │   ├── discount.service.ts       # Discount service
 │   └── ...                      # Other services
-├── scripts/                      # Background scripts
-│   └── sync-discounts.ts        # Discount sync cron job
+├── scripts/                      # Background and one-off data scripts
+│   ├── sync-discounts.ts        # Discount sync cron job
+│   ├── curate-catalogue.mjs     # Keeps the 15 products per category of catalogue-selection.json active
+│   └── import-catalogue-images.ts # Official product images of catalogue-images.json (see deploy/README.md)
 ├── prisma/                      # Database schema and seeds
 ├── deploy/                      # VPS deployment script, its tests and runbook
 ├── ecosystem.config.js          # PM2 configuration of the production server (VPS)
@@ -111,19 +113,21 @@ hardwarehouse-api/
 
 ### Authorization model
 
-Clerk sign-ups are **restricted**: accounts are created by an administrator only, so any
-authenticated session belongs to a staff member. Two levels therefore coexist:
+Clerk sign-ups are **invite-only** and the app has no sign-up page: accounts are created by an
+administrator, who sets their `publicMetadata.role` to `employee` or `admin`. The guards never rely
+on that alone: a signed-in account without one of these roles is refused everywhere (403).
 
 | Level | Guard | Scope |
 |---|---|---|
 | Public | none | catalogue reads consumed by the Symfony storefront |
-| Staff | `requireAuth()` / `auth()` | create and update brands, categories, products; manage stocks; uploads; analytics |
-| Admin | `requireAdmin()` | **deletions**, discounts, stock movements, users, purchase orders |
+| Staff (`employee` or `admin`) | `requireStaff()` | brands, categories, products and discounts (deletions included), stocks, uploads, analytics |
+| Admin (`admin`) | `requireAdmin()` | everything staff can do, plus users, stock movements and purchase orders |
 | Storefront (server to server) | `requireShop()` | stock exits of paid orders (`POST /api/v1/stock-exits`) |
 
-The rule of thumb: staff feed the catalogue, administrators handle destructive or sensitive
-operations. `proxy.ts` mirrors it in the UI by restricting `/admin/users` and
-`/admin/transactions` to the `admin` role.
+The roles live in `lib/auth/roles.ts`. `proxy.ts` applies the same rule to the pages: `/admin`
+needs a staff role, and `/admin/users`, `/admin/transactions` and `/admin/purchase-orders` need
+`admin`. `__tests__/unit/auth/routeGuards.test.ts` checks every route handler against this matrix,
+so a new route fails the tests until its guard is decided.
 
 Writing a stock movement (`POST /api/v1/transactions`) requires the `admin` role, like the
 history it feeds — otherwise a direct API call would bypass the UI restriction.
