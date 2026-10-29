@@ -1,11 +1,11 @@
 import {NextRequest, NextResponse} from "next/server";
 import {clientIp, rateLimiter} from "@/lib/rate-limit";
 import {db} from "@/lib/db";
-import {requireAuth} from "@/lib/auth/require-role";
+import {requireStaff} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 
 export async function GET(req: NextRequest) {
-    const { response } = await requireAuth();
+    const { response } = await requireStaff();
     if (response) return response;
 
     try {

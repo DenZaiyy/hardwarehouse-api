@@ -1,7 +1,7 @@
 import {NextRequest, NextResponse} from 'next/server';
 import {ImageUploadService} from '@/services/image-upload.service';
 import {db} from '@/lib/db';
-import {requireAuth} from '@/lib/auth/require-role';
+import {requireStaff} from '@/lib/auth/require-role';
 import {isSafeSlug} from '@/lib/utils';
 import {clientIp, rateLimiter} from '@/lib/rate-limit';
 
@@ -17,7 +17,7 @@ interface RouteParams {
  * - logo: File
  */
 export async function POST(req: NextRequest, { params }: RouteParams) {
-  const { response } = await requireAuth();
+  const { response } = await requireStaff();
   if (response) return response;
 
   try {
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
  * Supprime le logo d'une marque et met à jour la marque en DB
  */
 export async function DELETE(_request: NextRequest, { params }: RouteParams) {
-  const { response } = await requireAuth();
+  const { response } = await requireStaff();
   if (response) return response;
 
   try {

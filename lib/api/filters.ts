@@ -1,9 +1,15 @@
 import {FilterParams, PaginationParams, SortParams} from "@/types/types";
 import {Prisma} from "@prisma/client";
 
+// Une valeur qui n'est pas un nombre (?page=abc) retombe sur la valeur par défaut : NaN ferait échouer Prisma (500)
+function parseInteger(value: string | null, fallback: number): number {
+    const parsed = parseInt(value ?? '');
+    return Number.isNaN(parsed) ? fallback : parsed;
+}
+
 export function parsePagination(searchParams: URLSearchParams): PaginationParams {
-    const page = Math.max(1, parseInt(searchParams.get('page') || '1'));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get('limit') || '25')));
+    const page = Math.max(1, parseInteger(searchParams.get('page'), 1));
+    const limit = Math.min(50, Math.max(1, parseInteger(searchParams.get('limit'), 25)));
     const skip = (page - 1) * limit;
 
     return { page, limit, skip };

@@ -2,8 +2,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {slugifyName} from "@/lib/utils";
 import {clientIp, rateLimiter} from "@/lib/rate-limit";
-import {auth} from "@clerk/nextjs/server";
-import {requireAdmin} from "@/lib/auth/require-role";
+import {requireStaff} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {NotFoundError} from "@/lib/api/errors";
 import {productPatchSchema} from "@/lib/validators/productSchema";
@@ -110,11 +109,8 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
     try {
-        const { userId } = await auth();
-
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", statusCode: 401 }, { status: 401 });
-        }
+        const { response } = await requireStaff();
+        if (response) return response;
 
         const ip = clientIp(req);
         const { slug } = await params;
@@ -288,7 +284,7 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 }
 
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
-    const { response } = await requireAdmin();
+    const { response } = await requireStaff();
     if (response) return response;
 
     try {
