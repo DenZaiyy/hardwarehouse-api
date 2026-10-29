@@ -54,3 +54,6 @@ next-env.d.ts
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# images envoyées depuis le back-office : données d'exécution, en production dans shared/images (deploy/README.md)
+/public/images/

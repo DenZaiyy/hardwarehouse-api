@@ -1,0 +1,1634 @@
+[
+  {
+    "slug": "amd-ryzen-5-5600",
+    "sourceUrl": "https://www.amd.com/en/support/downloads/drivers.html/processors/ryzen/ryzen-5000-series/amd-ryzen-5-5600.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-5-5600x.jpg"
+    ],
+    "mpn": "100-100000927BOX",
+    "ean13": "0730143314190"
+  },
+  {
+    "slug": "intel-core-i5-13400f",
+    "sourceUrl": "https://www.intel.com/content/www/us/en/products/sku/230501/intel-core-i513400f-processor-20m-cache-up-to-4-60-ghz/specifications.html",
+    "images": [
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2022-09/newsroom-innovation-13th-gen-intel-core-3.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2022-09/newsroom-innovation-13th-gen-intel-core-4.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2022-09/newsroom-innovation-13th-gen-intel-core-5.jpg"
+    ],
+    "mpn": "BX8071513400F",
+    "ean13": "5032037260299"
+  },
+  {
+    "slug": "amd-ryzen-5-7600",
+    "sourceUrl": "https://www.amd.com/en/products/processors/desktops/ryzen/7000-series/amd-ryzen-5-7600.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-5-7600x.jpg"
+    ],
+    "mpn": "100-100001015BOX",
+    "ean13": "0730143314572"
+  },
+  {
+    "slug": "amd-ryzen-7-8700g",
+    "sourceUrl": "https://www.amd.com/en/products/processors/desktops/ryzen/8000-series/amd-ryzen-7-8700g.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-8700g.jpg"
+    ],
+    "mpn": "100-100001236SBX",
+    "ean13": "0730143317696"
+  },
+  {
+    "slug": "amd-ryzen-5-9600x",
+    "sourceUrl": "https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-5-9600x.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2613900-ryzen-5-9600x.jpg"
+    ],
+    "mpn": "100-100001405WOF",
+    "ean13": "0730143315609"
+  },
+  {
+    "slug": "amd-ryzen-7-5800x3d",
+    "sourceUrl": "https://www.amd.com/en/products/processors/desktops/ryzen/5000-series/amd-ryzen-7-5800x3d.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-5800x3d.jpg"
+    ],
+    "mpn": "100-100000651WOF",
+    "ean13": "0730143313797"
+  },
+  {
+    "slug": "intel-core-ultra-5-245k",
+    "sourceUrl": "https://www.intel.com/content/www/us/en/products/sku/241067/intel-core-ultra-5-processor-245k-24m-cache-up-to-5-20-ghz/specifications.html",
+    "images": [
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2024-10/newsroom-intel-arl-chip-3.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2024-10/newsroom-intel-arl-chip-2.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2024-10/newsroom-intel-arl-chip-8.jpg"
+    ],
+    "mpn": "BX80768245K",
+    "ean13": "5032037282086"
+  },
+  {
+    "slug": "intel-core-i5-14600k",
+    "sourceUrl": "https://www.intel.com/content/www/us/en/products/sku/236799/intel-core-i5-processor-14600k-24m-cache-up-to-5-30-ghz/specifications.html",
+    "images": [
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2022-09/newsroom-innovation-13th-gen-intel-core-3.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2022-09/newsroom-innovation-13th-gen-intel-core-4.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2022-09/newsroom-innovation-13th-gen-intel-core-5.jpg"
+    ],
+    "mpn": "BX8071514600K",
+    "ean13": "5032037278447"
+  },
+  {
+    "slug": "amd-ryzen-7-9700x",
+    "sourceUrl": "https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-7-9700x.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2613900-ryzen-7-9700x.jpg"
+    ],
+    "mpn": "100-100001404WOF",
+    "ean13": "0730143315593"
+  },
+  {
+    "slug": "amd-ryzen-7-7800x3d",
+    "sourceUrl": "https://www.amd.com/en/products/processors/desktops/ryzen/7000-series/amd-ryzen-7-7800x3d.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-7800x3d.jpg",
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-7800x3d-front.jpg",
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2505503-ryzen-7-7800x3d-pl.jpg"
+    ],
+    "mpn": "100-100000910WOF",
+    "ean13": "0730143314930"
+  },
+  {
+    "slug": "intel-core-i7-14700k",
+    "sourceUrl": "https://www.intel.com/content/www/us/en/products/sku/236783/intel-core-i7-processor-14700k-33m-cache-up-to-5-60-ghz/specifications.html",
+    "images": [
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2022-09/newsroom-innovation-13th-gen-intel-core-3.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2022-09/newsroom-innovation-13th-gen-intel-core-4.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2022-09/newsroom-innovation-13th-gen-intel-core-5.jpg"
+    ],
+    "mpn": "BX8071514700K",
+    "ean13": "5032037278485"
+  },
+  {
+    "slug": "intel-core-ultra-7-265k",
+    "sourceUrl": "https://www.intel.com/content/www/us/en/products/sku/241063/intel-core-ultra-7-processor-265k-30m-cache-up-to-5-50-ghz/specifications.html",
+    "images": [
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2024-10/newsroom-intel-arl-chip-3.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2024-10/newsroom-intel-arl-chip-2.jpg",
+      "https://www.intel.com/content/dam/www/central-libraries/us/en/images/2024-10/newsroom-intel-arl-chip-8.jpg"
+    ],
+    "mpn": "BX80768265K",
+    "ean13": "5032037282062"
+  },
+  {
+    "slug": "amd-ryzen-7-9800x3d",
+    "sourceUrl": "https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-7-9800x3d.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2900400-ryzen-7-9800x3d-product.jpg"
+    ],
+    "mpn": "100-100001084WOF",
+    "ean13": "0730143315289"
+  },
+  {
+    "slug": "amd-ryzen-9-9900x",
+    "sourceUrl": "https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-9-9900x.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2613900-ryzen-9-9950x.jpg"
+    ],
+    "mpn": "100-100000662WOF",
+    "ean13": "0730143315296"
+  },
+  {
+    "slug": "amd-ryzen-9-9950x3d",
+    "sourceUrl": "https://www.amd.com/en/products/processors/desktops/ryzen/9000-series/amd-ryzen-9-9950x3d.html",
+    "images": [
+      "https://cdn11.bigcommerce.com/s-akg40mhl49/images/stencil/original/products/165/468/Ryzen_9_9000X3D__70129.1741368512.png"
+    ],
+    "mpn": "100-100000719WOF",
+    "ean13": "0730143315555"
+  },
+  {
+    "slug": "amd-radeon-rx-7600-8gb",
+    "sourceUrl": "https://www.amd.com/en/products/graphics/desktops/radeon/7000-series/amd-radeon-rx-7600.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/graphics/2648997-amd-radeon-7600.jpg"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "msi-ventus-2x-rtx-4060-ti-oc-8gb",
+    "sourceUrl": "https://www.msi.com/Graphics-Card/GeForce-RTX-4060-Ti-VENTUS-2X-BLACK-8G-OC",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_168438831035e33bc69d2ce3a105ae4b4bac7c3dd0.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_16843883123ebd0475f2aab95fa8ddf3e8eaecb052.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_168438831200bc90fb0a8a72ecbc48abf517c6a887.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1684388315ce7e3e0a17c4f4fac81a3933d57a1ec3.webp"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "nvidia-geforce-rtx-5070-12gb",
+    "sourceUrl": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5070-family/",
+    "images": [
+      "https://assets.nvidia.partners/images/png/RTX5070-3QTR-Back-Left.png",
+      "https://assets.nvidia.partners/images/png/5070-1000x1000.png"
+    ],
+    "mpn": "NVGFT570",
+    "ean13": null
+  },
+  {
+    "slug": "amd-radeon-rx-9070-16gb",
+    "sourceUrl": "https://www.amd.com/en/products/graphics/desktops/radeon/9000-series/amd-radeon-rx-9070.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/graphics/radeon-rx-9070/2922918-radeon-rx-9070-product.jpg"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "amd-radeon-rx-9070-xt-16gb",
+    "sourceUrl": "https://www.amd.com/en/products/graphics/desktops/radeon/9000-series/amd-radeon-rx-9070xt.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/graphics/radeon-rx-9070/2922918-radeon-rx-9070xt-product.jpg"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "amd-radeon-rx-7900-xtx-24gb",
+    "sourceUrl": "https://www.amd.com/en/products/graphics/desktops/radeon/7000-series/amd-radeon-rx-7900xtx.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/graphics/2648997-amd-radeon-7900xtx.jpg"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "nvidia-geforce-rtx-5090-32gb",
+    "sourceUrl": "https://www.nvidia.com/en-us/geforce/graphics-cards/50-series/rtx-5090/",
+    "images": [
+      "https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/news/rtx-50-series-graphics-cards-gpu-laptop-announcements/geforce-rtx-5090-founders-edition-photo-004.png",
+      "https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/news/rtx-50-series-graphics-cards-gpu-laptop-announcements/geforce-rtx-5090-founders-edition-photo-005.png",
+      "https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/news/rtx-50-series-graphics-cards-gpu-laptop-announcements/geforce-rtx-5090-founders-edition-photo-007.png",
+      "https://www.nvidia.com/content/dam/en-zz/Solutions/geforce/news/rtx-50-series-graphics-cards-gpu-laptop-announcements/geforce-rtx-5090-founders-edition-photo-006.png"
+    ],
+    "mpn": "NVGFT590",
+    "ean13": null
+  },
+  {
+    "slug": "kingston-fury-beast-16gb-ddr4-3200",
+    "sourceUrl": "https://www.kingston.com/en/memory/gaming/kingston-fury-beast-ddr4-memory",
+    "images": [
+      "https://media.kingston.com/kingston/product/FURY_Beast_Black_DDR4_1_angle-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/FURY_Beast_Black_DDR4_1-zm-lg.jpg"
+    ],
+    "mpn": "KF432C16BBK2/16",
+    "ean13": "0740617319903"
+  },
+  {
+    "slug": "corsair-vengeance-lpx-16gb-ddr4-3200",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/memory/cmk16gx4m2e3200c16/vengeancea-lpx-16gb-2-x-8gb-ddr4-dram-3200mhz-c16-memory-kit-black-cmk16gx4m2e3200c16",
+    "images": [
+      "https://assets.corsair.com/image/upload/products/Memory/CMK16GX4M2E3200C16/Gallery/VENG_LPX_BLK_01.png",
+      "https://assets.corsair.com/image/upload/products/Memory/CMK16GX4M2E3200C16/Gallery/VENG_LPX_BLK_02.png",
+      "https://assets.corsair.com/image/upload/products/Memory/CMK16GX4M2E3200C16/Gallery/VENG_LPX_BLK_03.png",
+      "https://assets.corsair.com/image/upload/products/Memory/CMK16GX4M2E3200C16/Gallery/VENG_LPX_BLK_04.png"
+    ],
+    "mpn": "CMK16GX4M2E3200C16",
+    "ean13": "0840006608530"
+  },
+  {
+    "slug": "corsair-vengeance-lpx-32gb-ddr4-3200",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/memory/cmk32gx4m2e3200c16/vengeancea-lpx-32gb-2-x-16gb-ddr4-dram-3200mhz-c16-memory-kit-black-cmk32gx4m2e3200c16",
+    "images": [
+      "https://assets.corsair.com/image/upload/products/Memory/CMK32GX4M2E3200C16/Gallery/VENG_LPX_BLK_01.png",
+      "https://assets.corsair.com/image/upload/products/Memory/CMK32GX4M2E3200C16/Gallery/VENG_LPX_BLK_02.png",
+      "https://assets.corsair.com/image/upload/products/Memory/CMK32GX4M2E3200C16/Gallery/VENG_LPX_BLK_03.png",
+      "https://assets.corsair.com/image/upload/products/Memory/CMK32GX4M2E3200C16/Gallery/VENG_LPX_BLK_04.png"
+    ],
+    "mpn": "CMK32GX4M2E3200C16",
+    "ean13": "0840006608547"
+  },
+  {
+    "slug": "gskill-ripjaws-v-32gb-ddr4-3600",
+    "sourceUrl": "https://www.gskill.com/product/165/184/1562833535/F4-3600C18D-32GVK",
+    "images": [
+      "https://www.gskill.com/_upload/images/156283353510.png",
+      "https://www.gskill.com/_upload/images/156283353511.png",
+      "https://www.gskill.com/_upload/images/156283353512.png"
+    ],
+    "mpn": "F4-3600C18D-32GVK",
+    "ean13": "4713294223104"
+  },
+  {
+    "slug": "crucial-pro-32gb-ddr5-5600",
+    "sourceUrl": "https://www.crucial.com/memory/ddr5/cp2k16g56c46u5",
+    "images": [
+      "https://assets.micron.com/adobe/assets/urn:aaid:aem:835a69f3-ac69-45ab-8fc1-2d5c14cefb8c/as/crucial-ddr5-pro-udimm-kit-front.png"
+    ],
+    "mpn": "CP2K16G56C46U5",
+    "ean13": "0649528937803"
+  },
+  {
+    "slug": "kingston-fury-beast-32gb-ddr5-5600",
+    "sourceUrl": "https://www.kingston.com/en/memory/gaming/kingston-fury-beast-ddr5-memory",
+    "images": [
+      "https://media.kingston.com/kingston/product/FURY_Beast_Black_DDR5_1_angle-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/FURY_Beast_Black_DDR5_1-zm-lg.jpg"
+    ],
+    "mpn": "KF556C40BBK2-32",
+    "ean13": "0740617325706"
+  },
+  {
+    "slug": "gskill-ripjaws-s5-32gb-ddr5-5600",
+    "sourceUrl": "https://www.gskill.com/product/165/377/1640229565/F5-5600J3636C16GX2-RS5K-F5-5600J3636C16GA2-RS5K",
+    "images": [
+      "https://www.gskill.com/_upload/images/164022956510.png",
+      "https://www.gskill.com/_upload/images/164022956511.png",
+      "https://www.gskill.com/_upload/images/164022956512.png",
+      "https://www.gskill.com/_upload/images/164022956513.png"
+    ],
+    "mpn": "F5-5600J3636C16GX2-RS5K",
+    "ean13": "4713294230799"
+  },
+  {
+    "slug": "corsair-vengeance-rgb-ddr5-32gb-6000",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/memory/cmh32gx5m2b6000c36/vengeance-rgb-32gb-2x16gb-ddr5-dram-6000mt-s-cl36-memory-kit-black-cmh32gx5m2b6000c36",
+    "images": [
+      "https://assets.corsair.com/image/upload/products/Memory/vengeance-rgb-ddr5-config/black/2up/Vengeance-RGB-DDR5-2UP-BLACK_01.png",
+      "https://assets.corsair.com/image/upload/products/Memory/vengeance-rgb-ddr5-config/black/2up/Vengeance-RGB-DDR5-2UP-BLACK_10.png",
+      "https://assets.corsair.com/image/upload/products/Memory/vengeance-rgb-ddr5-config/black/2up/Vengeance-RGB-DDR5-2UP-BLACK_11.png"
+    ],
+    "mpn": "CMH32GX5M2B6000C36",
+    "ean13": "0840006693222"
+  },
+  {
+    "slug": "gskill-flare-x5-32gb-ddr5-6000",
+    "sourceUrl": "https://www.gskill.com/product/165/396/1662622664/F5-6000J3636F16GX2-FX5",
+    "images": [
+      "https://www.gskill.com/_upload/images/166262266410.png",
+      "https://www.gskill.com/_upload/images/166262266411.png",
+      "https://www.gskill.com/_upload/images/166262266412.png"
+    ],
+    "mpn": "F5-6000J3636F16GX2-FX5",
+    "ean13": "4713294232687"
+  },
+  {
+    "slug": "gskill-trident-z5-32gb-ddr5-6000",
+    "sourceUrl": "https://www.gskill.com/product/165/371/1640229700/F5-6000J3636F16GX2-TZ5K-F5-6000J3636F16GA2-TZ5K",
+    "images": [
+      "https://www.gskill.com/_upload/images/164022970010.png",
+      "https://www.gskill.com/_upload/images/164022970011.png",
+      "https://www.gskill.com/_upload/images/164022970012.png",
+      "https://www.gskill.com/_upload/images/164022970013.png"
+    ],
+    "mpn": "F5-6000J3636F16GX2-TZ5K",
+    "ean13": "4713294230706"
+  },
+  {
+    "slug": "kingston-fury-renegade-32gb-ddr5-6400",
+    "sourceUrl": "https://www.kingston.com/en/memory/gaming/fury-renegade-ddr5",
+    "images": [
+      "https://media.kingston.com/kingston/product/FURY_Renegade_Silver_Black_DDR5_1_angle-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/FURY_Renegade_Silver_Black_DDR5_1-zm-lg.jpg"
+    ],
+    "mpn": "KF564C32RSK2-32",
+    "ean13": "0740617329780"
+  },
+  {
+    "slug": "corsair-dominator-platinum-rgb-32gb-ddr5-6200",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/memory/cmt32gx5m2x6200c36/dominatora-platinum-rgb-32gb-2x16gb-ddr5-dram-6200mhz-c36-memory-kit-a-black-cmt32gx5m2x6200c36",
+    "images": [
+      "https://assets.corsair.com/image/upload/products/Memory/CMT32GX5M2C4800C34/Gallery/DOMINATOR_RGB_PLATINUM_BLACK_DDR5_01.png",
+      "https://assets.corsair.com/image/upload/products/Memory/CMT32GX5M2C4800C34/Gallery/DOMINATOR_RGB_PLATINUM_BLACK_DDR5_13.png",
+      "https://assets.corsair.com/image/upload/products/Memory/CMT32GX5M2C4800C34/Gallery/DOMINATOR_RGB_PLATINUM_BLACK_DDR5_14.png"
+    ],
+    "mpn": "CMT32GX5M2X6200C36",
+    "ean13": "0840006660392"
+  },
+  {
+    "slug": "corsair-vengeance-64gb-ddr5-6000",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/memory/cmk64gx5m4b6000c36/vengeance-64gb-4x16gb-ddr5-dram-6000mt-s-cl36-memory-kit-black-cmk64gx5m4b6000c36",
+    "images": [
+      "https://assets.corsair.com/image/upload/products/Memory/vengeance-ddr5-blk-config/Vengeance-DDR5-4UP-BLACK_01.png",
+      "https://assets.corsair.com/image/upload/products/Memory/vengeance-ddr5-blk-config/Vengeance-DDR5-BLACK_13.png",
+      "https://assets.corsair.com/image/upload/products/Memory/vengeance-ddr5-blk-config/Vengeance-DDR5-BLACK_14.png",
+      "https://assets.corsair.com/image/upload/products/Memory/vengeance-ddr5-blk-config/Vengeance-DDR5-BLACK_10.png"
+    ],
+    "mpn": "CMK64GX5M4B6000C36",
+    "ean13": "0840006661733"
+  },
+  {
+    "slug": "gskill-trident-z5-rgb-48gb-ddr5-6800",
+    "sourceUrl": "https://www.gskill.com/product/165/374/1681713107/F5-6800J3446F24GX2-TZ5RK",
+    "images": [
+      "https://www.gskill.com/_upload/images/168171310710.png",
+      "https://www.gskill.com/_upload/images/168171310711.png",
+      "https://www.gskill.com/_upload/images/168171310712.png",
+      "https://www.gskill.com/_upload/images/168171310713.png"
+    ],
+    "mpn": "F5-6800J3446F24GX2-TZ5RK",
+    "ean13": "4713294233288"
+  },
+  {
+    "slug": "crucial-pro-96gb-ddr5-5600",
+    "sourceUrl": "https://www.crucial.com/memory/ddr5/cp2k48g56c46u5",
+    "images": [
+      "https://assets.micron.com/adobe/assets/urn:aaid:aem:835a69f3-ac69-45ab-8fc1-2d5c14cefb8c/as/crucial-ddr5-pro-udimm-kit-front.png"
+    ],
+    "mpn": "CP2K48G56C46U5",
+    "ean13": "0649528938121"
+  },
+  {
+    "slug": "asrock-b550-phantom-gaming-4",
+    "sourceUrl": "https://www.asrock.com/mb/AMD/B550%20Phantom%20Gaming%204/index.asp",
+    "images": [
+      "https://www.asrock.com/mb/photo/B550%20Phantom%20Gaming%204(L2).png",
+      "https://www.asrock.com/mb/photo/B550%20Phantom%20Gaming%204(L4).png",
+      "https://www.asrock.com/mb/photo/B550%20Phantom%20Gaming%204(L3).png",
+      "https://www.asrock.com/mb/photo/B550%20Phantom%20Gaming%204(L5).png"
+    ],
+    "mpn": "90-MXBCY0-A0UAYZ",
+    "ean13": "4710483931499"
+  },
+  {
+    "slug": "msi-mag-b550-tomahawk",
+    "sourceUrl": "https://www.msi.com/Motherboard/MAG-B550-TOMAHAWK",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_5_20200520165805_5ec4f11d89e51.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_6_20200520165809_5ec4f1215e207.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_7_20200520165812_5ec4f124dcab7.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_2_20200520165819_5ec4f12b5dc4b.webp"
+    ],
+    "mpn": "911-7C91-044",
+    "ean13": "4719072728625"
+  },
+  {
+    "slug": "asrock-b650m-pro-rs-wifi",
+    "sourceUrl": "https://www.asrock.com/mb/AMD/B650M%20Pro%20RS%20WiFi/index.asp",
+    "images": [
+      "https://www.asrock.com/mb/photo/B650M%20Pro%20RS%20WiFi(L2).png",
+      "https://www.asrock.com/mb/photo/B650M%20Pro%20RS%20WiFi(L5).png",
+      "https://www.asrock.com/mb/photo/B650M%20Pro%20RS%20WiFi(L4).png",
+      "https://www.asrock.com/mb/photo/B650M%20Pro%20RS%20WiFi(L6).png"
+    ],
+    "mpn": "90-MXBLZ0-A0UAYZ",
+    "ean13": "4710483943089"
+  },
+  {
+    "slug": "msi-pro-b760-p-wifi",
+    "sourceUrl": "https://www.msi.com/Motherboard/PRO-B760-P-WIFI",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_16733441638907fe3d93ade747964e54a7f73f3540.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_16733441672a01744f3ae7706f19aa29ecf980edb6.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_16733441632598438b89c536cce8d069114790b8e3.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_167334416561ed00e43e599d5e429b634a017d9e7d.webp"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "asrock-b850m-c-wifi",
+    "sourceUrl": "https://www.asrock.com/MB/AMD/B850M-C/index.us.asp",
+    "images": [
+      "https://www.asrock.com/mb/photo/B850M-C(L1).png",
+      "https://www.asrock.com/mb/photo/B850M-C(L2).png",
+      "https://www.asrock.com/mb/photo/B850M-C(L3).png",
+      "https://www.asrock.com/mb/photo/B850M-C(L4).png"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "gigabyte-b760-gaming-x-ax",
+    "sourceUrl": "https://www.gigabyte.com/Motherboard/B760-GAMING-X-AX-rev-1x",
+    "images": [
+      "https://static.gigabyte.com/StaticFile/Image/Global/5b993eb1f4fa3978a5e15061d9d71a67/ProductRemoveBg/33300"
+    ],
+    "mpn": "B760 GAMING X AX",
+    "ean13": "4719331851774"
+  },
+  {
+    "slug": "msi-mag-b650-tomahawk-wifi",
+    "sourceUrl": "https://www.msi.com/Motherboard/MAG-B650-TOMAHAWK-WIFI",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_1664786210c53040b0e9883d7154b15822645b8360.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_16647862076483c5f134837db9cec7b126c4168d6a.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1664786209a9689d07944a779d45389aa775cc99cb.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_16647862123c808a0e651189833a405720d5634109.webp"
+    ],
+    "mpn": "911-7D75-010",
+    "ean13": "4711377010153"
+  },
+  {
+    "slug": "gigabyte-b850-aorus-elite-wifi7",
+    "sourceUrl": "https://www.gigabyte.com/Motherboard/B850-AORUS-ELITE-WIFI7-rev-1x",
+    "images": [
+      "https://www.gigabyte.com/FileUpload/Global/KeyFeature/3841/innergigabyte/images/product/hero.png",
+      "https://static.gigabyte.com/StaticFile/Image/Global/c2ae7ebc94e1b2b4f216b503ca093a6d/ProductRemoveBg/44577",
+      "https://www.gigabyte.com/FileUpload/Global/KeyFeature/3841/innergigabyte/images/product/diagram.png",
+      "https://www.gigabyte.com/FileUpload/Global/KeyFeature/3841/innergigabyte/images/product/diagram_connectivity.png"
+    ],
+    "mpn": "B850 A ELITE WF7",
+    "ean13": "4719331866105"
+  },
+  {
+    "slug": "msi-pro-z790-a-max-wifi",
+    "sourceUrl": "https://www.msi.com/Motherboard/PRO-Z790-A-MAX-WIFI",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_16951778355e1c9fad7ee9573521f2f388a74d8ec2.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1695177833043bb9639e6c3c6d1b8dff48b6b9ba01.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1695177836f07c8b568a7976b81164e43119cedb89.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1695177838a77e88a2e31dc342dff76162ccfbada0.webp"
+    ],
+    "mpn": "911-7E07-025",
+    "ean13": "4711377139939"
+  },
+  {
+    "slug": "gigabyte-x670-aorus-elite-ax",
+    "sourceUrl": "https://www.gigabyte.com/Motherboard/X670-AORUS-ELITE-AX-rev-10-12",
+    "images": [
+      "https://static.gigabyte.com/StaticFile/Image/Global/6ebd6fdfe0941b3d2f26037b2f78828b/ProductRemoveBg/31804"
+    ],
+    "mpn": "X670 AORUS ELITE AX",
+    "ean13": "4719331848798"
+  },
+  {
+    "slug": "gigabyte-z890-aorus-elite-wifi7",
+    "sourceUrl": "https://www.gigabyte.com/Motherboard/Z890-AORUS-ELITE-WIFI7",
+    "images": [
+      "https://static.gigabyte.com/StaticFile/Image/Global/9bd932624b1a074aee0397c9ded72e69/ProductRemoveBg/42074",
+      "https://www.gigabyte.com/FileUpload/Global/KeyFeature/3777/innergigabyte/images/product/diagram_connectivity.png",
+      "https://www.gigabyte.com/FileUpload/Global/KeyFeature/3777/innergigabyte/images/product/diagram.png"
+    ],
+    "mpn": "Z890 A ELITE WIFI7",
+    "ean13": "4719331864507"
+  },
+  {
+    "slug": "msi-mag-x870-tomahawk-wifi",
+    "sourceUrl": "https://www.msi.com/Motherboard/MAG-X870-TOMAHAWK-WIFI",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_172723235270328ece144ba1aa78e7ca5cbd695baf.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_172723235236c3ff5efb9fbf6f2a35c9ef32a353e4.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_17272323555b793286b037c03391d7c9681d2f2a09.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1727232357f5eb8ea92f9c419d5e616a202718cac4.webp"
+    ],
+    "mpn": "911-7E51-010",
+    "ean13": "4711377254557"
+  },
+  {
+    "slug": "msi-mag-z890-tomahawk-wifi",
+    "sourceUrl": "https://www.msi.com/Motherboard/MAG-Z890-TOMAHAWK-WIFI",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_17284665969894727b87ea7eae6e608e9d7d12b0e0.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_17284665960a37d8aa4dfbe5963cacda0c0f84dd4d.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_17284665990a6d7699a7742c91810911c66cc803e7.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1728466601f5bcb08a7b5fbb2bebdad14e22311d86.webp"
+    ],
+    "mpn": "911-7E32-003",
+    "ean13": "4711377259712"
+  },
+  {
+    "slug": "asus-rog-strix-z790-e-gaming-wifi",
+    "sourceUrl": "https://rog.asus.com/motherboards/rog-strix/rog-strix-z790-e-gaming-wifi-model/",
+    "images": [
+      "https://dlcdnwebimgs.asus.com/gain/92E3E18B-7970-4BD6-AAC9-8FCB67C29614",
+      "https://dlcdnwebimgs.asus.com/gain/1B70FB9E-13D9-479B-99A9-4529198D1067",
+      "https://dlcdnwebimgs.asus.com/gain/BA8BE702-252E-4295-B218-03E3876BEBDC",
+      "https://dlcdnwebimgs.asus.com/gain/14F6096A-76AC-45D0-8938-8532A00399EA"
+    ],
+    "mpn": "90MB1CL0-M0EAY0",
+    "ean13": "4711081938538"
+  },
+  {
+    "slug": "asus-rog-strix-x870e-e-gaming-wifi",
+    "sourceUrl": "https://rog.asus.com/motherboards/rog-strix/rog-strix-x870e-e-gaming-wifi/",
+    "images": [
+      "https://dlcdnwebimgs.asus.com/gain/C2A10896-76C0-4772-9A3A-69D7B0C00441",
+      "https://dlcdnwebimgs.asus.com/gain/48935256-A7F3-4165-8114-F1B61552DFE7",
+      "https://dlcdnwebimgs.asus.com/gain/25F8B10F-C877-423A-B00D-4DF78797265B",
+      "https://dlcdnwebimgs.asus.com/gain/30331E3F-C475-423B-8C26-0042EAE74A2E"
+    ],
+    "mpn": "90MB1IB0-M0EAY0",
+    "ean13": "4711387724163"
+  },
+  {
+    "slug": "cooler-master-masterbox-q300l-matx",
+    "sourceUrl": "https://www.coolermaster.com/en-global/products/MCB-Q300L-KANN-S00.html",
+    "images": [
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dwf7ababb2/Assets/masterbox-q300l/large/gallery-1-min.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dwf7a0df19/Assets/masterbox-q300l/large/gallery-3-min.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw01ecbbb8/Assets/masterbox-q300l/large/gallery-4-min.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw7106fda7/Assets/masterbox-q300l/large/gallery-5-min.png"
+    ],
+    "mpn": "MCB-Q300L-KANN-S00",
+    "ean13": null
+  },
+  {
+    "slug": "corsair-3000d-airflow",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/pc-cases/cc-9011251-ww/3000d-tempered-glass-mid-tower-black-cc-9011251-ww",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/CC-9011251-WW/3000D_AF_BLACK_RENDER_01.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/CC-9011251-WW/3000D_AF_BLACK_RENDER_02.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/CC-9011251-WW/3000D_AF_BLACK_RENDER_07.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/CC-9011251-WW/3000D_AF_BLACK_RENDER_04.png"
+    ],
+    "mpn": "CC-9011251-WW",
+    "ean13": "0840006610427"
+  },
+  {
+    "slug": "be-quiet-pure-base-500dx",
+    "sourceUrl": "https://www.bequiet.com/en/case/1854",
+    "images": [
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=80c86a30287@be-quiet.net",
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=ad8bba30285@be-quiet.net",
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=6e3f5a30283@be-quiet.net"
+    ],
+    "mpn": "BGW37",
+    "ean13": "4260052187937"
+  },
+  {
+    "slug": "corsair-4000d-airflow-mid-tower",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/pc-cases/cc-9011200-ww/4000d-airflow-tempered-glass-mid-tower-atx-case-black-cc-9011200-ww",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/base-4000d-airflow-config/Gallery/4000D_AF_BLACK_01.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/base-4000d-airflow-config/Gallery/4000D_AF_BLACK_42.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/base-4000d-airflow-config/Gallery/4000D_AF_BLACK_36.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/base-4000d-airflow-config/Gallery/4000D_AF_BLACK_41.png"
+    ],
+    "mpn": "CC-9011200-WW",
+    "ean13": "0840006621904"
+  },
+  {
+    "slug": "cooler-master-td500-mesh-v2",
+    "sourceUrl": "https://www.coolermaster.com/en-global/products/masterbox-td500-mesh-v2.html",
+    "images": [
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw40d8a54f/Assets/masterbox-td500-mesh-v2/large/td500-mesh-v2-black-gallery-2-0110.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dweb5bad1e/Assets/masterbox-td500-mesh-v2/large/td500-mesh-v2-black-gallery-1-0110.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw9499f4a8/Assets/masterbox-td500-mesh-v2/large/td500-mesh-v2-black-gallery-10-0110.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dwdbe4369d/Assets/masterbox-td500-mesh-v2/large/td500-mesh-v2-black-gallery-3-0110.png"
+    ],
+    "mpn": "TD500V2-KGNN-S00",
+    "ean13": null
+  },
+  {
+    "slug": "corsair-5000d-airflow",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/pc-cases/cc-9011210-ww/5000d-airflow-tempered-glass-mid-tower-atx-pc-case-black-cc-9011210-ww",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/base-5000d-airflow/Gallery/5000D_AF_BLACK_001.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/base-5000d-airflow/Gallery/5000D_AF_BLACK_12.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/base-5000d-airflow/Gallery/5000D_AF_BLACK_11.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/base-5000d-airflow/Gallery/5000D_AF_BLACK_16.png"
+    ],
+    "mpn": "CC-9011210-WW",
+    "ean13": "0840006627470"
+  },
+  {
+    "slug": "be-quiet-silent-base-802",
+    "sourceUrl": "https://www.bequiet.com/en/case/2049",
+    "images": [
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=c042ea34415@be-quiet.net",
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=cd66ea34413@be-quiet.net",
+      "https://www.bequiet.com/volumes/pim/cases/silentbase/silentbase802/3d/black/001.jpg"
+    ],
+    "mpn": "BG039",
+    "ean13": "4260052188378"
+  },
+  {
+    "slug": "corsair-6500x-dual-chamber",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/pc-cases/cc-9011283-ww/6500x-mid-tower-dual-chamber-pc-case-black-obsidian-aluminum-cc-9011283-ww",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/6500X/CC-9011283-WW/6500X_BLACK_OBSIDIAN_09.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/6500X/CC-9011283-WW/6500X_BLACK_OBSIDIAN_10.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/6500X/CC-9011283-WW/6500X_BLACK_OBSIDIAN_11.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Cases/6500X/CC-9011283-WW/6500X_BLACK_OBSIDIAN_12.png"
+    ],
+    "mpn": "CC-9011283-WW",
+    "ean13": "0840006688853"
+  },
+  {
+    "slug": "corsair-cx550-550w-80-bronze",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/psu/cp-9020277-eu/cx-series-cx550-550-watt-80-plus-bronze-atx-power-supply-eu-cp-9020277-eu",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/base-cx-series-2023-config/CX550/CX550_01.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/base-cx-series-2023-config/CX550/CX550_12.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/base-cx-series-2023-config/CX550/CX550_13.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/base-cx-series-2023-config/CX550/CX550_14.png"
+    ],
+    "mpn": "CP-9020277-EU",
+    "ean13": "0840006670773"
+  },
+  {
+    "slug": "cooler-master-mwe-bronze-v2-650w",
+    "sourceUrl": "https://www.coolermaster.com/en-global/products/mwe-650-bronze-v2.html",
+    "images": [
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw8c77c963/Assets/mwe-650-bronze-v2/large/1_gallery_650_mwe_bronze_v2.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw747fcd55/Assets/mwe-650-bronze-v2/large/2_gallery_650_mwe_bronze_v2.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dwecb2c90f/Assets/mwe-650-bronze-v2/large/5_gallery_650_mwe_bronze_v2.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dwf23193f3/Assets/mwe-650-bronze-v2/large/mwe-bronze-v2-gallery-4.png"
+    ],
+    "mpn": "MPE-6501-ACAAB-EU",
+    "ean13": null
+  },
+  {
+    "slug": "corsair-rm650e-650w-80-gold",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/psu/cp-9020302-eu/rme-series-rm650e-fully-modular-low-noise-atx-power-supply-eu-cp-9020302-eu",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/rme-series-2025/Gallery/CP-9020302-NA_01.png",
+      "https://assets.corsair.com/image/upload/f_png/products/rme-series-2025/Gallery/CP-9020302-NA_10.png",
+      "https://assets.corsair.com/image/upload/f_png/products/rme-series-2025/Gallery/CP-9020302-NA_08.png",
+      "https://assets.corsair.com/image/upload/f_png/products/rme-series-2025/Gallery/CP-9020302-NA_09.png"
+    ],
+    "mpn": "CP-9020302-EU",
+    "ean13": "0840440485735"
+  },
+  {
+    "slug": "seasonic-focus-gx-650-650w-80-gold",
+    "sourceUrl": "https://seasonic.com/focus-gx/",
+    "images": [
+      "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-back-panel-angled-scaled.webp",
+      "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-vertical-scaled.webp",
+      "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-750-650-550-connector-plate-angled-1462x1080.webp",
+      "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-back-panel-scaled.webp"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "corsair-rm750e-750w-80-gold",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/psu/cp-9020295-eu/rme-series-rm750e-fully-modular-low-noise-atx-power-supply-eu-cp-9020295-eu",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/rme-series-2025/Gallery/CP-9020295-NA_01.png",
+      "https://assets.corsair.com/image/upload/f_png/products/rme-series-2025/Gallery/CP-9020295-NA_10.png",
+      "https://assets.corsair.com/image/upload/f_png/products/rme-series-2025/Gallery/CP-9020295-NA_08.png",
+      "https://assets.corsair.com/image/upload/f_png/products/rme-series-2025/Gallery/CP-9020295-NA_09.png"
+    ],
+    "mpn": "CP-9020295-EU",
+    "ean13": "0840006691082"
+  },
+  {
+    "slug": "seasonic-focus-gx-750-750w-80-gold",
+    "sourceUrl": "https://seasonic.com/focus-gx/",
+    "images": [
+      "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-back-panel-angled-scaled.webp",
+      "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-vertical-scaled.webp",
+      "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-750-650-550-connector-plate-angled-1462x1080.webp",
+      "https://seasonic.com/wp-content/uploads/2024/04/FOCUS-PX-GX-back-panel-scaled.webp"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "be-quiet-pure-power-12-m-750w-80-gold",
+    "sourceUrl": "https://www.bequiet.com/en/powersupply/4068",
+    "images": [
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=da2a1a45761@be-quiet.net",
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=0ca04a45759@be-quiet.net",
+      "https://www.bequiet.com/volumes/pim/powersupply/purepower/purepower12m/360/750W/020.jpg"
+    ],
+    "mpn": "BN343",
+    "ean13": "4260052189481"
+  },
+  {
+    "slug": "corsair-rm850x-850w-80-gold-modular",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/psu/cp-9020270-eu/rmx-series-rm850x-fully-modular-power-supply-eu-cp-9020270-eu",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/850/RM850x_2024_01.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/850/RM850x_2024_10.png"
+    ],
+    "mpn": "CP-9020270-EU",
+    "ean13": "0840006667445"
+  },
+  {
+    "slug": "be-quiet-pure-power-12-m-850w-80-gold",
+    "sourceUrl": "https://www.bequiet.com/fr/powersupply/4067?article=BN344",
+    "images": [
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=6479aa45765@be-quiet.net",
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=beac0a45763@be-quiet.net"
+    ],
+    "mpn": "BN344",
+    "ean13": "4260052189498"
+  },
+  {
+    "slug": "cooler-master-v850-gold-i-850w",
+    "sourceUrl": "https://legacy.coolermaster.com/en-global/products/v850-gold-i-multi/",
+    "images": [
+      "https://a.storyblok.com/f/281110/e3b757ada8/v850-gold-i-gallery-1.png",
+      "https://a.storyblok.com/f/281110/f0d854ccc4/v850-gold-i-gallery-2.png",
+      "https://a.storyblok.com/f/281110/90fe972541/v850-gold-i-gallery-3.png",
+      "https://a.storyblok.com/f/281110/5f2b7a006f/v850-gold-i-gallery-6.png"
+    ],
+    "mpn": "MPZ-8501-AFAG",
+    "ean13": null
+  },
+  {
+    "slug": "corsair-sf750-750w-80-platinum-sfx",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/psu/cp-9020284-eu/sf-series-sf750-fully-modular-80-plus-platinum-sfx-power-supply-eu-cp-9020284-eu",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/sf-platinum-series/Gallery/750/CP-9020284_01.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/sf-platinum-series/Gallery/750/CP-9020284_10.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/sf-platinum-series/Gallery/750/CP-9020284_11.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/sf-platinum-series/Gallery/750/CP-9020284_12.png"
+    ],
+    "mpn": "CP-9020284-EU",
+    "ean13": "0840006676300"
+  },
+  {
+    "slug": "be-quiet-straight-power-12-850w-80-platinum",
+    "sourceUrl": "https://www.bequiet.com/en/powersupply/4103",
+    "images": [
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=b8f4ea47522@be-quiet.net",
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=aa142a47517@be-quiet.net",
+      "https://www.bequiet.com/volumes/pim/powersupply/straightpower/straightpower12/XR/750W-1000W/045.jpg"
+    ],
+    "mpn": "BN337",
+    "ean13": "4260052189429"
+  },
+  {
+    "slug": "corsair-hx1000-1000w-80-platinum",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/psu/cp-9020139-eu/hx-series-hx1000-1000-watt-80-plus-platinum-certified-fully-modular-psu-eu-cp-9020139-eu",
+    "images": [
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/CP-9020139-EU/Gallery/HX1000_01.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/CP-9020139-EU/Gallery/HX1000_02.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/CP-9020139-EU/Gallery/HX1000_03.png",
+      "https://assets.corsair.com/image/upload/f_png/products/Power-Supply-Units/CP-9020139-EU/Gallery/HX1000_04.png"
+    ],
+    "mpn": "CP-9020139-EU",
+    "ean13": null
+  },
+  {
+    "slug": "kingston-nv2-1tb-nvme",
+    "sourceUrl": "https://www.kingston.com/en/memory/search/discontinuedmodels?partid=SNV2S%2F1000G",
+    "images": [
+      "https://media.kingston.com/kingston/product/ktc-product-ssd-snv2s-1000g-1-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/ktc-product-ssd-snv2s-1000g-2-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/ktc-product-ssd-snv2s-1000g-3-zm-lg.jpg"
+    ],
+    "mpn": "SNV2S/1000G",
+    "ean13": "0740617329919"
+  },
+  {
+    "slug": "crucial-p3-1tb-nvme",
+    "sourceUrl": "https://www.crucial.fr/ssd/p3/CT1000P3SSD8",
+    "images": [
+      "https://assets.micron.com/adobe/assets/urn:aaid:aem:6a66cf55-2ffa-4947-b2f4-1c57f00bfcd5/as/crucial-p3-ssd-flat-front-image.png"
+    ],
+    "mpn": "CT1000P3SSD8",
+    "ean13": "0649528918796"
+  },
+  {
+    "slug": "samsung-870-evo-1tb-sata",
+    "sourceUrl": "https://www.samsung.com/fr/memory-storage/sata-ssd/870-evo-1tb-sata-3-2-5-ssd-mz-77e1t0b-eu/",
+    "images": [
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-77e1t0b-eu/gallery/fr-870-evo-sata-3-2-5-ssd-mz-77e1t0b-eu-356627475?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-77e1t0b-eu/gallery/fr-870-evo-sata-3-2-5-ssd-mz-77e1t0b-eu-356627459?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-77e1t0b-eu/gallery/fr-870-evo-sata-3-2-5-ssd-mz-77e1t0b-eu-356627460?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-77e1t0b-eu/gallery/fr-870-evo-sata-3-2-5-ssd-mz-77e1t0b-eu-356627461?$Q90_2052_1641_JPG$"
+    ],
+    "mpn": "MZ-77E1T0B/EU",
+    "ean13": "8806090545917"
+  },
+  {
+    "slug": "western-digital-black-sn770-1tb-nvme",
+    "sourceUrl": "https://documents.sandisk.com/content/dam/asset-library/en_us/assets/public/western-digital/product/internal-drives/wd-black-ssd/product-brief-wd-black-sn770-nvme-ssd.pdf",
+    "images": [
+      "https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-black-sn770-nvme-ssd/gallery/wd-black-sn770-nvme-ssd-front.png",
+      "https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-black-sn770-nvme-ssd/gallery/wd-black-sn770-nvme-ssd-angled.png"
+    ],
+    "mpn": "WDS100T3X0E",
+    "ean13": null
+  },
+  {
+    "slug": "kingston-kc3000-1tb-nvme",
+    "sourceUrl": "https://www.kingston.com/fr/ssd/kc3000-nvme-m2-solid-state-drive?partnum=skc3000s%2F1024g",
+    "images": [
+      "https://media.kingston.com/kingston/product/ktc-product-ssd-kc3000-1024gb-1-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/ktc-product-ssd-kc3000-1024gb-2-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/ktc-product-ssd-kc3000-1024gb-3-zm-lg.jpg"
+    ],
+    "mpn": "SKC3000S/1024G",
+    "ean13": "0740617324433"
+  },
+  {
+    "slug": "western-digital-black-sn850x-1tb-nvme",
+    "sourceUrl": "https://www.sandisk.com/fr-fr/products/ssd/internal-ssd/wd-black-sn850x-nvme-ssd?sku=WDS100T2X0E",
+    "images": [
+      "https://www.sandisk.com/content/dam/sandisk/en-us/assets/products/internal-storage/wd-black-sn850x-nvme-ssd/gallery/wd-black-sn850x-nvme-ssd-front.png",
+      "https://www.sandisk.com/content/dam/sandisk/en-us/assets/products/internal-storage/wd-black-sn850x-nvme-ssd/gallery/wd-black-sn850x-nvme-ssd-angled.png"
+    ],
+    "mpn": "WDS100T2X0E",
+    "ean13": "0718037891392"
+  },
+  {
+    "slug": "kingston-nv3-2tb-nvme",
+    "sourceUrl": "https://www.kingston.com/fr/ssd/nv3-nvme-pcie-ssd?partnum=snv3s%2F2000g",
+    "images": [
+      "https://media.kingston.com/kingston/product/SNV3S_2000GB-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/SNV3S_2000GB_angle-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/SNV3S_2000GB_pkg-zm-lg.jpg"
+    ],
+    "mpn": "SNV3S/2000G",
+    "ean13": "0740617344783"
+  },
+  {
+    "slug": "crucial-p3-plus-2tb-nvme",
+    "sourceUrl": "https://www.crucial.fr/ssd/p3-plus/CT2000P3PSSD8",
+    "images": [
+      "https://assets.micron.com/adobe/assets/urn:aaid:aem:7f5fc122-7774-417e-9806-59baf7d2569f/as/crucial-p3-plus-ssd-flat-front-image.png"
+    ],
+    "mpn": "CT2000P3PSSD8",
+    "ean13": null
+  },
+  {
+    "slug": "samsung-990-evo-2tb-nvme",
+    "sourceUrl": "https://www.samsung.com/fr/memory-storage/nvme-ssd/990-evo-2tb-mz-v9e2t0bw/",
+    "images": [
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-v9e2t0bw/gallery/fr-990-evo-nvme-m2-ssd-mz-v9e2t0bw-539474345?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-v9e2t0bw/gallery/fr-990-evo-nvme-m2-ssd-mz-v9e2t0bw-539474330?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-v9e2t0bw/gallery/fr-990-evo-nvme-m2-ssd-mz-v9e2t0bw-539474332?$Q90_2052_1641_JPG$"
+    ],
+    "mpn": "MZ-V9E2T0BW",
+    "ean13": "8806095300269"
+  },
+  {
+    "slug": "western-digital-black-sn850x-2tb-nvme",
+    "sourceUrl": "https://www.sandisk.com/fr-fr/products/ssd/internal-ssd/wd-black-sn850x-nvme-ssd?sku=WDS200T2X0E",
+    "images": [
+      "https://www.sandisk.com/content/dam/sandisk/en-us/assets/products/internal-storage/wd-black-sn850x-nvme-ssd/gallery/wd-black-sn850x-nvme-ssd-front.png",
+      "https://www.sandisk.com/content/dam/sandisk/en-us/assets/products/internal-storage/wd-black-sn850x-nvme-ssd/gallery/wd-black-sn850x-nvme-ssd-angled.png"
+    ],
+    "mpn": "WDS200T2X0E",
+    "ean13": "0718037891408"
+  },
+  {
+    "slug": "samsung-990-pro-2tb-nvme",
+    "sourceUrl": "https://www.samsung.com/fr/memory-storage/nvme-ssd/990-pro-2tb-nvme-pcie-gen-4-mz-v9p2t0bw/",
+    "images": [
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-v9p2t0bw/gallery/fr-990pro-nvme-m2-ssd-mz-v9p2t0bw-534284922?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-v9p2t0bw/gallery/fr-990pro-nvme-m2-ssd-mz-v9p2t0bw-534284907?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-v9p2t0bw/gallery/fr-990pro-nvme-m2-ssd-mz-v9p2t0bw-534284908?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-v9p2t0bw/gallery/fr-990pro-nvme-m2-ssd-mz-v9p2t0bw-534284909?$Q90_2052_1641_JPG$"
+    ],
+    "mpn": "MZ-V9P2T0BW",
+    "ean13": "8806094215038"
+  },
+  {
+    "slug": "crucial-t705-2tb-nvme",
+    "sourceUrl": "https://www.crucial.fr/ssd/t705/CT2000T705SSD3",
+    "images": [
+      "https://assets.micron.com/adobe/assets/urn:aaid:aem:bc55fd78-4106-46b1-898e-ff39ee3122a1/as/crucial-ssd-t705-topview.png"
+    ],
+    "mpn": "CT2000T705SSD3",
+    "ean13": null
+  },
+  {
+    "slug": "samsung-9100-pro-2tb-nvme",
+    "sourceUrl": "https://www.samsung.com/fr/memory-storage/nvme-ssd/9100-pro-2tb-nvme-pcie-gen-5-mz-vap2t0bw/",
+    "images": [
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-vap2t0bw/gallery/fr-9100-pro-nvme-m2-ssd-mz-vap2t0bw-545880449?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-vap2t0bw/gallery/fr-9100-pro-nvme-m2-ssd-mz-vap2t0bw-545880459?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-vap2t0bw/gallery/fr-9100-pro-nvme-m2-ssd-mz-vap2t0bw-545880467?$Q90_2052_1641_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/mz-vap2t0bw/gallery/fr-9100-pro-nvme-m2-ssd-mz-vap2t0bw-545880474?$Q90_2052_1641_JPG$"
+    ],
+    "mpn": "MZ-VAP2T0BW",
+    "ean13": "8806095811710"
+  },
+  {
+    "slug": "western-digital-blue-1tb-7200rpm",
+    "sourceUrl": "https://www.westerndigital.com/fr-fr/products/internal-drives/wd-blue-desktop-sata-hdd?sku=WD10EZEX",
+    "images": [
+      "https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-blue-desktop-sata-hdd/gallery/wd-blue-pc-desktop-hard-drive-1tb.png"
+    ],
+    "mpn": "WD10EZEX",
+    "ean13": "0718037779911"
+  },
+  {
+    "slug": "western-digital-blue-2tb-7200rpm",
+    "sourceUrl": "https://www.westerndigital.com/fr-fr/products/internal-drives/wd-blue-desktop-sata-hdd?sku=WD20EZBX",
+    "images": [
+      "https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-blue-desktop-sata-hdd/gallery/wd-blue-pc-desktop-hard-drive-2tb.png"
+    ],
+    "mpn": "WD20EZBX",
+    "ean13": "0718037877501"
+  },
+  {
+    "slug": "toshiba-p300-3tb-7200rpm",
+    "sourceUrl": "https://www.toshiba-storage.com/products/toshiba-internal-hard-drives-p300/",
+    "images": [
+      "https://www.toshiba-storage.com/wp/wp-content/uploads/2019/09/P300_Gallery_Images_01.png",
+      "https://www.toshiba-storage.com/wp/wp-content/uploads/2019/09/P300_Gallery_Images_02.png",
+      "https://www.toshiba-storage.com/wp/wp-content/uploads/2017/08/P300_Gallery_Images_01-2.png",
+      "https://www.toshiba-storage.com/wp/wp-content/uploads/2020/02/toshiba-p300-gallery-images-640x640px.png"
+    ],
+    "mpn": "HDWD130EZSTA",
+    "ean13": null
+  },
+  {
+    "slug": "seagate-skyhawk-4tb-surveillance",
+    "sourceUrl": "https://www.seagate.com/fr/fr/products/video-analytics/skyhawk-hard-drive/?sku=ST4000VX016",
+    "images": [
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/surveillance-drives/skyhawk-hard-drive/_shared/images/skyhawk-4tb-front-600x600.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/surveillance-drives/skyhawk-hard-drive/_shared/images/skyhawk-4tb-hero-left-600x600.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/surveillance-drives/skyhawk-hard-drive/_shared/images/skyhawk-4tb-hero-right-600x600.png"
+    ],
+    "mpn": "ST4000VX016",
+    "ean13": null
+  },
+  {
+    "slug": "toshiba-n300-4tb-nas",
+    "sourceUrl": "https://www.toshiba-storage.com/products/toshiba-internal-hard-drives-n300/",
+    "images": [
+      "https://www.toshiba-storage.com/wp/wp-content/uploads/2019/09/N300_Gallery_Images_01.png",
+      "https://www.toshiba-storage.com/wp/wp-content/uploads/2019/09/N300_Gallery_Images_02.png"
+    ],
+    "mpn": "HDWG440EZSTA",
+    "ean13": null
+  },
+  {
+    "slug": "seagate-ironwolf-4tb-nas",
+    "sourceUrl": "https://www.seagate.com/fr/fr/products/nas-drives/ironwolf-hard-drive/?sku=ST4000VN006",
+    "images": [
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/nas-drives/ironwolf-hard-drive/_shared/images/ironwolf-4tb-front-product-detail-image.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/nas-drives/ironwolf-hard-drive/_shared/images/ironwolf-4tb-left-product-detail-image.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/nas-drives/ironwolf-hard-drive/_shared/images/ironwolf-4tb-right-product-detail-image.png"
+    ],
+    "mpn": "ST4000VN006",
+    "ean13": "7636490078309"
+  },
+  {
+    "slug": "western-digital-red-plus-4tb-nas",
+    "sourceUrl": "https://www.westerndigital.com/fr-fr/products/internal-drives/wd-red-plus-sata-3-5-hdd?sku=WD40EFPX",
+    "images": [
+      "https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-red-plus-sata-3-5-hdd/gallery/wd-red-plus-sata-3-5-hdd-4tb.png"
+    ],
+    "mpn": "WD40EFPX",
+    "ean13": "0718037899794"
+  },
+  {
+    "slug": "western-digital-purple-6tb-surveillance",
+    "sourceUrl": "https://www.westerndigital.com/fr-fr/products/internal-drives/wd-purple-sata-hdd?sku=WD64PURZ",
+    "images": [
+      "https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-purple-sata-hdd/gallery/wd-purple-surveillance-hard-drive-6tb.png"
+    ],
+    "mpn": "WD64PURZ",
+    "ean13": "0718037898339"
+  },
+  {
+    "slug": "toshiba-x300-8tb-performance",
+    "sourceUrl": "https://www.toshiba-storage.com/products/toshiba-internal-hard-drives-x300/",
+    "images": [
+      "https://www.toshiba-storage.com/wp/wp-content/uploads/2019/09/X300_Gallery_Images_01.png",
+      "https://www.toshiba-storage.com/wp/wp-content/uploads/2019/09/X300_Gallery_Images_02.png"
+    ],
+    "mpn": "HDWR480EZSTA",
+    "ean13": null
+  },
+  {
+    "slug": "seagate-ironwolf-8tb-nas",
+    "sourceUrl": "https://www.seagate.com/fr/fr/products/nas-drives/ironwolf-hard-drive/?sku=ST8000VN004",
+    "images": [
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/nas-drives/ironwolf-hard-drive/_shared/images/ironwolf-8tb-front-product-detail-image.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/nas-drives/ironwolf-hard-drive/_shared/images/ironwolf-8tb-left-product-detail-image.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/nas-drives/ironwolf-hard-drive/_shared/images/ironwolf-8tb-right-product-detail-image.png"
+    ],
+    "mpn": "ST8000VN004",
+    "ean13": null
+  },
+  {
+    "slug": "western-digital-red-plus-8tb-nas",
+    "sourceUrl": "https://www.westerndigital.com/fr-fr/products/internal-drives/wd-red-plus-sata-3-5-hdd?sku=WD80EFPX",
+    "images": [
+      "https://www.westerndigital.com/content/dam/store/en-us/assets/products/internal-storage/wd-red-plus-sata-3-5-hdd/gallery/wd-red-plus-sata-3-5-hdd-8tb.png"
+    ],
+    "mpn": "WD80EFPX",
+    "ean13": "0718037899817"
+  },
+  {
+    "slug": "seagate-exos-x18-12tb-enterprise",
+    "sourceUrl": "https://www.seagate.com/fr/fr/support/internal-hard-drives/enterprise-hard-drives/exos-X18/",
+    "images": [
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/enterprise-drives/exos-x/x18/_shared/images/product-detail-gallery-x18-12tb-1.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/enterprise-drives/exos-x/x18/_shared/images/product-detail-gallery-x18-12tb-2.png"
+    ],
+    "mpn": "ST12000NM000J",
+    "ean13": null
+  },
+  {
+    "slug": "dell-p2422h-24-full-hd",
+    "sourceUrl": "https://www.dell.com/fr-fr/shop/p/APD/210-AZYX/",
+    "images": [
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/p-series/p2422h/media-gallery/peripherals_monitor_p2422h_gallery_2.psd?fmt=png-alpha&wid=1600",
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/p-series/p2422h/media-gallery/peripherals_monitor_p2422h_gallery_1.psd?fmt=png-alpha&wid=1600",
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/p-series/p2422h/media-gallery/peripherals_monitor_p2422h_gallery_6.psd?fmt=png-alpha&wid=1600"
+    ],
+    "mpn": "210-AZYX",
+    "ean13": "5397184505175"
+  },
+  {
+    "slug": "asus-tuf-gaming-vg249q3a-24-180hz",
+    "sourceUrl": "https://www.asus.com/fr/displays-desktops/monitors/tuf-gaming/tuf-gaming-vg249q3a/",
+    "images": [
+      "https://dlcdnwebimgs.asus.com/gain/1292674f-ed78-43e1-b6f2-573192db5f6b/",
+      "https://dlcdnwebimgs.asus.com/gain/ce50735b-93b4-4dfb-8751-7f80c7e54a88/",
+      "https://dlcdnwebimgs.asus.com/gain/c244293d-bd1e-4ded-a33f-38a0ef8809ec/",
+      "https://dlcdnwebimgs.asus.com/gain/c414e418-c791-4f55-aa85-012f33e536b6/"
+    ],
+    "mpn": "90LM09B0-B01170",
+    "ean13": "4711387172452"
+  },
+  {
+    "slug": "lg-24gn65r-b-24-144hz-ips",
+    "sourceUrl": "https://www.lg.com/it/monitor/gaming/24gn65r-b/",
+    "images": [
+      "https://www.lg.com/content/dam/channel/wcms/it/images/monitor/24gn65r-b_beu_eeis_it_c/gallery/24GN65R-B_UltraGear-Gaming-Monitors-DZ-01.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/it/images/monitor/24gn65r-b_beu_eeis_it_c/gallery/24GN65R-B_UltraGear-Gaming-Monitors-DZ-03.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/it/images/monitor/24gn65r-b_beu_eeis_it_c/gallery/24GN65R-B_UltraGear-Gaming-Monitors-DZ-05.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/it/images/monitor/24gn65r-b_beu_eeis_it_c/gallery/24GN65R-B_UltraGear-Gaming-Monitors-DZ-06.jpg"
+    ],
+    "mpn": "24GN65R-B.BEU",
+    "ean13": "8806084069276"
+  },
+  {
+    "slug": "gigabyte-gs27q-27-170hz",
+    "sourceUrl": "https://www.gigabyte.com/fr/Monitor/GS27Q",
+    "images": [
+      "https://www.gigabyte.com/FileUpload/Global/KeyFeature/2461/innergigabyte/images/design-left-b.png",
+      "https://static.gigabyte.com/StaticFile/Image/Global/5a1b6a4b6ed73e042282dadf5f3b88e6/ProductRemoveBg/45055",
+      "https://www.gigabyte.com/FileUpload/Global/KeyFeature/2461/innergigabyte/images/gallery/02.png"
+    ],
+    "mpn": "GS27Q",
+    "ean13": "4719331852887"
+  },
+  {
+    "slug": "samsung-odyssey-g5-27-1440p-165hz",
+    "sourceUrl": "https://www.samsung.com/fr/monitors/gaming/odyssey-g5-g55c-27-inch-165hz-curved-qhd-ls27cg552euxen/",
+    "images": [
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/ls27cg552euxen/gallery/fr-odyssey-g5-g55c-ls27cg552euxen-539583234?$Q90_1368_1094_F_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/ls27cg552euxen/gallery/fr-odyssey-g5-g55c-ls27cg552euxen-539583235?$Q90_1368_1094_F_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/ls27cg552euxen/gallery/fr-odyssey-g5-g55c-ls27cg552euxen-539583233?$Q90_1368_1094_F_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/ls27cg552euxen/gallery/fr-odyssey-g5-g55c-ls27cg552euxen-539583226?$Q90_1368_1094_F_JPG$"
+    ],
+    "mpn": "LS27CG552EUXEN",
+    "ean13": "8806095337210"
+  },
+  {
+    "slug": "dell-g2724d-27-1440p-165hz",
+    "sourceUrl": "https://www.dell.com/fr-fr/shop/p/APD/210-BHTK/",
+    "images": [
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/g-series/g2724d/media-gallery/monitor-g2724d-black-gallery-2.psd?fmt=png-alpha&wid=1000",
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/g-series/g2724d/media-gallery/monitor-g2724d-black-gallery-1.psd?fmt=png-alpha&wid=1000",
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/g-series/g2724d/media-gallery/monitor-g2724d-black-gallery-7.psd?fmt=png-alpha&wid=1000",
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/g-series/g2724d/media-gallery/monitor-g2724d-black-gallery-4.psd?fmt=png-alpha&wid=1000"
+    ],
+    "mpn": "210-BHTK",
+    "ean13": null
+  },
+  {
+    "slug": "asus-proart-pa278qv-27-qhd",
+    "sourceUrl": "https://www.asus.com/fr/displays-desktops/monitors/proart/proart-display-pa278qv/",
+    "images": [
+      "https://www.asus.com/media/global/gallery/ipdwstoa00r8cwqz_setting_xxx_0_90_end_2000.png",
+      "https://www.asus.com/media/global/gallery/pqaqirssqcmlqufo_setting_xxx_0_90_end_2000.png",
+      "https://www.asus.com/media/global/gallery/ery6j7flriv0rcum_setting_xxx_0_90_end_2000.png",
+      "https://www.asus.com/media/global/gallery/aahfduawvgph4f3j_setting_xxx_0_90_end_2000.png"
+    ],
+    "mpn": "90LM05L1-B03370",
+    "ean13": "4718017603614"
+  },
+  {
+    "slug": "lg-27gp850-b-27-1440p-180hz",
+    "sourceUrl": "https://www.lg.com/fr/moniteurs/gaming/27gp850p-b-moniteur-ultragear/",
+    "images": [
+      "https://www.lg.com/content/dam/channel/wcms/fr/images/moniteurs/27gp850p-b_beu_eefs_fr_c/gallery/DZ-01.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/fr/images/moniteurs/27gp850p-b_beu_eefs_fr_c/gallery/DZ-03.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/fr/images/moniteurs/27gp850p-b_beu_eefs_fr_c/gallery/DZ-05.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/fr/images/moniteurs/27gp850p-b_beu_eefs_fr_c/gallery/DZ-06.jpg"
+    ],
+    "mpn": "27GP850P-B.AEU",
+    "ean13": "8806091983299"
+  },
+  {
+    "slug": "dell-u2723qe-27-4k-ips-black",
+    "sourceUrl": "https://www.dell.com/fr-fr/shop/p/APD/210-BCXK/",
+    "images": [
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/u-series/u2723qe/media-gallery/monitor-u2723qe-gallery-1.psd?fmt=png-alpha&wid=1000",
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/u-series/u2723qe/media-gallery/monitor-u2723qe-gallery-3.psd?fmt=png-alpha&wid=1000",
+      "https://i.dell.com/is/image/DellContent/content/dam/ss2/product-images/dell-client-products/peripherals/monitors/u-series/u2723qe/media-gallery/monitor-u2723qe-gallery-6.psd?fmt=png-alpha&wid=1000"
+    ],
+    "mpn": "210-BCXK",
+    "ean13": "5397184567753"
+  },
+  {
+    "slug": "samsung-odyssey-g7-32-1440p-curved-240hz",
+    "sourceUrl": "https://www.samsung.com/at/monitors/gaming/odyssey-g7-32-inch-240hz-1ms-curved-lc32g75tqsrxen/",
+    "images": [
+      "https://images.samsung.com/is/image/samsung/p6pim/at/lc32g75tqsrxen/gallery/at-odyssey-g7-c27g75t-lc32g75tqsrxen-437284074?$Q90_1368_1094_F_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/at/lc32g75tqsrxen/gallery/at-odyssey-g7-c27g75t-lc32g75tqsrxen-437284078?$Q90_1368_1094_F_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/at/lc32g75tqsrxen/gallery/at-odyssey-g7-c27g75t-lc32g75tqsrxen-437284075?$Q90_1368_1094_F_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/at/lc32g75tqsrxen/gallery/at-odyssey-g7-c27g75t-lc32g75tqsrxen-437284080?$Q90_1368_1094_F_JPG$"
+    ],
+    "mpn": "LC32G75TQSRXEN",
+    "ean13": null
+  },
+  {
+    "slug": "lg-32gr93u-b-32-4k-144hz",
+    "sourceUrl": "https://www.lg.com/be_fr/moniteurs/moniteurs-gaming-ultragear/32gr93u-b/",
+    "images": [
+      "https://www.lg.com/content/dam/channel/wcms/be_fr/images/monitor/32gr93u-b_aeu_eebn_nl_c/gallery/large01.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/be_fr/images/monitor/32gr93u-b_aeu_eebn_nl_c/gallery/large03.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/be_fr/images/monitor/32gr93u-b_aeu_eebn_nl_c/gallery/large05.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/be_fr/images/monitor/32gr93u-b_aeu_eebn_nl_c/gallery/large07.jpg"
+    ],
+    "mpn": "32GR93U-B.AEU",
+    "ean13": "8806084254382"
+  },
+  {
+    "slug": "lg-34gp83a-b-34-ultrawide-160hz",
+    "sourceUrl": "https://www.lg.com/ca_fr/moniteurs/pleine-hd-et-qhd/34gp83a-b/",
+    "images": [
+      "https://www.lg.com/content/dam/channel/wcms/ca_fr/images/moniteurs-de-bureau/34gp83a-b_aus_enci_ca_fr_c/gallery/dz-01.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/ca_fr/images/moniteurs-de-bureau/34gp83a-b_aus_enci_ca_fr_c/gallery/dz-03.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/ca_fr/images/moniteurs-de-bureau/34gp83a-b_aus_enci_ca_fr_c/gallery/dz-05.jpg",
+      "https://www.lg.com/content/dam/channel/wcms/ca_fr/images/moniteurs-de-bureau/34gp83a-b_aus_enci_ca_fr_c/gallery/dz-07.jpg"
+    ],
+    "mpn": "34GP83A-B.AUS",
+    "ean13": "0195174002872"
+  },
+  {
+    "slug": "samsung-odyssey-g8-oled-34-ultrawide",
+    "sourceUrl": "https://www.samsung.com/fr/monitors/gaming/odyssey-oled-g8-g85sb-34-inch-175hz-curved-ultra-wqhd-ls34bg850suxen/",
+    "images": [
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/ls34bg850suxen/gallery/fr-odyssey-oled-g8-g85sb-ls34bg850suxen-534399608?$Q90_1368_1094_F_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/ls34bg850suxen/gallery/fr-odyssey-oled-g8-g85sb-ls34bg850suxen-534399613?$Q90_1368_1094_F_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/ls34bg850suxen/gallery/fr-odyssey-oled-g8-g85sb-ls34bg850suxen-534399606?$Q90_1368_1094_F_JPG$",
+      "https://images.samsung.com/is/image/samsung/p6pim/fr/ls34bg850suxen/gallery/fr-odyssey-oled-g8-g85sb-ls34bg850suxen-534399616?$Q90_1368_1094_F_JPG$"
+    ],
+    "mpn": "LS34BG850SUXEN",
+    "ean13": "8806094525175"
+  },
+  {
+    "slug": "razer-ornata-v3-x",
+    "sourceUrl": "https://www.razer.com/gaming-keyboards/razer-ornata-v3-x",
+    "images": [
+      "https://assets3.razerzone.com/TO21gC25eHr0JutQQhGPzOPd1zs=/1920x1280/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhd8%2Fh69%2F9502654332958%2Fornata-v3-2-x-500x500.png"
+    ],
+    "mpn": "RZ03-04470500-R3F1",
+    "ean13": "8886419348863"
+  },
+  {
+    "slug": "logitech-g305-lightspeed",
+    "sourceUrl": "https://www.logitechg.com/fr-be/shop/p/g305-lightspeed-wireless-gaming-mouse.910-005283",
+    "images": [
+      "https://resource.logitechg.com/content/dam/gaming/en/products/g305/2025-update/g305-lightspeed-mouse-top-angle-black-gallery-1.png",
+      "https://resource.logitechg.com/content/dam/gaming/en/products/g305/2025-update/g305-lightspeed-mouse-profile-left-angle-black-gallery-4.png",
+      "https://resource.logitechg.com/content/dam/gaming/en/products/g305/2025-update/g305-lightspeed-mouse-3qtr-high-back-angle-black-gallery-7.png",
+      "https://resource.logitechg.com/content/dam/gaming/en/products/g305/2025-update/g305-lightspeed-mouse-bottom-angle-black-gallery-5.png"
+    ],
+    "mpn": "910-005283",
+    "ean13": "5099206077836"
+  },
+  {
+    "slug": "steelseries-arctis-nova-1x",
+    "sourceUrl": "https://steelseries.com/fr-fr/gaming-headsets/arctis-nova-1?color=black&primaryPlatform=xbox",
+    "images": [
+      "https://images.ctfassets.net/hmm5mo4qf4mf/5NruAikgArpnvPoDwIMz2v/9144c65b81b3c3e0cc240fee40847787/arctis_nova_1x_black_pdp_img_buy_06.png__1920x1080_crop-fit_optimize_subsampling-2-145.png",
+      "https://images.ctfassets.net/hmm5mo4qf4mf/72suah0rdKoBzMBrc8AfM9/24a5100f17e3e6ab261c4e500fcc5124/arctis_nova_1x_black_pdp_img_buy_04.png__1920x1080_crop-fit_optimize_subsampling-2-144.png",
+      "https://images.ctfassets.net/hmm5mo4qf4mf/7CpsRzNDriygwFN1zBowOW/4153bb9a2cedddc1de1f21ba72d5e762/arctis_nova_1x_black_pdp_img_buy_05.png",
+      "https://images.ctfassets.net/hmm5mo4qf4mf/7jF0lFuCxi27LCbses4kAt/d4ee844c29993dcda5ea0a509623be92/arctis_nova_1x_black_pdp_img_buy_03.png__1920x1080_crop-fit_optimize_subsampling-2-143.png"
+    ],
+    "mpn": "61616",
+    "ean13": "5707119043618"
+  },
+  {
+    "slug": "razer-deathadder-v3-gaming-mouse",
+    "sourceUrl": "https://www.razer.com/fr-fr/gaming-mice/razer-deathadder-v3/RZ01-04640100-R3M1",
+    "images": [
+      "https://assets3.razerzone.com/0MD48zTyLW2BJzQIGbYIMqTiK54=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fh79%2Fhaf%2F9529652674590%2Fdeathadder-v3-2-500x500.png"
+    ],
+    "mpn": "RZ01-04640100-R3M1",
+    "ean13": "8886419334071"
+  },
+  {
+    "slug": "logitech-lift-vertical-mouse",
+    "sourceUrl": "https://www.logitech.com/fr-fr/shop/p/lift-vertical-ergonomic-mouse.910-006473",
+    "images": [
+      "https://resource.logitech.com/content/dam/logitech/en/products/mice/lift-vertical-ergonomic-mouse/2026-update/gallery/graphite/lift-mouse-top-angle-graphite-gallery-1.png",
+      "https://resource.logitech.com/content/dam/logitech/en/products/mice/lift-vertical-ergonomic-mouse/2026-update/gallery/graphite/lift-mouse-front-angle-graphite-gallery-6.png",
+      "https://resource.logitech.com/content/dam/logitech/en/products/mice/lift-vertical-ergonomic-mouse/2026-update/gallery/graphite/lift-mouse-profile-left-graphite-gallery-7.png",
+      "https://resource.logitech.com/content/dam/logitech/en/products/mice/lift-vertical-ergonomic-mouse/2026-update/gallery/graphite/lift-mouse-profile-right-graphite-gallery-8.png"
+    ],
+    "mpn": "910-006473",
+    "ean13": "5099206099784"
+  },
+  {
+    "slug": "corsair-k55-rgb-pro-xt",
+    "sourceUrl": "https://www.corsair.com/ww/en/p/keyboards/ch-9226715-fr/k55-rgb-pro-xt-gaming-keyboard-fr-ch-9226715-fr",
+    "images": [
+      "https://assets.corsair.com/image/upload/products/Gaming-Keyboards/base-k55-rgb-pro-xt-config/Gallery/CH-9226715-FR/FR_K55_RGB_PRO_XT_01.png"
+    ],
+    "mpn": "CH-9226715-FR",
+    "ean13": "0840006631545"
+  },
+  {
+    "slug": "steelseries-aerox-3-wireless",
+    "sourceUrl": "https://steelseries.com/fr-fr/gaming-mice/aerox-3-2022?color=onyx&connectivityType=wireless",
+    "images": [
+      "https://images.ctfassets.net/hmm5mo4qf4mf/3y6ZJnwrVOZDQpu98ibwx3/999e95f81e9d7e3f1c4385a085e0ce25/buy2.png",
+      "https://images.ctfassets.net/hmm5mo4qf4mf/2VG0tOlhFVP9EfpinOULRf/7ef5b27030fd941ab44bf992dea5b9a4/BuyImg_05.png",
+      "https://images.ctfassets.net/hmm5mo4qf4mf/75b5uerCuplThI7S7NxQqw/51c5464125743b9a036fdbd8b4f9f7ea/BuyImg_04.png"
+    ],
+    "mpn": "62612",
+    "ean13": "5707119047562"
+  },
+  {
+    "slug": "logitech-mx-master-3s-wireless-mouse",
+    "sourceUrl": "https://www.logitech.com/fr-fr/shop/p/mx-master-3s",
+    "images": [
+      "https://resource.logitech.com/content/dam/logitech/en/products/mice/mx-master-3s/2025-update/mx-master-3s-bluetooth-edition-top-view-graphite-new-1.png",
+      "https://resource.logitech.com/content/dam/logitech/en/products/mice/mx-master-3s/2025-update/mx-master-3s-bluetooth-edition-left-front-view-graphite-new-8.png",
+      "https://resource.logitech.com/content/dam/logitech/en/products/mice/mx-master-3s/2025-update/mx-master-3s-bluetooth-edition-left-profile-view-graphite-new-4.png",
+      "https://resource.logitech.com/content/dam/logitech/en/products/mice/mx-master-3s/2025-update/mx-master-3s-bluetooth-edition-rear-view-graphite-new-7.png"
+    ],
+    "mpn": "910-007501",
+    "ean13": "5099206129382"
+  },
+  {
+    "slug": "logitech-mx-keys-s",
+    "sourceUrl": "https://www.logitech.com/fr-fr/shop/p/mx-keys-s.920-011568",
+    "images": [
+      "https://resource.logitech.com/content/dam/logitech/en/products/keyboards/mx-keys-s/migration-assets-for-delorean-2025/gallery/mx-keys-s-top-view-graphite-fra.png",
+      "https://resource.logitech.com/content/dam/logitech/en/products/keyboards/mx-keys-s/migration-assets-for-delorean-2025/gallery/mx-keys-s-fob-view-graphite-fra.png",
+      "https://resource.logitech.com/content/dam/logitech/en/products/keyboards/mx-keys-s/migration-assets-for-delorean-2025/gallery/mx-keys-s-amazon-graphite-fra.png"
+    ],
+    "mpn": "920-011568",
+    "ean13": "5099206112261"
+  },
+  {
+    "slug": "logitech-g502-x-lightspeed",
+    "sourceUrl": "https://www.logitechg.com/fr-fr/shop/p/g502-x-wireless-lightforce.910-006181",
+    "images": [
+      "https://resource.logitechg.com/content/dam/gaming/en/products/g502x-lightspeed/gallery/g502-x-lightspeed-mouse-top-angle-black-gallery-1.png",
+      "https://resource.logitechg.com/content/dam/gaming/en/products/g502x-lightspeed/gallery/2026-update/gallery/g502-x-lightspeed-3qtr-high-back-angle-black-gallery-5.png",
+      "https://resource.logitechg.com/content/dam/gaming/en/products/g502x-lightspeed/gallery/2026-update/gallery/g502-x-lightspeed-top-profile-angle-black-gallery-7.png",
+      "https://resource.logitechg.com/content/dam/gaming/en/products/g502x-lightspeed/gallery/2026-update/gallery/g502-x-lightspeed-back-angle-black-gallery-8.png"
+    ],
+    "mpn": "910-006181",
+    "ean13": "5099206096387"
+  },
+  {
+    "slug": "corsair-k70-rgb-pro",
+    "sourceUrl": "https://www.corsair.com/fr/fr/p/keyboards/ch-9109410-fr/k70-rgb-pro-mechanical-gaming-keyboard-with-pbt-double-shot-pro-keycaps-cherry-mx-red-ch-9109410-fr",
+    "images": [
+      "https://assets.corsair.com/image/upload/products/Gaming-Keyboards/CH-9109410-FR/Gallery/K70_RGB_PRO_PBT_01.png"
+    ],
+    "mpn": "CH-9109410-FR",
+    "ean13": "0840006645818"
+  },
+  {
+    "slug": "logitech-g-pro-x-superlight-2",
+    "sourceUrl": "https://www.logitechg.com/fr-fr/shop/p/pro-x2-superlight-wireless-mouse.910-006631",
+    "images": [
+      "https://resource.logitechg.com/content/dam/gaming/en/products/pro-x-superlight-2/new-gallery-assets-2025/pro-x-superlight-2-mice-top-angle-black-gallery-1.png",
+      "https://resource.logitechg.com/content/dam/gaming/en/products/pro-x-superlight-2/new-gallery-assets-2025/pro-x-superlight-2-mice-profile-right-angle-black-gallery-5.png",
+      "https://resource.logitechg.com/content/dam/gaming/en/products/pro-x-superlight-2/new-gallery-assets-2025/pro-x-superlight-2-mice-bottom-angle-black-gallery-6.png"
+    ],
+    "mpn": "910-006631",
+    "ean13": "5099206104532"
+  },
+  {
+    "slug": "razer-basilisk-v3-pro",
+    "sourceUrl": "https://www.razer.com/fr-fr/gaming-mice/razer-basilisk-v3-pro/RZ01-04620100-R3G1",
+    "images": [
+      "https://assets3.razerzone.com/gs-JSSQnfmE-YqwggRrrHSQovyE=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fha0%2Fhb6%2F9529652445214%2Fbasilisk-v3-pro-black-2-500x500.png"
+    ],
+    "mpn": "RZ01-04620100-R3G1",
+    "ean13": "8886419334026"
+  },
+  {
+    "slug": "steelseries-apex-pro-tkl-mechanical-keyboard",
+    "sourceUrl": "https://steelseries.com/fr-fr/gaming-keyboards/apex-pro-gen-3?keyboardSize=tkl&connectivityType=wired&keyboardLanguage=french&color=black",
+    "images": [
+      "https://images.ctfassets.net/hmm5mo4qf4mf/4JowI26eF16rzKZ2fMJpI7/30f8b3e7ee6f957b5a927f526ada0185/apex_pro_tkl_gen_3_black_img_buy_01.png__1920x1080_crop-fit_optimize_subsampling-2-3759.png"
+    ],
+    "mpn": "64744",
+    "ean13": "5707119058827"
+  },
+  {
+    "slug": "razer-blackwidow-v4-pro",
+    "sourceUrl": "https://www.razer.com/fr-fr/gaming-keyboards/razer-blackwidow-v4-pro/RZ03-04682200-R3F1",
+    "images": [
+      "https://medias-p1.phoenix.razer.com/sys-master-phoenix-images-container/h74/h37/9477488148510/230216-bw-v4-pro-1500x1000-1.jpg"
+    ],
+    "mpn": "RZ03-04682200-R3F1",
+    "ean13": "8887910072226"
+  },
+  {
+    "slug": "msi-mag-274qrf-qd-e2-27-180hz",
+    "sourceUrl": "https://www.msi.com/Monitor/MAG-274QRF-QD-E2",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_1698825055a998b04cad4f3a7146e1cbbd35fe08d1.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_16988250552efaa093406f011b9eddd931141cae72.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_169882505896fa01ab5e58dcbaf0a44a97398d5cdf.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_16988250589c864cb898e551b20af436c3a01cb8be.webp"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "msi-g274qpx-27-240hz",
+    "sourceUrl": "https://www.msi.com/Monitor/G274QPX",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_1691385657d4c42d6fce6a530d08f777c8fc7bff11.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1662348040d1b8254774295bcfbf202e181f9e2aea.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1662348043c0b92b5d17c9c54d4aa62860284b4c87.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1662348043c7b13c3526a76b4cacd929b462517556.webp"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "nzxt-h5-flow-mid-tower",
+    "sourceUrl": "https://nzxt.com/fr-intl/products/h5-flow",
+    "images": [
+      "https://nzxt.com/cdn/shop/files/h5-flow_black_01_hero.png",
+      "https://nzxt.com/cdn/shop/files/h5-flow_black_02_side.png",
+      "https://nzxt.com/cdn/shop/files/h5-flow_black_03_front.png",
+      "https://nzxt.com/cdn/shop/files/h5-flow_black_06_overlook.png"
+    ],
+    "mpn": "CC-H52FB-01",
+    "ean13": "0810074845915"
+  },
+  {
+    "slug": "nzxt-h7-flow-mid-tower",
+    "sourceUrl": "https://nzxt.com/fr-intl/products/h7-flow",
+    "images": [
+      "https://nzxt.com/cdn/shop/files/h7-flow-hero-black.png",
+      "https://nzxt.com/cdn/shop/files/h7-flow-side-empty-black.png",
+      "https://nzxt.com/cdn/shop/files/h7-flow-back-angle-black.png",
+      "https://nzxt.com/cdn/shop/files/h7-flow-top-black.png"
+    ],
+    "mpn": "CM-H72FB-01",
+    "ean13": "0810074845557"
+  },
+  {
+    "slug": "nzxt-h9-flow-dual-chamber",
+    "sourceUrl": "https://nzxt.com/fr-intl/products/h9-flow",
+    "images": [
+      "https://nzxt.com/cdn/shop/files/h9-flow_09_black-hero.png",
+      "https://nzxt.com/cdn/shop/files/h9-flow_10_black-front.png",
+      "https://nzxt.com/cdn/shop/files/h9-flow_11_black-side.png",
+      "https://nzxt.com/cdn/shop/files/h9-flow_12_black-rear.png"
+    ],
+    "mpn": "CM-H92FB-01",
+    "ean13": "0810074847858"
+  },
+  {
+    "slug": "fractal-design-pop-air-rgb-tg",
+    "sourceUrl": "https://www.fractal-design.com/products/cases/pop-series/pop-air/pop-air-rgb-black-tg-clear-tint/",
+    "images": [
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/3156be4b9292fbe53fd5853b076157d78cf42ff4-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/3b9d0fda79ad785d117dea4be00bbdd2b580866c-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/11b27b4b38e236a51cf8509ded50eff27934c94a-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/90a10500e183591de5193d80bf15c12e0c218e11-2560x2560.jpg"
+    ],
+    "mpn": "FD-C-POR1A-06",
+    "ean13": null
+  },
+  {
+    "slug": "fractal-design-meshify-2-compact-tg",
+    "sourceUrl": "https://www.fractal-design.com/products/cases/meshify-series/meshify-2-compact/meshify-2-compact-black-dark-tg/",
+    "images": [
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/5d89827038eaf22b7e4863b565cc776e708c6463-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/58d9da19d501fa9104286576c1e10181ac157f20-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/418ccd3c919a5eb1c2e2d9ab07631ef46195023f-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/a316264b0c8f756e6d1c8348d4a57739500d9d16-2560x2560.jpg"
+    ],
+    "mpn": "FD-C-MES2C-02",
+    "ean13": null
+  },
+  {
+    "slug": "fractal-design-north-charcoal-tg",
+    "sourceUrl": "https://www.fractal-design.com/products/cases/north-series/north/north-charcoal-black-tg-light/",
+    "images": [
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/5d669dc4fc710d4772451a472d4ca409f490d62a-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/f101b4a13b9b234a8ea3921f12cdd7b7fa315622-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/7163c08b3c8e58a29b80bf884097f34f8c1d1701-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/d86a10c8c6f97519ff60d4ac8a0b9b9c2029efee-2560x2560.jpg"
+    ],
+    "mpn": "FD-C-NOR1C-02",
+    "ean13": null
+  },
+  {
+    "slug": "fractal-design-define-7-atx-mid-tower",
+    "sourceUrl": "https://www.fractal-design.com/products/cases/define-series/define-7/black/",
+    "images": [
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/f69ae55b81525106a3389a4bdd07df621caf013e-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/611eabe2006e4f200a070fe9fbd6a2caf63a2034-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/ffb1ec0cdacd16dec4ca4651ede3b60c950e3593-2560x2560.jpg",
+      "https://assets.fractal-design.com/images/uxzbxy2o/production/3bcee9752c21689b0dac0417a6c4d105f644c14d-2560x2560.jpg"
+    ],
+    "mpn": "FD-C-DEF7A-01",
+    "ean13": null
+  },
+  {
+    "slug": "seasonic-vertex-gx-1000-1000w-80-gold",
+    "sourceUrl": "https://seasonic.com/vertex-gx/",
+    "images": [
+      "https://seasonic.com/wp-content/uploads/2024/07/Vertex-PX-GX-750-850-1000-1200-fan-grill-1462x1080.webp",
+      "https://seasonic.com/wp-content/uploads/2024/07/Vertex-PX-GX-850-1000-1200-connector-plate-angled-1462x1080.webp",
+      "https://seasonic.com/wp-content/uploads/2024/07/Vertex-PX-GX-750-850-1000-1200-back-panel-angled-1462x1080.webp",
+      "https://seasonic.com/wp-content/uploads/2024/07/Vertex-GX-1000-PSU-Box-1462x1080.webp"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "gigabyte-gaming-oc-rx-7800-xt-16gb",
+    "sourceUrl": "https://www.gigabyte.com/fr/Graphics-Card/GV-R78XTGAMING-OC-16GD",
+    "images": [
+      "https://static.gigabyte.com/StaticFile/Image/Global/369cb90b3cf9ca4b7b00802e3a1ce7b8/ProductRemoveBg/36215"
+    ],
+    "mpn": "GV-R78XTGAMING OC-16GD",
+    "ean13": null
+  },
+  {
+    "slug": "asrock-challenger-rx-9070-16gb",
+    "sourceUrl": "https://www.asrock.com/Graphics-Card/AMD/Radeon%20RX%209070%20Challenger%2016GB/index.fr.asp",
+    "images": [
+      "https://www.asrock.com/Graphics-Card/photo/Radeon%20RX%209070%20Challenger%2016GB(L1).png",
+      "https://www.asrock.com/Graphics-Card/photo/Radeon%20RX%209070%20Challenger%2016GB(L2).png",
+      "https://www.asrock.com/Graphics-Card/photo/Radeon%20RX%209070%20Challenger%2016GB(L3).png"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "asus-tuf-gaming-rtx-5070-ti-oc-16gb",
+    "sourceUrl": "https://www.asus.com/fr/motherboards-components/graphics-cards/tuf-gaming/tuf-rtx5070ti-o16g-gaming/",
+    "images": [
+      "https://dlcdnwebimgs.asus.com/gain/a1ff0778-334d-4bc1-8862-7bfd44f2754b/",
+      "https://dlcdnwebimgs.asus.com/gain/2889b185-f693-4c09-87c6-7b1e638adf3a/",
+      "https://dlcdnwebimgs.asus.com/gain/1ea3b410-fbc6-4450-b0ad-efac7b9d0ca3/",
+      "https://dlcdnwebimgs.asus.com/gain/06ec6fac-a459-469c-99b0-3e2011cb746e/"
+    ],
+    "mpn": "TUF-RTX5070TI-O16G-GAMING",
+    "ean13": null
+  },
+  {
+    "slug": "seagate-barracuda-1tb-7200rpm",
+    "sourceUrl": "https://www.seagate.com/fr/fr/support/internal-hard-drives/desktop-hard-drives/barracuda-3-5/",
+    "images": [
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/hard-drives/barracuda-hard-drive/_shared/images/barracuda-3-5-1tb-hero-right-400x400.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/hard-drives/barracuda-hard-drive/_shared/images/barracuda-3-5-1tb-front-400x400.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/hard-drives/barracuda-hard-drive/_shared/images/barracuda-3-5-1tb-hero-left-400x400.png"
+    ],
+    "mpn": "ST1000DM010",
+    "ean13": null
+  },
+  {
+    "slug": "seagate-barracuda-2tb-7200rpm",
+    "sourceUrl": "https://www.seagate.com/fr/fr/support/internal-hard-drives/desktop-hard-drives/barracuda-3-5/",
+    "images": [
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/hard-drives/barracuda-hard-drive/_shared/images/barracuda-3-5-2tb-hero-right-400x400.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/hard-drives/barracuda-hard-drive/_shared/images/barracuda-3-5-2tb-front-400x400.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/hard-drives/barracuda-hard-drive/_shared/images/barracuda-3-5-2tb-hero-left-400x400.png"
+    ],
+    "mpn": "ST2000DM008",
+    "ean13": "8719706011280"
+  },
+  {
+    "slug": "seagate-barracuda-4tb-5400rpm",
+    "sourceUrl": "https://www.seagate.com/fr/fr/products/hard-drives/barracuda-hard-drive/",
+    "images": [
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/hard-drives/barracuda-hard-drive/_shared/images/barracuda-3-5-4tb-front-400x400.png",
+      "https://www.seagate.com/content/dam/seagate/migrated-assets/www-content/products/hard-drives/barracuda-hard-drive/_shared/images/barracuda-3-5-4tb-hero-left-400x400.png"
+    ],
+    "mpn": "ST4000DM004",
+    "ean13": null
+  },
+  {
+    "slug": "asus-dual-geforce-rtx-4060-oc-8gb",
+    "sourceUrl": "https://www.asus.com/fr/motherboards-components/graphics-cards/dual/dual-rtx4060-o8g/",
+    "images": [
+      "https://dlcdnwebimgs.asus.com/gain/d98545a5-7edd-41a7-9809-e6db13f51ded/",
+      "https://dlcdnwebimgs.asus.com/gain/8e8f4cdd-31db-43f4-9d98-ed926327c9cc/",
+      "https://dlcdnwebimgs.asus.com/gain/7b06b950-62e3-4de2-ae89-d62d157a3767/",
+      "https://dlcdnwebimgs.asus.com/gain/6c21ea1c-1d7c-4723-94e7-c164beb06eb4/"
+    ],
+    "mpn": "DUAL-RTX4060-O8G",
+    "ean13": null
+  },
+  {
+    "slug": "amd-radeon-rx-7700-xt-12gb",
+    "sourceUrl": "https://www.amd.com/fr/products/graphics/desktops/radeon/7000-series/amd-radeon-rx-7700-xt.html",
+    "images": [
+      "https://www.amd.com/content/dam/amd/en/images/products/graphics/2648997-amd-radeon-7700xt.jpg"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "msi-suprim-x-rtx-4080-super-16gb",
+    "sourceUrl": "https://www.msi.com/Graphics-Card/GeForce-RTX-4080-SUPER-16G-SUPRIM-X",
+    "images": [
+      "https://storage-asset.msi.com/global/picture/product/product_1704703437cd0bb1ce5104acf13cdad77245989172.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1704703437c0d7e4a9c6fcc6352c1a46ca5192db79.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_1704703426c619b0e4edec636e73c3e8ab00a027b4.webp",
+      "https://storage-asset.msi.com/global/picture/product/product_17047034267a86ff87fce880b1f1fe9e0db95b08be.webp"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "gigabyte-aorus-master-rtx-5090-32gb",
+    "sourceUrl": "https://www.gigabyte.com/fr/Graphics-Card/GV-N5090AORUS-M-32GD",
+    "images": [
+      "https://static.gigabyte.com/StaticFile/Image/Global/a67d9b9d9fe4c2d45c95946aec6375ee/ProductRemoveBg/43834"
+    ],
+    "mpn": "GV-N5090AORUS M-32GD",
+    "ean13": null
+  },
+  {
+    "slug": "nvidia-geforce-rtx-5080-16gb",
+    "sourceUrl": "https://www.nvidia.com/fr-fr/geforce/graphics-cards/50-series/rtx-5080/",
+    "images": [
+      "https://assets.nvidia.partners/images/png/RTX5080-3QTR-Back-Left.png"
+    ],
+    "mpn": null,
+    "ean13": null
+  },
+  {
+    "slug": "kingston-a400-960gb-sata",
+    "sourceUrl": "https://www.kingston.com/fr/ssd/a400-solid-state-drive?partnum=sa400s37%2F960g",
+    "images": [
+      "https://media.kingston.com/kingston/product/SA400S37_960GB-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/SA400S37_960GB_pkg-zm-lg.jpg"
+    ],
+    "mpn": "SA400S37/960G",
+    "ean13": null
+  },
+  {
+    "slug": "kingston-kc3000-2tb-nvme",
+    "sourceUrl": "https://www.kingston.com/fr/ssd/kc3000-nvme-m2-solid-state-drive?partnum=skc3000d%2F2048g",
+    "images": [
+      "https://media.kingston.com/kingston/product/ktc-product-ssd-kc3000-2048gb-1-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/ktc-product-ssd-kc3000-2048gb-2-zm-lg.jpg",
+      "https://media.kingston.com/kingston/product/ktc-product-ssd-kc3000-2048gb-3-zm-lg.jpg"
+    ],
+    "mpn": "SKC3000D/2048G",
+    "ean13": null
+  },
+  {
+    "slug": "cooler-master-mwe-gold-750-v2",
+    "sourceUrl": "https://www.coolermaster.com/fr-fr/products/mwe-gold-750-v2-full-modular.html",
+    "images": [
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw4bc86526/Assets/mwe-gold-750-v2-full-modular/large/mwe-gold-750-v2-full-modular-gallery-1.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dwa76c2f40/Assets/mwe-gold-750-v2-full-modular/large/mwe-gold-750-v2-full-modular-gallery-v3-2.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dw325be01e/Assets/mwe-gold-750-v2-full-modular/large/mwe-gold-750-v2-full-modular-gallery-v3-3.png",
+      "https://www.coolermaster.com/on/demandware.static/-/Sites-cooler-master-main/default/dwdeb4bfbb/Assets/mwe-gold-750-v2-full-modular/large/mwe-gold-750-v2-full-modular-gallery-4.png"
+    ],
+    "mpn": null,
+    "ean13": null
+  }
+]

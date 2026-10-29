@@ -1,7 +1,7 @@
 "use client"
 
 import React, {useCallback, useState} from 'react';
-import Image from 'next/image';
+import {CatalogImage} from '@/components/admin/catalog-image';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
@@ -78,7 +78,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({
       <CardContent className={type === 'gallery' ? 'p-2' : 'p-4'}>
         <div className="relative">
           <div className={`relative ${getDimensions()} ${getContainerClass()}`}>
-            <Image 
+            <CatalogImage 
               src={src} 
               alt={alt} 
               fill 

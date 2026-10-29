@@ -94,8 +94,10 @@ hardwarehouse-api/
 ├── services/                     # Service layer for API calls
 │   ├── discount.service.ts       # Discount service
 │   └── ...                      # Other services
-├── scripts/                      # Background scripts
-│   └── sync-discounts.ts        # Discount sync cron job
+├── scripts/                      # Background and one-off data scripts
+│   ├── sync-discounts.ts        # Discount sync cron job
+│   ├── curate-catalogue.mjs     # Keeps the 15 products per category of catalogue-selection.json active
+│   └── import-catalogue-images.ts # Official product images of catalogue-images.json (see deploy/README.md)
 ├── prisma/                      # Database schema and seeds
 ├── deploy/                      # VPS deployment script, its tests and runbook
 ├── ecosystem.config.js          # PM2 configuration of the production server (VPS)
