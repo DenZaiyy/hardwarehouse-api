@@ -187,6 +187,24 @@ PATCH  /api/v1/products/[slug]  # Update product
 DELETE /api/v1/products/[slug]  # Delete product
 ```
 
+### Attribute filters and batch read (PC configurator)
+
+`GET /api/v1/products` and `GET /api/v1/categories/[slug]/products` accept generic attribute filters, keyed by the
+stable attribute `code` (`prisma/attribute-codes.js`), never by its label, which the back-office can change:
+
+| Parameter | Keeps the products whose attribute… | Field |
+|---|---|---|
+| `attr[code]=v1,v2` | value is one of the list | `value` |
+| `attrHas[code]=v1,v2` | multi-value list contains every value | `values` |
+| `attrMin[code]=n` | number is at least `n` | `numericValue` |
+| `attrMax[code]=n` | number is at most `n` | `numericValue` |
+
+A malformed or unknown code answers **400**: a filter ignored in silence would list incompatible products as
+compatible. A product without the attribute is never kept.
+
+`GET /api/v1/products?ids=<id1>,<id2>&include=attributes` reads up to 20 products in one call, without pagination,
+with their stock and their attributes indexed by code (`{"socket": {"value": "AM5"}, "tdp": {"value": "120", "numericValue": 120}}`).
+
 ### Discounts API
 ```
 GET    /api/v1/discounts                    # List all discounts

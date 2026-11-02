@@ -290,3 +290,20 @@ bash deploy/tests/receive-release.test.sh
 
 Les tests déploient de vraies versions minimales (un serveur Node) avec un PM2 isolé dans un dossier temporaire :
 le PM2 de la machine n'est pas touché. Prérequis : `node`, `pm2`, `curl`.
+
+## Schéma du configurateur : codes d'attributs
+
+Le configurateur de la boutique filtre le catalogue par attribut (`attr[socket]=AM5`…). Son schéma ajoute
+`Attributes.code` (unique), le type `MULTI_SELECT`, et `numericValue` / `values` aux valeurs d'attributs. MongoDB n'a
+pas de migrations : l'ordre compte, car l'index unique des codes échouerait sur des attributs qui n'en ont pas encore.
+
+1. Sur ton poste, sur la branche du configurateur, générer le client : `npm run db:generate`.
+2. Poser les codes et les valeurs numériques, d'abord sans `--apply` pour relire la liste des codes :
+   ```bash
+   node --env-file=.env --env-file=.env.local scripts/add-attribute-codes.mjs
+   ```
+3. Créer l'index unique : `npx prisma db push`.
+4. Déployer l'API. Entre les étapes 3 et 4, l'API en service ignore les nouveaux champs.
+
+Le `.env` du dépôt vise aujourd'hui la base de production : les étapes 2 et 3 la modifient directement. Pendant ces
+quelques minutes, un `npm run dev` local lancé avec le nouveau client échoue sur les attributs sans code.

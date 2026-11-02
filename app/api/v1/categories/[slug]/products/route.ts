@@ -1,6 +1,8 @@
 import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
-import {buildMeta, buildProductWhere, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
+import {buildAttributeWhere, buildMeta, buildProductWhere, parseAttributeFilters, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
+import {handleApiError} from "@/lib/api/handle-api-error";
+import {assertKnownAttributes} from "@/lib/api/known-attributes";
 
 export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categories/[slug]/products'>) {
     try {
@@ -10,7 +12,10 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categorie
         const pagination = parsePagination(searchParams);
         const sort = parseSort(searchParams);
         const filters = parseFilters(searchParams);
-        const where = buildProductWhere(filters, { category: { slug } });
+        // Filtres d'attributs du configurateur (attr[socket]=AM5…) : un code inconnu ou mal formé répond 400
+        const attributeFilters = parseAttributeFilters(searchParams);
+        await assertKnownAttributes(attributeFilters);
+        const where = {...buildProductWhere(filters, { category: { slug } }), ...buildAttributeWhere(attributeFilters)};
 
         const [products, total] = await Promise.all([
             db.products.findMany({
@@ -86,7 +91,7 @@ export async function GET(req: NextRequest, ctx: RouteContext<'/api/v1/categorie
             meta: buildMeta(total, pagination)
         }, { status: 200 });
     } catch (error) {
-        console.error('[CATEGORY PRODUCTS]', error instanceof Error ? error.message : error);
-        return NextResponse.json({ error: 'Erreur interne' }, { status: 500 });
+        // handleApiError : 400 pour un filtre invalide, 500 générique pour le reste
+        return handleApiError("CATEGORY PRODUCTS", error);
     }
 }
