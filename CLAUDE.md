@@ -212,6 +212,7 @@ npm run cypress:open     # E2E testing
 4. **Admin authentication required** for all admin routes
 5. **French localization** used throughout the application
 6. **Server components by default** - use 'use client' only when necessary
+7. **The repository `.env` and `.env.local` target `next-api-dev`**, a copy of the production database `next-api` on the same cluster (separate since 4 November 2026). Production data scripts take the production `DATABASE_URL` from a file kept outside the repository (`--env-file=$HOME/.hardwarehouse/api-production.env`, see `deploy/README.md`). Print the target database name before any `db:reset`, `db:push --force-reset`, `db:seed` or `--apply`
 
 ## 🔒 Authentication & Authorization
 

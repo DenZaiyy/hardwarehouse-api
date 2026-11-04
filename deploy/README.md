@@ -258,9 +258,13 @@ permettre d'en lister le contenu.
 ### Catalogue resserré et images officielles
 
 Deux scripts ont préparé le catalogue en octobre 2026 : `scripts/curate-catalogue.mjs` désactive les produits absents de
-`scripts/catalogue-selection.json` (15 par catégorie, rien n'est supprimé), et `scripts/import-catalogue-images.ts`
+`scripts/catalogue-selection.json` (15 par catégorie, sans rien supprimer), et `scripts/import-catalogue-images.ts`
 installe les images officielles listées dans `scripts/catalogue-images.json`. Les images sont générées sur un poste
 (`public/images/products`), puis copiées sur le VPS. Tous deux simulent par défaut et n'écrivent qu'avec `--apply`.
+Le 30 octobre 2026, une opération ponctuelle a supprimé 126 des 136 produits désactivés, avec leur stock et leurs
+caractéristiques, après une sauvegarde JSON sur le poste qui l'a lancée. Il en reste un par catégorie, désactivé pour
+montrer la fonction, dont le seul qui a un mouvement de stock (la base refuse de supprimer un produit qui a un
+historique). Le catalogue compte 160 produits, dont 150 en vente.
 
 L'ordre compte : la boutique doit savoir afficher un chemin relatif (filtre `catalog_image`) avant que la base de
 production n'en contienne, et Nginx doit servir les fichiers avant que la base n'y renvoie.
@@ -272,7 +276,9 @@ production n'en contienne, et Nginx doit servir les fichiers avant que la base n
    rsync -av public/images/products/ hwh@<IP>:hardwarehouse-api/shared/images/products/
    ```
 4. Toujours depuis ton poste, avec la base de production dans un fichier hors du dépôt (`chmod 600`), pour qu'aucun
-   commit ne puisse l'emporter. Il ne contient que `DATABASE_URL`. Chaque commande se lance d'abord sans `--apply` :
+   commit ne puisse l'emporter. Il ne contient que `DATABASE_URL`. Le `.env` du dépôt vise la base de développement
+   (`next-api-dev`, une copie de la production depuis le 4 novembre 2026). Chaque commande se lance d'abord sans
+   `--apply` :
    ```bash
    node --env-file=$HOME/.hardwarehouse/api-production.env scripts/curate-catalogue.mjs
    ```
