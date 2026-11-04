@@ -2,10 +2,13 @@ import {NextRequest, NextResponse} from "next/server";
 import {db} from "@/lib/db";
 import {slugifyName} from "@/lib/utils";
 import {clientIp, rateLimiter} from "@/lib/rate-limit";
-import {buildMeta, buildProductWhere, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
+import {buildAttributeWhere, buildMeta, buildProductWhere, parseAttributeFilters, parseFilters, parsePagination, parseSort} from "@/lib/api/filters";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {ConflictError, NotFoundError} from "@/lib/api/errors";
 import {isInternalRequest} from "@/lib/api/internal-request";
+import {assertKnownAttributes} from "@/lib/api/known-attributes";
+import {attributeValueRows} from "@/lib/api/attribute-values";
+import {indexAttributes, parseProductIds, productSpecSelect} from "@/lib/api/product-specs";
 import {productCreateSchema} from "@/lib/validators/productSchema";
 import {requireStaff} from "@/lib/auth/require-role";
 
@@ -14,9 +17,24 @@ export async function GET(req: NextRequest) {
         const { searchParams } = req.nextUrl;
         const isInternal = isInternalRequest(req);
 
+        // Lecture groupée (configurateur de la boutique) : 20 produits au plus, sans pagination, attributs sur demande
+        const ids = searchParams.get('ids');
+        if (ids !== null) {
+            const withAttributes = searchParams.get('include') === 'attributes';
+            const products = await db.products.findMany({where: {id: {in: parseProductIds(ids)}}, select: productSpecSelect});
+            const data = products.map(({productAttributeValues, ...product}) => ({
+                ...product,
+                ...(withAttributes && {attributes: indexAttributes(productAttributeValues)}),
+            }));
+
+            return NextResponse.json({data, total: data.length}, {status: 200});
+        }
+
         const sort = parseSort(searchParams);
         const filters = parseFilters(searchParams);
-        const where = buildProductWhere(filters);
+        const attributeFilters = parseAttributeFilters(searchParams);
+        await assertKnownAttributes(attributeFilters);
+        const where = {...buildProductWhere(filters), ...buildAttributeWhere(attributeFilters)};
         const pagination = isInternal ? null : parsePagination(searchParams);
 
         const select = {
@@ -137,15 +155,9 @@ export async function POST(req: NextRequest) {
                 }
             });
 
-            // Create attributes in same transaction
+            // Create attributes in same transaction, typées pour les filtres d'attributs du configurateur
             if (attributes && Object.keys(attributes).length > 0) {
-                const attributeValueData = Object.entries(attributes)
-                    .filter(([, value]) => value && String(value).trim() !== '')
-                    .map(([categoryAttributeId, value]) => ({
-                        productId: product.id,
-                        categoryAttributeId: categoryAttributeId,
-                        value: String(value)
-                    }));
+                const attributeValueData = await attributeValueRows(tx, product.id, attributes);
 
                 if (attributeValueData.length > 0) {
                     await tx.productAttributeValues.createMany({

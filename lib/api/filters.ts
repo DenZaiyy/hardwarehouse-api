@@ -1,5 +1,6 @@
 import {FilterParams, PaginationParams, SortParams} from "@/types/types";
 import {Prisma} from "@prisma/client";
+import {z} from "zod";
 
 // Une valeur qui n'est pas un nombre (?page=abc) retombe sur la valeur par défaut : NaN ferait échouer Prisma (500)
 function parseInteger(value: string | null, fallback: number): number {
@@ -119,6 +120,67 @@ export function buildProductWhere(filters: FilterParams, extraWhere: object = {}
             ]
         }),
         ...(filters.inStock && { stock: { quantity: { gt: 0 } } })
+    };
+}
+
+export type AttributeFilter =
+    | {kind: 'attr' | 'attrHas'; code: string; values: string[]}
+    | {kind: 'attrMin' | 'attrMax'; code: string; value: number};
+
+const ATTRIBUTE_PARAM = /^(attr|attrHas|attrMin|attrMax)\[(.*)]$/;
+// Même forme que les codes attribués par prisma/attribute-codes.js
+const attributeCodeSchema = z.string().regex(/^[a-z][a-z0-9_]*$/, "Code d'attribut invalide");
+const attributeValuesSchema = z.string()
+    .transform((value) => value.split(',').map((item) => item.trim()).filter(Boolean))
+    .pipe(z.array(z.string()).min(1, "Valeur de filtre requise"));
+const attributeBoundSchema = z.string().trim().min(1, "Borne requise").pipe(z.coerce.number({error: "La borne doit être un nombre"}));
+
+/**
+ * Filtres d'attributs génériques du catalogue, dont se sert le configurateur de la boutique :
+ * attr[code]=v1,v2 (valeur dans la liste), attrHas[code]=v (la liste du produit contient chaque valeur),
+ * attrMin[code]=n et attrMax[code]=n (bornes de la valeur numérique). Un code ou une valeur mal formés lèvent une
+ * ZodError (400 par handleApiError) : un filtre ignoré en silence ferait passer des produits incompatibles.
+ */
+export function parseAttributeFilters(searchParams: URLSearchParams): AttributeFilter[] {
+    const filters: AttributeFilter[] = [];
+
+    for (const [key, raw] of searchParams) {
+        const match = ATTRIBUTE_PARAM.exec(key);
+        if (!match) continue;
+
+        const kind = match[1] as AttributeFilter['kind'];
+        const code = attributeCodeSchema.parse(match[2]);
+        filters.push(kind === 'attr' || kind === 'attrHas'
+            ? {kind, code, values: attributeValuesSchema.parse(raw)}
+            : {kind, code, value: attributeBoundSchema.parse(raw)});
+    }
+
+    return filters;
+}
+
+function attributeValueWhere(filter: AttributeFilter): Prisma.ProductAttributeValuesWhereInput {
+    switch (filter.kind) {
+        case 'attr':
+            return {value: {in: filter.values}};
+        case 'attrHas':
+            return {values: {hasEvery: filter.values}};
+        case 'attrMin':
+            return {numericValue: {gte: filter.value}};
+        case 'attrMax':
+            return {numericValue: {lte: filter.value}};
+    }
+}
+
+/** Chaque filtre exige du produit une valeur de cet attribut qui le respecte : un produit sans l'attribut est exclu. */
+export function buildAttributeWhere(filters: AttributeFilter[]): Prisma.ProductsWhereInput {
+    if (filters.length === 0) return {};
+
+    return {
+        AND: filters.map((filter) => ({
+            productAttributeValues: {
+                some: {categoryAttribute: {attribute: {code: filter.code}}, ...attributeValueWhere(filter)},
+            },
+        })),
     };
 }
 
