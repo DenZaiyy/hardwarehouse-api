@@ -313,6 +313,17 @@ et l'API en service, avec l'ancien client Prisma, ne sait pas lire un attribut `
    node --env-file=<variables de la base visée> --import tsx scripts/add-configurator-attributes.ts
    ```
    puis la même commande avec `--apply`.
+6. Créer la catégorie Refroidissement et ses cinq ventirads be quiet! (`scripts/cooling-catalogue.json` : sockets,
+   puissance dissipable, prix et stock), en simulation puis avec `--apply`. Un produit déjà présent garde ses champs,
+   seules ses valeurs d'attributs sont réécrites :
+   ```bash
+   node --env-file=<variables de la base visée> --import tsx scripts/add-cooling-category.ts
+   ```
+   Leurs images suivent la section Images du catalogue : générées sur le poste par
+   `scripts/import-catalogue-images.ts --apply` avec les cinq slugs (`be-quiet-pure-rock-3-black`,
+   `be-quiet-pure-rock-pro-3`, `be-quiet-dark-rock-5`, `be-quiet-dark-rock-pro-5`, `be-quiet-dark-rock-elite`), copiées
+   par `rsync`, puis reportées en base de production avec `--db-only` et les mêmes slugs.
 
-Depuis le 4 novembre 2026, le `.env` local vise `next-api-dev`, une copie de la base de production : les étapes 2, 3
-et 5 y ont été répétées. Pour la production, elles se lancent avec les variables de production, gardées hors du dépôt.
+Depuis le 4 novembre 2026, le `.env` local vise `next-api-dev`, une copie de la base de production : les étapes 2, 3,
+5 et 6 y ont été répétées (images générées dans `public/images/products/` du worktree du configurateur). Pour la
+production, elles se lancent avec les variables de production, gardées hors du dépôt.
