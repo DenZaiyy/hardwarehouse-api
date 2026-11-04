@@ -13,7 +13,8 @@ export function parseProductIds(value: string): string[] {
     return productIdsSchema.parse(value);
 }
 
-// Champs de la lecture groupée : ceux d'une liste, la catégorie, le stock et les valeurs d'attributs
+// Champs de la lecture groupée : ceux d'une liste (dont la remise, que la boutique applique comme son panier), la
+// catégorie, le stock et les valeurs d'attributs
 export const productSpecSelect = {
     id: true,
     name: true,
@@ -21,6 +22,7 @@ export const productSpecSelect = {
     price: true,
     discountPrice: true,
     discountAmount: true,
+    promote: true,
     active: true,
     thumbnail: true,
     category: {select: {slug: true}},

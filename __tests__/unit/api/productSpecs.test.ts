@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {indexAttributes, parseProductIds} from "@/lib/api/product-specs";
+import {indexAttributes, parseProductIds, productSpecSelect} from "@/lib/api/product-specs";
 
 const id = (n: number) => n.toString(16).padStart(24, '0');
 
@@ -30,5 +30,11 @@ describe('indexAttributes', () => {
             tdp: {value: '120', numericValue: 120},
             form_factors_supported: {value: 'ATX, Micro-ATX', values: ['ATX', 'Micro-ATX']},
         });
+    });
+});
+
+describe('productSpecSelect', () => {
+    test("renvoie de quoi appliquer la remise comme le panier de la boutique", () => {
+        expect(productSpecSelect).toMatchObject({price: true, discountPrice: true, discountAmount: true, promote: true});
     });
 });
