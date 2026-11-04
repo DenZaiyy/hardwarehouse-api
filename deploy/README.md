@@ -258,9 +258,13 @@ permettre d'en lister le contenu.
 ### Catalogue resserré et images officielles
 
 Deux scripts ont préparé le catalogue en octobre 2026 : `scripts/curate-catalogue.mjs` désactive les produits absents de
-`scripts/catalogue-selection.json` (15 par catégorie, rien n'est supprimé), et `scripts/import-catalogue-images.ts`
+`scripts/catalogue-selection.json` (15 par catégorie, sans rien supprimer), et `scripts/import-catalogue-images.ts`
 installe les images officielles listées dans `scripts/catalogue-images.json`. Les images sont générées sur un poste
 (`public/images/products`), puis copiées sur le VPS. Tous deux simulent par défaut et n'écrivent qu'avec `--apply`.
+Le 30 octobre 2026, une opération ponctuelle a supprimé 126 des 136 produits désactivés, avec leur stock et leurs
+caractéristiques, après une sauvegarde JSON sur le poste qui l'a lancée. Il en reste un par catégorie, désactivé pour
+montrer la fonction, dont le seul qui a un mouvement de stock (la base refuse de supprimer un produit qui a un
+historique). Le catalogue compte 160 produits, dont 150 en vente.
 
 L'ordre compte : la boutique doit savoir afficher un chemin relatif (filtre `catalog_image`) avant que la base de
 production n'en contienne, et Nginx doit servir les fichiers avant que la base n'y renvoie.
@@ -272,7 +276,9 @@ production n'en contienne, et Nginx doit servir les fichiers avant que la base n
    rsync -av public/images/products/ hwh@<IP>:hardwarehouse-api/shared/images/products/
    ```
 4. Toujours depuis ton poste, avec la base de production dans un fichier hors du dépôt (`chmod 600`), pour qu'aucun
-   commit ne puisse l'emporter. Il ne contient que `DATABASE_URL`. Chaque commande se lance d'abord sans `--apply` :
+   commit ne puisse l'emporter. Il ne contient que `DATABASE_URL`. Le `.env` du dépôt vise la base de développement
+   (`next-api-dev`, une copie de la production depuis le 4 novembre 2026). Chaque commande se lance d'abord sans
+   `--apply` :
    ```bash
    node --env-file=$HOME/.hardwarehouse/api-production.env scripts/curate-catalogue.mjs
    ```
@@ -290,3 +296,40 @@ bash deploy/tests/receive-release.test.sh
 
 Les tests déploient de vraies versions minimales (un serveur Node) avec un PM2 isolé dans un dossier temporaire :
 le PM2 de la machine n'est pas touché. Prérequis : `node`, `pm2`, `curl`.
+
+## Schéma et attributs du configurateur
+
+Le configurateur de la boutique filtre le catalogue par attribut (`attr[socket]=AM5`…). Son schéma ajoute
+`Attributes.code` (unique), le type `MULTI_SELECT`, et `numericValue` / `values` aux valeurs d'attributs. MongoDB n'a
+pas de migrations : l'ordre compte, car l'index unique des codes échouerait sur des attributs qui n'en ont pas encore,
+et l'API en service, avec l'ancien client Prisma, ne sait pas lire un attribut `MULTI_SELECT`.
+
+1. Sur ton poste, sur la branche du configurateur, générer le client : `npm run db:generate`.
+2. Poser les codes et les valeurs numériques, d'abord sans `--apply` pour relire la liste des codes :
+   ```bash
+   node --env-file=<variables de la base visée> scripts/add-attribute-codes.mjs
+   ```
+3. Créer l'index unique : `npx prisma db push`.
+4. Déployer l'API. Entre les étapes 3 et 4, l'API en service ignore les nouveaux champs.
+5. Seulement ensuite, ajouter les attributs qui manquaient aux règles (`ddr_type` des cartes mères, `ddr_supported`
+   et `cooler_included` des processeurs, `power_draw` des cartes graphiques, `form_factors_supported` des boîtiers).
+   Valeurs et sources sont dans `scripts/configurator-attributes.json`. Le script refuse d'écrire si un produit d'une
+   de ces catégories reste sans valeur, et peut être relancé sans risque :
+   ```bash
+   node --env-file=<variables de la base visée> --import tsx scripts/add-configurator-attributes.ts
+   ```
+   puis la même commande avec `--apply`.
+6. Créer la catégorie Refroidissement et ses cinq ventirads be quiet! (`scripts/cooling-catalogue.json` : sockets,
+   puissance dissipable, prix et stock), en simulation puis avec `--apply`. Un produit déjà présent garde ses champs,
+   seules ses valeurs d'attributs sont réécrites :
+   ```bash
+   node --env-file=<variables de la base visée> --import tsx scripts/add-cooling-category.ts
+   ```
+   Leurs images suivent la section Images du catalogue : générées sur le poste par
+   `scripts/import-catalogue-images.ts --apply` avec les cinq slugs (`be-quiet-pure-rock-3-black`,
+   `be-quiet-pure-rock-pro-3`, `be-quiet-dark-rock-5`, `be-quiet-dark-rock-pro-5`, `be-quiet-dark-rock-elite`), copiées
+   par `rsync`, puis reportées en base de production avec `--db-only` et les mêmes slugs.
+
+Depuis le 4 novembre 2026, le `.env` local vise `next-api-dev`, une copie de la base de production : les étapes 2, 3,
+5 et 6 y ont été répétées (images générées dans `public/images/products/` du worktree du configurateur). Pour la
+production, elles se lancent avec les variables de production, gardées hors du dépôt.

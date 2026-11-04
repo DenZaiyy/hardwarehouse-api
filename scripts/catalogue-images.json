@@ -1630,5 +1630,60 @@
     ],
     "mpn": null,
     "ean13": null
+  },
+  {
+    "slug": "be-quiet-pure-rock-3-black",
+    "sourceUrl": "https://www.bequiet.com/en/cpucooler/5591",
+    "images": [
+      "https://www.bequiet.com/volumes/pim/cooler/purerock/Pure%20Rock%203/Pure%20Rock%203%20Black/360/007.jpg",
+      "https://www.bequiet.com/volumes/pim/cooler/purerock/Pure%20Rock%203/Pure%20Rock%203%20Black/360/001.jpg",
+      "https://www.bequiet.com/volumes/pim/cooler/purerock/Pure%20Rock%203/Pure%20Rock%203%20Black/360/013.jpg"
+    ],
+    "mpn": "BK039",
+    "ean13": "4260052192481"
+  },
+  {
+    "slug": "be-quiet-pure-rock-pro-3",
+    "sourceUrl": "https://www.bequiet.com/en/cpucooler/5599",
+    "images": [
+      "https://www.bequiet.com/volumes/pim/cooler/purerock/Pure%20Rock%20Pro%203/Pure%20Rock%20Pro%203%20Silver/360/007.jpg",
+      "https://www.bequiet.com/volumes/pim/cooler/purerock/Pure%20Rock%20Pro%203/Pure%20Rock%20Pro%203%20Silver/360/001.jpg",
+      "https://www.bequiet.com/volumes/pim/cooler/purerock/Pure%20Rock%20Pro%203/Pure%20Rock%20Pro%203%20Silver/360/013.jpg"
+    ],
+    "mpn": "BK041",
+    "ean13": "4260052192504"
+  },
+  {
+    "slug": "be-quiet-dark-rock-5",
+    "sourceUrl": "https://www.bequiet.com/en/cpucooler/5110",
+    "images": [
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=fc2f8a53406@be-quiet.net",
+      "https://www.bequiet.com/volumes/pim/cooler/darkrock/Dark%20Rock%205/XR/001.jpg",
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=0b7b6a53405@be-quiet.net"
+    ],
+    "mpn": "BK035",
+    "ean13": "4260052190739"
+  },
+  {
+    "slug": "be-quiet-dark-rock-pro-5",
+    "sourceUrl": "https://www.bequiet.com/en/cpucooler/4466",
+    "images": [
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=7df73a49628@be-quiet.net",
+      "https://www.bequiet.com/volumes/pim/cooler/darkrock/Dark%20Rock%20Pro%205/xr/001.jpg",
+      "https://bert.bequiet.com/admin/ImageServer.php?omitPreview=true&ID=78e5ca49627@be-quiet.net"
+    ],
+    "mpn": "BK036",
+    "ean13": "4260052190746"
+  },
+  {
+    "slug": "be-quiet-dark-rock-elite",
+    "sourceUrl": "https://www.bequiet.com/en/cpucooler/4468",
+    "images": [
+      "https://www.bequiet.com/volumes/pim/cooler/darkrock/Dark%20Rock%20Elite/xr/007.jpg",
+      "https://www.bequiet.com/volumes/pim/cooler/darkrock/Dark%20Rock%20Elite/xr/001.jpg",
+      "https://www.bequiet.com/volumes/pim/cooler/darkrock/Dark%20Rock%20Elite/xr/013.jpg"
+    ],
+    "mpn": "BK037",
+    "ean13": "4260052190753"
   }
 ]

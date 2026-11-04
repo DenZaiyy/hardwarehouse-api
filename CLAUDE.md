@@ -43,7 +43,8 @@ services/              # Business logic services (one per entity)
 hooks/                 # React hooks
 types/                 # Shared types (incl. Clerk session claims)
 scripts/               # sync-discounts.ts (not scheduled in production: it re-enables discounts disabled by hand),
-                       # curate-catalogue.mjs and import-catalogue-images.ts (one-off catalogue data, dry run unless --apply)
+                       # curate-catalogue.mjs, import-catalogue-images.ts, add-attribute-codes.mjs,
+                       # add-configurator-attributes.ts and add-cooling-category.ts (one-off data, dry run unless --apply)
 deploy/                # VPS release script, its tests and the deployment runbook
 prisma/
 ├── schema.prisma      # generator + datasource only
@@ -75,6 +76,7 @@ API routes follow these conventions:
 - **Error handling** via `handleApiError()` — maps `ZodError` to 400, `ApiError` subclasses to their own status, anything else to a generic 500
 - **Rate limiting** in memory (`lib/rate-limit.ts`: sliding window, 10 requests/minute per client IP) — applied **per route, opt-in**, currently on 14 admin handlers (writes, image uploads, stats, transactions, category attributes); the public catalogue reads are not limited. It is not global middleware: a new route gets no rate limiting unless it calls `rateLimiter.limit(clientIp(req))` explicitly. `clientIp()` reads `X-Real-IP`, which Nginx sets from `CF-Connecting-IP`; never key on `X-Forwarded-For`, whose start the client chooses. The counters live in the process, so PM2 must run a single instance.
 - **Pagination** via `parsePagination()` (default 25, max 50) + `buildMeta()`
+- **Attribute filters** for the storefront's PC configurator: `attr[code]`, `attrHas[code]`, `attrMin[code]`, `attrMax[code]` on the two product list routes (`parseAttributeFilters` / `buildAttributeWhere` in `lib/api/filters.ts`), keyed by `Attributes.code` (given by `prisma/attribute-codes.js`, never the label). An unknown code answers 400 (`assertKnownAttributes`). `GET /products?ids=…&include=attributes` is the configurator's batch read (20 ids max, `lib/api/product-specs.ts`)
 - **Internal calls**: `products`, `brands` and `discounts` collection routes skip pagination when `isInternalRequest(req)` recognises `x-internal-request: <INTERNAL_API_SECRET>` (`lib/api/internal-request.ts`). Only the back-office services send it, through `internalRequestHeaders()`, which throws when the secret is missing instead of letting the lists stop at 25. The Symfony storefront never sends it and stays paginated like any client.
 
 ## 🎨 Code Style Guidelines
@@ -212,6 +214,7 @@ npm run cypress:open     # E2E testing
 4. **Admin authentication required** for all admin routes
 5. **French localization** used throughout the application
 6. **Server components by default** - use 'use client' only when necessary
+7. **The repository `.env` and `.env.local` target `next-api-dev`**, a copy of the production database `next-api` on the same cluster (separate since 4 November 2026). Production data scripts take the production `DATABASE_URL` from a file kept outside the repository (`--env-file=$HOME/.hardwarehouse/api-production.env`, see `deploy/README.md`). Print the target database name before any `db:reset`, `db:push --force-reset`, `db:seed` or `--apply`
 
 ## 🔒 Authentication & Authorization
 

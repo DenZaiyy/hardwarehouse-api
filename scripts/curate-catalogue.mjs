@@ -1,6 +1,7 @@
 // Catalogue resserré à 15 produits par catégorie (choix validé par Kevin le 29 octobre 2026, scripts/catalogue-selection.json).
-// Les autres produits sont désactivés, jamais supprimés : l'historique (commandes, mouvements) reste intact et la
-// sélection se rejoue ou s'annule (--reset réactive tout). Simulation par défaut, --apply pour écrire.
+// Les autres produits sont désactivés par ce script, jamais supprimés : l'historique (commandes, mouvements) reste
+// intact et la sélection se rejoue ou s'annule (--reset réactive tout). Le 30 octobre, ces produits désactivés ont été
+// supprimés, sauf un par catégorie : --reset ne réactive plus que ces dix-là. Simulation par défaut, --apply pour écrire.
 // Usage : node --env-file=.env --env-file=.env.local scripts/curate-catalogue.mjs [--apply] [--reset]
 import {readFileSync} from "node:fs";
 import {PrismaClient} from "@prisma/client";

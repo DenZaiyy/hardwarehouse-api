@@ -5,6 +5,7 @@ import {clientIp, rateLimiter} from "@/lib/rate-limit";
 import {requireStaff} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {NotFoundError} from "@/lib/api/errors";
+import {attributeValueRows} from "@/lib/api/attribute-values";
 import {productPatchSchema} from "@/lib/validators/productSchema";
 
 interface UpdateProductData {
@@ -201,13 +202,8 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
                     where: { productId }
                 });
 
-                const attributeValueData = Object.entries(attributes)
-                    .filter(([, value]) => value && String(value).trim() !== '')
-                    .map(([categoryAttributeId, value]) => ({
-                        productId,
-                        categoryAttributeId: categoryAttributeId,
-                        value: String(value)
-                    }));
+                // Valeurs typées pour les filtres d'attributs du configurateur (numericValue, values)
+                const attributeValueData = await attributeValueRows(tx, productId, attributes);
 
                 if (attributeValueData.length > 0) {
                     await tx.productAttributeValues.createMany({

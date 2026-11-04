@@ -2,6 +2,8 @@
 const { PrismaClient } = require('@prisma/client');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const slugify = require('slugify');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { attributeCode } = require('./attribute-codes');
 
 const prisma = new PrismaClient();
 
@@ -872,6 +874,7 @@ async function main() {
             if (!attribute) {
                 attribute = await prisma.attributes.create({
                     data: {
+                        code: attributeCode(attributeData.name, category.slug),
                         name: attributeData.name,
                         type: attributeData.type,
                     },
@@ -998,11 +1001,14 @@ async function main() {
                 continue;
             }
 
+            // numericValue pour comparer des nombres, values pour un attribut à choix multiples (configurateur)
             await prisma.productAttributeValues.create({
                 data: {
                     productId: product.id,
                     categoryAttributeId: categoryAttribute.id,
-                    value: String(value),
+                    value: Array.isArray(value) ? value.join(', ') : String(value),
+                    ...(Array.isArray(value) && { values: value.map(String) }),
+                    ...(attribute.type === 'NUMBER' && Number.isFinite(Number(value)) && { numericValue: Number(value) }),
                 },
             });
 
