@@ -1,5 +1,8 @@
 model Attributes {
   id                 String               @id @default(auto()) @map("_id") @db.ObjectId
+  // Identifiant stable (« socket », « ddr_type »…) : les règles du configurateur et les filtres attr[code] de l'API
+  // s'y réfèrent, jamais au libellé, modifiable. Attribué par prisma/attribute-codes.js.
+  code               String               @unique
   name               String
   type               AttributeType        @default(TEXT) // Type de valeur attendue
   categoryAttributes CategoryAttributes[]
@@ -12,6 +15,7 @@ enum AttributeType {
   NUMBER
   BOOLEAN
   SELECT
+  MULTI_SELECT // Plusieurs valeurs par produit : formats acceptés par un boîtier, sockets d'un refroidissement…
 }
 
 // Table associative : quels attributs sont disponibles pour quelle catégorie
@@ -40,6 +44,10 @@ model ProductAttributeValues {
   categoryAttributeId String             @db.ObjectId
   categoryAttribute   CategoryAttributes @relation(fields: [categoryAttributeId], references: [id], onDelete: Cascade)
   value               String
+  // Renseigné pour un attribut NUMBER : MongoDB compare les chaînes « 650 » et « 1000 » dans l'ordre alphabétique
+  numericValue        Float?
+  // Renseigné pour un attribut MULTI_SELECT, value en garde la forme lisible
+  values              String[]           @default([])
 
   @@unique([productId, categoryAttributeId])
   @@index([productId])

@@ -1,0 +1,83 @@
+{
+  "_comment": "Catégorie Refroidissement du configurateur de la boutique (étape 3b), créée par scripts/add-cooling-category.ts. Caractéristiques lues le 4 novembre 2026 sur les fiches officielles be quiet! (source) : be quiet! publie la puissance dissipable de ses ventirads, que la règle cooler_capacity compare au TDP du processeur, mais pas celle de ses watercoolings, laissés de côté. Prix hors taxe et stock fixés par Kevin. Images : scripts/catalogue-images.json.",
+  "category": {"name": "Refroidissement", "slug": "refroidissement", "logo": "https://picsum.photos/300/300?random=111"},
+  "brand": "be-quiet",
+  "attributes": [
+    {"code": "sockets_supported", "name": "Sockets compatibles", "type": "MULTI_SELECT"},
+    {"code": "cooler_tdp_max", "name": "Puissance dissipable (W)", "type": "NUMBER"},
+    {"code": "hauteur_mm", "name": "Hauteur (mm)", "type": "NUMBER"},
+    {"code": "ventilateurs_inclus"}
+  ],
+  "products": [
+    {
+      "slug": "be-quiet-pure-rock-3-black",
+      "name": "Pure Rock 3 Black",
+      "sku": "COOL-BE-QUI-PURE-ROCK-3-BLACK",
+      "mpn": "BK039",
+      "ean13": "4260052192481",
+      "price": 37.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Ventirad be quiet! Pure Rock 3 Black pour processeur jusqu'à 190 W",
+      "description": "Le ventirad be quiet! Pure Rock 3 Black refroidit les processeurs jusqu'à 190 W de TDP. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851, il mesure 154 mm de haut et embarque un ventilateur PWM.",
+      "source": "https://www.bequiet.com/en/cpucooler/5591",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "cooler_tdp_max": 190, "hauteur_mm": 154, "ventilateurs_inclus": 1}
+    },
+    {
+      "slug": "be-quiet-pure-rock-pro-3",
+      "name": "Pure Rock Pro 3",
+      "sku": "COOL-BE-QUI-PURE-ROCK-PRO-3",
+      "mpn": "BK041",
+      "ean13": "4260052192504",
+      "price": 49.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Ventirad be quiet! Pure Rock Pro 3 pour processeur jusqu'à 250 W",
+      "description": "Le ventirad be quiet! Pure Rock Pro 3 refroidit les processeurs jusqu'à 250 W de TDP. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851, il mesure 155 mm de haut et embarque deux ventilateurs Pure Wings 3 de 120 mm.",
+      "source": "https://www.bequiet.com/en/cpucooler/5599",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "cooler_tdp_max": 250, "hauteur_mm": 155, "ventilateurs_inclus": 2}
+    },
+    {
+      "slug": "be-quiet-dark-rock-5",
+      "name": "Dark Rock 5",
+      "sku": "COOL-BE-QUI-DARK-ROCK-5",
+      "mpn": "BK035",
+      "ean13": "4260052190739",
+      "price": 66.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Ventirad be quiet! Dark Rock 5 pour processeur jusqu'à 210 W",
+      "description": "Le ventirad be quiet! Dark Rock 5 refroidit les processeurs jusqu'à 210 W de TDP. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851, il mesure 161 mm de haut et embarque un ventilateur PWM.",
+      "source": "https://www.bequiet.com/en/cpucooler/5110",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "cooler_tdp_max": 210, "hauteur_mm": 161, "ventilateurs_inclus": 1}
+    },
+    {
+      "slug": "be-quiet-dark-rock-pro-5",
+      "name": "Dark Rock Pro 5",
+      "sku": "COOL-BE-QUI-DARK-ROCK-PRO-5",
+      "mpn": "BK036",
+      "ean13": "4260052190746",
+      "price": 87.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Ventirad be quiet! Dark Rock Pro 5 pour processeur jusqu'à 270 W",
+      "description": "Le ventirad be quiet! Dark Rock Pro 5 refroidit les processeurs jusqu'à 270 W de TDP. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851, il mesure 168 mm de haut et embarque deux ventilateurs PWM.",
+      "source": "https://www.bequiet.com/en/cpucooler/4466",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "cooler_tdp_max": 270, "hauteur_mm": 168, "ventilateurs_inclus": 2}
+    },
+    {
+      "slug": "be-quiet-dark-rock-elite",
+      "name": "Dark Rock Elite",
+      "sku": "COOL-BE-QUI-DARK-ROCK-ELITE",
+      "mpn": "BK037",
+      "ean13": "4260052190753",
+      "price": 104.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Ventirad be quiet! Dark Rock Elite pour processeur jusqu'à 280 W",
+      "description": "Le ventirad be quiet! Dark Rock Elite refroidit les processeurs jusqu'à 280 W de TDP. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851, il mesure 168 mm de haut et embarque deux ventilateurs Silent Wings de 135 mm.",
+      "source": "https://www.bequiet.com/en/cpucooler/4468",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "cooler_tdp_max": 280, "hauteur_mm": 168, "ventilateurs_inclus": 2}
+    }
+  ]
+}
