@@ -43,8 +43,8 @@ services/              # Business logic services (one per entity)
 hooks/                 # React hooks
 types/                 # Shared types (incl. Clerk session claims)
 scripts/               # sync-discounts.ts (not scheduled in production: it re-enables discounts disabled by hand),
-                       # curate-catalogue.mjs, import-catalogue-images.ts and add-attribute-codes.mjs (one-off data,
-                       # dry run unless --apply)
+                       # curate-catalogue.mjs, import-catalogue-images.ts, add-attribute-codes.mjs and
+                       # add-configurator-attributes.ts (one-off data, dry run unless --apply)
 deploy/                # VPS release script, its tests and the deployment runbook
 prisma/
 ├── schema.prisma      # generator + datasource only
