@@ -3,13 +3,9 @@ import {db} from "@/lib/db";
 import {currentUser} from "@clerk/nextjs/server";
 import {requireStaff} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
-import {NotFoundError} from "@/lib/api/errors";
+import {BadRequestError, ConflictError, NotFoundError} from "@/lib/api/errors";
+import {changeStockQuantity} from "@/lib/stocks/stock-movements";
 import {stockPatchSchema} from "@/lib/validators/stockSchema";
-
-interface UpdateStockData {
-    quantity?: number;
-    productId?: string;
-}
 
 export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[id]'>) {
     const { response } = await requireStaff();
@@ -43,57 +39,40 @@ export async function GET(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[
     }
 }
 
-export async function PATCH(_req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[id]'>) {
+export async function PATCH(req: NextRequest, ctx: RouteContext<'/api/v1/stocks/[id]'>) {
     const { userId, response } = await requireStaff();
     if (response) return response;
 
     try {
         const { id } = await ctx.params;
-        const { quantity, productId } = stockPatchSchema.parse(await _req.json());
+        const { quantity, minQuantity, productId } = stockPatchSchema.parse(await req.json());
 
-        // Vérifier qu'au moins un champ est fourni
-        if (quantity === undefined && !productId) {
-            return new NextResponse("At least one field is required", { status: 400 });
+        if (quantity === undefined && minQuantity === undefined) {
+            throw new BadRequestError("Indiquez une quantité ou un seuil d'alerte.");
         }
 
-        const stock = await db.stocks.findUnique({
-            where: { id }
-        })
-
-        if (!stock) throw new NotFoundError("Stock");
-
-        // Construire l'objet de données dynamiquement
-        const updateData: UpdateStockData = {};
-        const quantityChanged = quantity !== undefined && quantity !== stock.quantity;
-        if (quantityChanged) updateData.quantity = quantity;
-        if (productId) updateData.productId = productId;
+        const user = await currentUser();
+        const author = { userId, userFullName: user?.fullName ?? "Undefined User" };
 
         const updatedStock = await db.$transaction(async (tx) => {
-            const updated = await tx.stocks.update({
-                where: { id },
-                data: updateData
-            });
+            // Lu dans la transaction : la quantité remplacée est celle que le mouvement enregistre (lib/stocks)
+            const stock = await tx.stocks.findUnique({ where: { id } });
+            if (!stock) throw new NotFoundError("Stock");
 
-            // La table Transactions est un historique dérivé : on ne la crée jamais
-            // manuellement, elle est générée automatiquement à chaque changement de quantité.
-            if (quantityChanged) {
-                const user = await currentUser();
-
-                await tx.transactions.create({
-                    data: {
-                        oldQtt: stock.quantity,
-                        newQtt: quantity,
-                        type: quantity > stock.quantity,
-                        userId,
-                        userFullName: user?.fullName ?? "Undefined User",
-                        product: {
-                            connect: { id: updateData.productId ?? stock.productId }
-                        }
-                    }
-                });
+            // Le formulaire renvoie le produit du stock : en changer fausserait l'historique des deux produits
+            if (productId !== undefined && productId !== stock.productId) {
+                throw new BadRequestError("Le produit d'un stock ne peut pas changer.");
             }
 
-            return updated;
+            if (quantity !== undefined) {
+                await changeStockQuantity(tx, stock, quantity, author);
+            }
+
+            if (minQuantity !== undefined && minQuantity !== stock.minQuantity) {
+                await tx.stocks.update({ where: { id }, data: { minQuantity } });
+            }
+
+            return tx.stocks.findUniqueOrThrow({ where: { id } });
         });
 
         return NextResponse.json(updatedStock, { status: 200 });
@@ -108,17 +87,20 @@ export async function DELETE(_req: NextRequest, ctx: RouteContext<'/api/v1/stock
 
     try {
         const { id } = await ctx.params;
-        const stock = await db.stocks.findUnique({
-            where: {
-                id
+
+        await db.$transaction(async (tx) => {
+            const stock = await tx.stocks.findUnique({ where: { id } });
+            if (!stock) throw new NotFoundError("Stock");
+
+            // Supprimer un stock non vide ferait disparaître des articles sans aucun mouvement : la quantité passe
+            // d'abord à 0 par une modification, qui laisse sa sortie dans l'historique
+            if (stock.quantity !== 0) {
+                throw new ConflictError(`Ce stock contient encore ${stock.quantity} article(s) : passez sa quantité à 0 avant de le supprimer.`);
             }
-        });
 
-        if (!stock) throw new NotFoundError("Stock");
-
-        await db.stocks.delete({
-            where: {
-                id
+            const { count } = await tx.stocks.deleteMany({ where: { id, quantity: 0 } });
+            if (count !== 1) {
+                throw new ConflictError("Le stock a été modifié entre-temps : rechargez la page, puis recommencez.");
             }
         });
 

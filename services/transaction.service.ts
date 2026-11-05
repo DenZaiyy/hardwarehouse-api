@@ -45,7 +45,9 @@ export async function getTransaction(id: string): Promise<TransactionsWithProduc
     return res.json();
 }
 
-export async function createTransaction(data: Partial<TransactionsWithProduct>): Promise<TransactionsWithProduct> {
+// Rend le message de l'API au lieu de lever une exception, dont le navigateur ne recevrait pas le message en
+// production : un mouvement refusé (stock modifié depuis l'ouverture du formulaire, stock insuffisant) s'explique
+export async function createTransaction(data: Partial<TransactionsWithProduct>): Promise<{ success: boolean; error?: string }> {
     const cookieHeader = await cookies();
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions`, {
@@ -58,9 +60,12 @@ export async function createTransaction(data: Partial<TransactionsWithProduct>):
         cache: "no-store"
     });
 
-    if (!res.ok) throw new Error("Failed to create transaction");
+    if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        return { success: false, error: errorData.error || "Échec de l'enregistrement du mouvement" };
+    }
 
-    return res.json();
+    return { success: true };
 }
 
 export async function deleteTransaction(id: string): Promise<void> {

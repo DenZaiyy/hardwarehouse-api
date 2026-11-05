@@ -95,7 +95,6 @@ hardwarehouse-api/
 │   ├── discount.service.ts       # Discount service
 │   └── ...                      # Other services
 ├── scripts/                      # Background and one-off data scripts
-│   ├── sync-discounts.ts        # Discount sync cron job
 │   ├── curate-catalogue.mjs     # Keeps the 15 products per category of catalogue-selection.json active
 │   └── import-catalogue-images.ts # Official product images of catalogue-images.json (see deploy/README.md)
 ├── prisma/                      # Database schema and seeds
@@ -365,29 +364,22 @@ See [`cypress/README.md`](cypress/README.md) for the account setup, the sign-in 
 
 ## 🔄 Background Processing
 
-### Discount Sync Service
-The application includes an automated background service that manages discount lifecycle:
+### Discount Sync
+The discounted price is copied onto each product (`discountPrice`, `discountAmount`, `promote`) and recomputed when
+a discount is created, changed or deleted. A period that starts or ends needs no action from anyone, so the API
+recomputes the affected products by itself:
 
-#### Running it
-The service is not part of the PM2 production configuration yet: as written, it would turn a discount disabled
-by hand back on within a minute. It is being reworked before PM2 runs it alongside the API. Until then, run it
-manually (see below).
-
-#### What the Discount Sync Does
-- **Automatic Activation**: Activates discounts when their start date is reached
-- **Automatic Expiration**: Deactivates discounts when their end date passes
-- **Price Recalculation**: Updates product prices in real-time
-- **Error Handling**: Robust error handling with logging
-- **Performance**: Parallel processing for bulk operations
-
-#### Manual Sync (Development)
-```bash
-# Run sync script manually
-npx tsx scripts/sync-discounts.ts
-```
-
-#### Frequency
-- **Sync frequency**: Every 1 minute (`INTERVAL_MS` in the script)
+- **Where it runs**: inside the API process. `instrumentation.ts` starts it when the Next.js server starts
+  (Node.js runtime only, never during `next build`), so PM2 restarts it with the API and nothing else runs on the VPS
+- **When**: once at startup, which catches up with periods that started or ended while the API was down, then every
+  5 minutes, in line with the shop's 300 s cache. A run never overlaps the previous one, and an error is logged
+  without stopping the next runs
+- **What**: the products shown as promoted, whose discount may have ended, and those covered by an active discount in
+  progress, which may have started (`lib/discounts/sync-discounted-prices.ts`). A product already up to date is not
+  rewritten
+- **What it never does**: switch a discount on or off. `active` belongs to the back-office, and a period only frames
+  an active discount: a discount switched off by hand stays off, even during its period
+- **Logs**: `pm2 logs next-api` shows `[DISCOUNT SYNC] lancée` at startup, then a line only when prices changed
 
 ## 🐳 Production Deployment
 

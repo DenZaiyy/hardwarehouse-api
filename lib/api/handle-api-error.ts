@@ -1,8 +1,17 @@
 import {NextResponse} from "next/server";
+import {Prisma} from "@prisma/client";
 import {ZodError} from "zod";
 import {ApiError} from "./errors";
 
 export function handleApiError(prefix: string, error: unknown): NextResponse {
+    // Deux transactions MongoDB ont écrit le même document : Prisma a annulé celle-ci, rien n'a été écrit
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") {
+        return NextResponse.json(
+            { error: "Une autre modification était en cours : rechargez la page, puis recommencez.", code: "CONFLICT" },
+            { status: 409 }
+        );
+    }
+
     if (error instanceof ZodError) {
         return NextResponse.json(
             {
