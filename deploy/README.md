@@ -310,7 +310,9 @@ et l'API en service, avec l'ancien client Prisma, ne sait pas lire un attribut `
    node --env-file=<variables de la base visée> scripts/add-attribute-codes.mjs
    ```
 3. Créer l'index unique : `npx prisma db push`.
-4. Déployer l'API. Entre les étapes 3 et 4, l'API en service ignore les nouveaux champs.
+4. Déployer l'API, puis la boutique (`hardwarehouse-sf`, `DEPLOYMENT.md`). Entre les étapes 3 et 4, l'API en service
+   ignore les nouveaux champs. La boutique doit connaître le type `MULTI_SELECT` avant les étapes 5 et 6 : une version
+   antérieure ne sait plus lire la fiche d'un produit qui porte un attribut de ce type.
 5. Seulement ensuite, ajouter les attributs qui manquaient aux règles (`ddr_type` des cartes mères, `ddr_supported`
    et `cooler_included` des processeurs, `power_draw` des cartes graphiques, `form_factors_supported` des boîtiers).
    Valeurs et sources sont dans `scripts/configurator-attributes.json`. Le script refuse d'écrire si un produit d'une
