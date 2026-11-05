@@ -25,6 +25,7 @@ app/
 └── globals.css        # Global styles
 
 proxy.ts               # Clerk middleware (Next.js 16 renamed middleware.ts -> proxy.ts)
+instrumentation.ts     # register(): starts the discount sync inside the API process (Node.js runtime, never during a build)
 
 components/
 ├── admin/             # Admin-specific components
@@ -33,7 +34,9 @@ components/
 lib/
 ├── api/               # parseFilters / parsePagination / buildMeta, error classes, handleApiError, internal-request
 ├── auth/              # roles (employee, admin), requireStaff / requireAdmin, requireShop
-├── discounts/         # Discount computation and relation refresh
+├── discounts/         # Discount computation, relation refresh, and the sync of discounted prices every 5 minutes
+│                      # (a period only frames an active discount: the sync never touches `active`, set in the back-office)
+├── stocks/            # Stock writes: compare-and-set quantity + movement in the same transaction
 ├── validators/        # Zod schemas, one per entity
 ├── db.ts              # Prisma client singleton
 ├── rate-limit.ts      # In-memory rate limiter (rateLimiter) and its key (clientIp)
@@ -42,8 +45,7 @@ lib/
 services/              # Business logic services (one per entity)
 hooks/                 # React hooks
 types/                 # Shared types (incl. Clerk session claims)
-scripts/               # sync-discounts.ts (not scheduled in production: it re-enables discounts disabled by hand),
-                       # curate-catalogue.mjs, import-catalogue-images.ts, add-attribute-codes.mjs,
+scripts/               # curate-catalogue.mjs, import-catalogue-images.ts, add-attribute-codes.mjs,
                        # add-configurator-attributes.ts and add-cooling-category.ts (one-off data, dry run unless --apply)
 deploy/                # VPS release script, its tests and the deployment runbook
 prisma/
@@ -73,7 +75,8 @@ The system manages these core entities (Prisma models in `prisma/models/`):
 API routes follow these conventions:
 - **Authorization** via `requireStaff()` (roles `employee` and `admin`: catalogue, discounts, stocks, uploads, analytics) and `requireAdmin()` (plus users, stock movements, purchase orders) from `lib/auth/require-role.ts`. A signed-in account without a role gets 403. `__tests__/unit/auth/routeGuards.test.ts` holds the expected guard of every route handler: update it when adding a route.
 - **Validation** via Zod schemas in `lib/validators/`
-- **Error handling** via `handleApiError()` — maps `ZodError` to 400, `ApiError` subclasses to their own status, anything else to a generic 500
+- **Error handling** via `handleApiError()` — maps `ZodError` to 400, `ApiError` subclasses to their own status, a Prisma write conflict between two MongoDB transactions (`P2034`) to 409, anything else to a generic 500
+- **Stock writes** go through `lib/stocks/stock-movements.ts`, inside the route's `db.$transaction`: a quantity is only replaced if it still holds the value read in that transaction (otherwise 409), and every change records its movement in `Transactions` in the same transaction. A stock is deleted only when empty, and its product never changes. `POST /api/v1/stock-exits` (shop orders) follows the same rules with a decrement. Back-office write services return `{ success, error }` instead of throwing: a failed server action does not pass its message to the browser in production
 - **Rate limiting** in memory (`lib/rate-limit.ts`: sliding window, 10 requests/minute per client IP) — applied **per route, opt-in**, currently on 14 admin handlers (writes, image uploads, stats, transactions, category attributes); the public catalogue reads are not limited. It is not global middleware: a new route gets no rate limiting unless it calls `rateLimiter.limit(clientIp(req))` explicitly. `clientIp()` reads `X-Real-IP`, which Nginx sets from `CF-Connecting-IP`; never key on `X-Forwarded-For`, whose start the client chooses. The counters live in the process, so PM2 must run a single instance.
 - **Pagination** via `parsePagination()` (default 25, max 50) + `buildMeta()`
 - **Attribute filters** for the storefront's PC configurator: `attr[code]`, `attrHas[code]`, `attrMin[code]`, `attrMax[code]` on the two product list routes (`parseAttributeFilters` / `buildAttributeWhere` in `lib/api/filters.ts`), keyed by `Attributes.code` (given by `prisma/attribute-codes.js`, never the label). An unknown code answers 400 (`assertKnownAttributes`). `GET /products?ids=…&include=attributes` is the configurator's batch read (20 ids max, `lib/api/product-specs.ts`)
