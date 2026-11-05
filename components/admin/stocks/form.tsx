@@ -34,8 +34,8 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
         if (!stock) {
             const result = await createStock(values)
 
-            if (!result) {
-                toast.error("Une erreur est survenue lors de la création du stock.")
+            if (!result.success) {
+                toast.error(result.error ?? "Une erreur est survenue lors de la création du stock.")
                 return
             }
 
@@ -44,8 +44,8 @@ const StockForm = ({ stock, products, method }: StockFormProps) => {
         } else {
             const result = await updateStock(stock.id, values)
 
-            if (!result) {
-                toast.error("Une erreur est survenue lors de la mise à jour du stock.")
+            if (!result.success) {
+                toast.error(result.error ?? "Une erreur est survenue lors de la mise à jour du stock.")
                 return
             }
 

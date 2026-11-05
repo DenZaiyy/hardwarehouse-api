@@ -10,7 +10,14 @@ import {formatDate} from "@/lib/utils";
 import {deleteStock} from "@/services/stock.service";
 
 async function handleConfirm(stockId: string) {
-    await deleteStock(stockId)
+    const result = await deleteStock(stockId)
+
+    if (!result.success) {
+        // Par exemple un stock qui n'est pas vide : sa quantité passe d'abord à 0, ce qui laisse un mouvement
+        toast.error(result.error ?? "La suppression du stock a échoué.")
+        return
+    }
+
     toast.success("Stock supprimée avec succès")
     setTimeout(() => window.location.reload(), 1500)
 }

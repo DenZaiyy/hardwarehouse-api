@@ -55,8 +55,8 @@ const TransactionForm = ({ stocks, method }: TransactionFormProps) => {
         const payload = { ...values, finalQuantity }
         const result = await createTransaction(payload)
 
-        if (!result) {
-            toast.error("Une erreur est survenue lors de la création de la transaction.")
+        if (!result.success) {
+            toast.error(result.error ?? "Une erreur est survenue lors de la création de la transaction.")
             return
         }
 
