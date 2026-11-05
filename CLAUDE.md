@@ -25,6 +25,7 @@ app/
 └── globals.css        # Global styles
 
 proxy.ts               # Clerk middleware (Next.js 16 renamed middleware.ts -> proxy.ts)
+instrumentation.ts     # register(): starts the discount sync inside the API process (Node.js runtime, never during a build)
 
 components/
 ├── admin/             # Admin-specific components
@@ -33,7 +34,8 @@ components/
 lib/
 ├── api/               # parseFilters / parsePagination / buildMeta, error classes, handleApiError, internal-request
 ├── auth/              # roles (employee, admin), requireStaff / requireAdmin, requireShop
-├── discounts/         # Discount computation and relation refresh
+├── discounts/         # Discount computation, relation refresh, and the sync of discounted prices every 5 minutes
+│                      # (a period only frames an active discount: the sync never touches `active`, set in the back-office)
 ├── stocks/            # Stock writes: compare-and-set quantity + movement in the same transaction
 ├── validators/        # Zod schemas, one per entity
 ├── db.ts              # Prisma client singleton
@@ -43,8 +45,7 @@ lib/
 services/              # Business logic services (one per entity)
 hooks/                 # React hooks
 types/                 # Shared types (incl. Clerk session claims)
-scripts/               # sync-discounts.ts (not scheduled in production: it re-enables discounts disabled by hand),
-                       # curate-catalogue.mjs, import-catalogue-images.ts, add-attribute-codes.mjs,
+scripts/               # curate-catalogue.mjs, import-catalogue-images.ts, add-attribute-codes.mjs,
                        # add-configurator-attributes.ts and add-cooling-category.ts (one-off data, dry run unless --apply)
 deploy/                # VPS release script, its tests and the deployment runbook
 prisma/
