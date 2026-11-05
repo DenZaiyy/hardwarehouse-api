@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {stockSchema} from "@/lib/validators/stockSchema";
+import {stockPatchSchema, stockSchema} from "@/lib/validators/stockSchema";
 
 describe('stockSchema', () => {
     describe('Valid inputs', () => {
@@ -397,5 +397,27 @@ describe('stockSchema', () => {
 
             expect(result.success).toBe(true);
         });
+    });
+});
+
+// Le formulaire de modification envoie aussi le seuil d'alerte : il était ignoré, le changement jamais enregistré
+describe('stockPatchSchema', () => {
+    test("accepte le seuil d'alerte", () => {
+        const result = stockPatchSchema.safeParse({minQuantity: "3"});
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+            expect(result.data.minQuantity).toBe(3);
+        }
+    });
+
+    test("laisse chaque champ facultatif, la route exigeant au moins l'un d'eux", () => {
+        const result = stockPatchSchema.safeParse({});
+
+        expect(result.success).toBe(true);
+    });
+
+    test("refuse un seuil négatif", () => {
+        expect(stockPatchSchema.safeParse({minQuantity: -1}).success).toBe(false);
     });
 });

@@ -1,9 +1,11 @@
 import {NextRequest, NextResponse} from "next/server";
+import {currentUser} from "@clerk/nextjs/server";
 import {db} from "@/lib/db";
 import {clientIp, rateLimiter} from "@/lib/rate-limit";
 import {requireStaff} from "@/lib/auth/require-role";
 import {handleApiError} from "@/lib/api/handle-api-error";
 import {ConflictError, NotFoundError} from "@/lib/api/errors";
+import {recordStockMovement} from "@/lib/stocks/stock-movements";
 import {stockSchema} from "@/lib/validators/stockSchema";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -41,7 +43,7 @@ export async function GET(_req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-    const { response } = await requireStaff();
+    const { userId, response } = await requireStaff();
     if (response) return response;
 
     try {
@@ -53,6 +55,8 @@ export async function POST(req: NextRequest) {
         }
 
         const { minQuantity, quantity, productId } = stockSchema.parse(await req.json());
+        const user = await currentUser();
+        const author = { userId, userFullName: user?.fullName ?? "Undefined User" };
 
         const stock = await db.$transaction(async (tx) => {
             // Parallel validation queries
@@ -75,7 +79,11 @@ export async function POST(req: NextRequest) {
                 throw new ConflictError("Le produit est déjà en stock, veuillez mettre à jour les stocks.");
             }
 
-            // Create stock
+            // La quantité de départ est une entrée : elle laisse son mouvement, comme toute autre (lib/stocks)
+            if (quantity > 0) {
+                await recordStockMovement(tx, { productId, oldQuantity: 0, newQuantity: quantity }, author);
+            }
+
             return tx.stocks.create({
                 data: {
                     minQuantity: minQuantity,

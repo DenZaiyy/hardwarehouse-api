@@ -9,4 +9,5 @@ export const stockSchema = z.object({
 
 export type Stock = z.infer<typeof stockSchema>;
 
-export const stockPatchSchema = stockSchema.omit({ minQuantity: true }).partial();
+// Le produit d'un stock ne change pas : un productId différent de celui du stock est refusé par la route
+export const stockPatchSchema = stockSchema.partial();
