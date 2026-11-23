@@ -46,7 +46,9 @@ services/              # Business logic services (one per entity)
 hooks/                 # React hooks
 types/                 # Shared types (incl. Clerk session claims)
 scripts/               # curate-catalogue.mjs, import-catalogue-images.ts, add-attribute-codes.mjs,
-                       # add-configurator-attributes.ts and add-cooling-category.ts (one-off data, dry run unless --apply)
+                       # add-configurator-attributes.ts (attribute codes as arguments limit a run to them) and
+                       # add-cooling-category.ts (air coolers, or liquid coolers with scripts/watercooling-catalogue.json):
+                       # one-off data, dry run unless --apply
 deploy/                # VPS release script, its tests and the deployment runbook
 prisma/
 ├── schema.prisma      # generator + datasource only

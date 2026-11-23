@@ -1,6 +1,6 @@
 {
-  "_comment": "Catégorie Refroidissement du configurateur de la boutique (étape 3b), créée par scripts/add-cooling-category.ts. Caractéristiques lues le 4 novembre 2026 sur les fiches officielles be quiet! (source) : be quiet! publie la puissance dissipable de ses ventirads, que la règle cooler_capacity compare au TDP du processeur, mais pas celle de ses watercoolings, laissés de côté. Prix hors taxe et stock fixés par Kevin. Images : scripts/catalogue-images.json.",
-  "category": {"name": "Refroidissement", "slug": "refroidissement", "logo": "https://picsum.photos/300/300?random=111"},
+  "_comment": "Catégorie Ventirads du configurateur de la boutique (étape 3b, identifiant refroidissement, son nom à la création), créée par scripts/add-cooling-category.ts. Caractéristiques lues le 4 novembre 2026 sur les fiches officielles be quiet! (source) : be quiet! publie la puissance dissipable de ses ventirads, que la règle cooler_capacity compare au TDP du processeur, mais pas celle de ses watercoolings, qui ont leur catégorie et leurs règles (scripts/watercooling-catalogue.json). Prix hors taxe et stock fixés par Kevin. Images : scripts/catalogue-images.json.",
+  "category": {"name": "Ventirads", "slug": "refroidissement", "logo": "https://picsum.photos/300/300?random=111"},
   "brand": "be-quiet",
   "attributes": [
     {"code": "sockets_supported", "name": "Sockets compatibles", "type": "MULTI_SELECT"},

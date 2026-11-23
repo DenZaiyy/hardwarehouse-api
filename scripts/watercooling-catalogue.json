@@ -1,0 +1,96 @@
+{
+  "_comment": "Catégorie Watercooling du configurateur de la boutique, créée par scripts/add-cooling-category.ts scripts/watercooling-catalogue.json. Caractéristiques lues le 23 novembre 2026 sur les fiches officielles be quiet! (source). be quiet! ne publie pas la puissance dissipable de ses watercoolings : la boutique ne vérifie que le socket du processeur et la taille du radiateur, que le boîtier doit accepter (radiator_sizes_supported, scripts/configurator-attributes.json). Les fiches citent aussi des sockets HEDT (2066, 2011-3, TR4, TR5) qu'aucun processeur du catalogue n'utilise, laissés de côté. Prix hors taxe proposés, à valider par Kevin : prix public conseillé be quiet! divisé par 1,2, arrondi au x,99 supérieur. Stock de 15 et seuil de 5, comme les ventirads. Images : scripts/catalogue-images.json.",
+  "category": {"name": "Watercooling", "slug": "watercooling", "logo": "https://picsum.photos/300/300?random=112"},
+  "brand": "be-quiet",
+  "attributes": [
+    {"code": "sockets_supported"},
+    {"code": "radiator_size", "name": "Taille du radiateur (mm)", "type": "SELECT"},
+    {"code": "ventilateurs_inclus"}
+  ],
+  "products": [
+    {
+      "slug": "be-quiet-pure-loop-2-240mm",
+      "name": "Pure Loop 2 240mm",
+      "sku": "COOL-BE-QUI-PURE-LOOP-2-240MM",
+      "mpn": "BW017",
+      "ean13": "4260052190692",
+      "price": 87.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Watercooling be quiet! Pure Loop 2 avec radiateur de 240 mm",
+      "description": "Le watercooling tout-en-un be quiet! Pure Loop 2 240mm associe un radiateur de 240 mm, deux ventilateurs Pure Wings 3 de 120 mm et une pompe PWM doublement découplée, qui limite les vibrations. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851, il se recharge par un bouchon de remplissage accessible.",
+      "source": "https://www.bequiet.com/en/watercooler/4399",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "radiator_size": "240", "ventilateurs_inclus": 2}
+    },
+    {
+      "slug": "be-quiet-pure-loop-2-280mm",
+      "name": "Pure Loop 2 280mm",
+      "sku": "COOL-BE-QUI-PURE-LOOP-2-280MM",
+      "mpn": "BW018",
+      "ean13": "4260052190708",
+      "price": 95.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Watercooling be quiet! Pure Loop 2 avec radiateur de 280 mm",
+      "description": "Le watercooling tout-en-un be quiet! Pure Loop 2 280mm associe un radiateur de 280 mm, deux ventilateurs Pure Wings 3 de 140 mm et une pompe PWM doublement découplée, qui limite les vibrations. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851, il se recharge par un bouchon de remplissage accessible.",
+      "source": "https://www.bequiet.com/en/watercooler/4398",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "radiator_size": "280", "ventilateurs_inclus": 2}
+    },
+    {
+      "slug": "be-quiet-pure-loop-2-360mm",
+      "name": "Pure Loop 2 360mm",
+      "sku": "COOL-BE-QUI-PURE-LOOP-2-360MM",
+      "mpn": "BW019",
+      "ean13": "4260052190715",
+      "price": 108.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Watercooling be quiet! Pure Loop 2 avec radiateur de 360 mm",
+      "description": "Le watercooling tout-en-un be quiet! Pure Loop 2 360mm associe un radiateur de 360 mm, trois ventilateurs Pure Wings 3 de 120 mm et une pompe PWM doublement découplée, qui limite les vibrations. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851, il se recharge par un bouchon de remplissage accessible.",
+      "source": "https://www.bequiet.com/en/watercooler/4397",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "radiator_size": "360", "ventilateurs_inclus": 3}
+    },
+    {
+      "slug": "be-quiet-pure-loop-2-fx-360mm",
+      "name": "Pure Loop 2 FX 360mm",
+      "sku": "COOL-BE-QUI-PURE-LOOP-2-FX-360MM",
+      "mpn": "BW015",
+      "ean13": "4260052189047",
+      "price": 129.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Watercooling be quiet! Pure Loop 2 FX avec radiateur de 360 mm et éclairage ARGB",
+      "description": "Le watercooling tout-en-un be quiet! Pure Loop 2 FX 360mm associe un radiateur de 360 mm, trois ventilateurs Light Wings de 120 mm à éclairage ARGB et une pompe PWM doublement découplée. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851, il se recharge par un bouchon de remplissage accessible.",
+      "source": "https://www.bequiet.com/en/watercooler/3743",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "radiator_size": "360", "ventilateurs_inclus": 3}
+    },
+    {
+      "slug": "be-quiet-silent-loop-3-240mm",
+      "name": "Silent Loop 3 240mm",
+      "sku": "COOL-BE-QUI-SILENT-LOOP-3-240MM",
+      "mpn": "BW024",
+      "ean13": "4260052192535",
+      "price": 116.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Watercooling be quiet! Silent Loop 3 avec radiateur de 240 mm",
+      "description": "Le watercooling tout-en-un be quiet! Silent Loop 3 240mm associe un radiateur de 240 mm, deux ventilateurs de 120 mm et une pompe amortie à moteur six pôles, dont la conception à trois chambres réduit les turbulences et le bruit. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851.",
+      "source": "https://www.bequiet.com/en/watercooler/5399",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "radiator_size": "240", "ventilateurs_inclus": 2}
+    },
+    {
+      "slug": "be-quiet-silent-loop-3-360mm",
+      "name": "Silent Loop 3 360mm",
+      "sku": "COOL-BE-QUI-SILENT-LOOP-3-360MM",
+      "mpn": "BW025",
+      "ean13": "4260052192542",
+      "price": 137.99,
+      "stock": 15,
+      "minQuantity": 5,
+      "shortDescription": "Watercooling be quiet! Silent Loop 3 avec radiateur de 360 mm",
+      "description": "Le watercooling tout-en-un be quiet! Silent Loop 3 360mm associe un radiateur de 360 mm, trois ventilateurs de 120 mm et une pompe amortie à moteur six pôles, dont la conception à trois chambres réduit les turbulences et le bruit. Compatible avec les sockets AM4, AM5, LGA1700 et LGA1851.",
+      "source": "https://www.bequiet.com/en/watercooler/5398",
+      "attributes": {"sockets_supported": ["AM4", "AM5", "LGA1150", "LGA1151", "LGA1155", "LGA1200", "LGA1700", "LGA1851"], "radiator_size": "360", "ventilateurs_inclus": 3}
+    }
+  ]
+}
