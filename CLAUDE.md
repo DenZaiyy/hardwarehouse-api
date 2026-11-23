@@ -5,7 +5,7 @@ This file contains development patterns, code style guidelines, and functionalit
 ## 🏗️ Project Architecture
 
 ### Framework & Structure
-- **Next.js 16** with App Router architecture (16.4.3 installed, `^16.4.3` in `package.json`) — React 19.2.3
+- **Next.js 16** with App Router architecture (16.4.6 installed, `^16.4.6` in `package.json`) — React 19.2.3
 - **TypeScript** for type safety across all files
 - **MongoDB** with Prisma ORM 6.19 (default client, imported from `@prisma/client` through `lib/db.ts`)
 - **Clerk Authentication** for admin-only access
@@ -46,7 +46,9 @@ services/              # Business logic services (one per entity)
 hooks/                 # React hooks
 types/                 # Shared types (incl. Clerk session claims)
 scripts/               # curate-catalogue.mjs, import-catalogue-images.ts, add-attribute-codes.mjs,
-                       # add-configurator-attributes.ts and add-cooling-category.ts (one-off data, dry run unless --apply)
+                       # add-configurator-attributes.ts (attribute codes as arguments limit a run to them) and
+                       # add-cooling-category.ts (air coolers, or liquid coolers with scripts/watercooling-catalogue.json):
+                       # one-off data, dry run unless --apply
 deploy/                # VPS release script, its tests and the deployment runbook
 prisma/
 ├── schema.prisma      # generator + datasource only

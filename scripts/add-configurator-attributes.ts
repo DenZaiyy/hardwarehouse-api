@@ -4,9 +4,11 @@
 // Les attributs absents sont créés et liés à leur catégorie, puis chaque produit reçoit sa valeur (créée ou remplacée).
 // Rien n'est écrit si un produit du fichier est introuvable dans la catégorie de l'attribut, ou si un produit de la
 // catégorie, actif ou non, reste sans valeur : un attribut absent rendrait le produit incompatible dans le configurateur.
-// Simulation par défaut, --apply pour écrire.
+// Des codes d'attributs en argument limitent le passage à ces attributs : les autres valeurs du fichier ne sont pas
+// réécrites (en production, une valeur corrigée depuis le back-office reste intacte). Simulation par défaut, --apply
+// pour écrire.
 // Usage (client Prisma généré depuis le schéma du configurateur, depuis la racine du projet) :
-//   node --env-file=.env --import tsx scripts/add-configurator-attributes.ts [--apply]
+//   node --env-file=.env --import tsx scripts/add-configurator-attributes.ts [code…] [--apply]
 import {readFileSync} from "node:fs";
 import {AttributeType} from "@prisma/client";
 import {db} from "@/lib/db";
@@ -29,10 +31,15 @@ const data = JSON.parse(readFileSync("scripts/configurator-attributes.json", "ut
     attributes: AttributeSpec[];
     products: Record<string, ProductEntry>;
 };
+const codes = process.argv.slice(2).filter((argument) => !argument.startsWith("--"));
+const selected = codes.length ? data.attributes.filter((spec) => codes.includes(spec.code)) : data.attributes;
 
 async function prepare(problems: string[]): Promise<Plan[]> {
     const plans: Plan[] = [];
-    for (const spec of data.attributes) {
+    for (const code of codes.filter((candidate) => !data.attributes.some((spec) => spec.code === candidate))) {
+        problems.push(`${code} : absent de la liste des attributs du fichier`);
+    }
+    for (const spec of selected) {
         const category = await db.categories.findUnique({
             where: {slug: spec.category},
             select: {id: true, Products: {select: {id: true, slug: true}}},
@@ -77,7 +84,8 @@ async function prepare(problems: string[]): Promise<Plan[]> {
         for (const code of Object.keys(entry).filter((key) => !PROVENANCE_KEYS.has(key))) {
             const plan = plans.find((candidate) => candidate.spec.code === code);
             if (!plan) {
-                problems.push(`${slug} : ${code} n'est pas dans la liste des attributs`);
+                // Un attribut du fichier laissé hors de ce passage n'est pas une erreur
+                if (!data.attributes.some((spec) => spec.code === code)) problems.push(`${slug} : ${code} n'est pas dans la liste des attributs`);
             } else if (!plan.values.some((value) => value.slug === slug)) {
                 problems.push(`${slug} : introuvable dans ${plan.spec.category}`);
             }

@@ -1,10 +1,11 @@
-// Crée la catégorie Refroidissement du configurateur de la boutique et ses ventirads, d'après
-// scripts/cooling-catalogue.json : la catégorie, ses attributs (créés s'ils manquent, puis liés à la catégorie), les
-// produits avec leur stock, puis la valeur de chaque attribut. Un produit déjà présent garde ses champs (un prix ou un
-// stock modifié depuis le back-office n'est pas écrasé) : seules ses valeurs d'attributs sont réécrites. Les images
-// passent ensuite par scripts/import-catalogue-images.ts. Simulation par défaut, --apply pour écrire.
+// Crée une catégorie de refroidissement du configurateur de la boutique et ses produits, d'après un fichier de données :
+// scripts/cooling-catalogue.json (ventirads, par défaut) ou scripts/watercooling-catalogue.json. La catégorie (renommée si
+// son nom a changé dans le fichier), ses attributs (créés s'ils manquent, puis liés à la catégorie), les produits avec leur
+// stock, puis la valeur de chaque attribut. Un produit déjà présent garde ses champs (un prix ou un stock modifié depuis le
+// back-office n'est pas écrasé) : seules ses valeurs d'attributs sont réécrites. Les images passent ensuite par
+// scripts/import-catalogue-images.ts. Simulation par défaut, --apply pour écrire.
 // Usage (client Prisma généré depuis le schéma du configurateur, depuis la racine du projet) :
-//   node --env-file=.env --import tsx scripts/add-cooling-category.ts [--apply]
+//   node --env-file=.env --import tsx scripts/add-cooling-category.ts [scripts/watercooling-catalogue.json] [--apply]
 import {readFileSync} from "node:fs";
 import {AttributeType} from "@prisma/client";
 import {db} from "@/lib/db";
@@ -28,7 +29,8 @@ type ProductSpec = {
 type Attribute = {spec: AttributeSpec; type: AttributeType; id: string | null};
 
 const apply = process.argv.includes("--apply");
-const data = JSON.parse(readFileSync("scripts/cooling-catalogue.json", "utf8")) as {
+const file = process.argv.slice(2).find((argument) => !argument.startsWith("--")) ?? "scripts/cooling-catalogue.json";
+const data = JSON.parse(readFileSync(file, "utf8")) as {
     category: {name: string; slug: string; logo: string};
     brand: string;
     attributes: AttributeSpec[];
@@ -58,7 +60,7 @@ async function main(): Promise<number> {
 
     const brand = await db.brands.findUnique({where: {slug: data.brand}, select: {id: true}});
     if (!brand) problems.push(`marque ${data.brand} introuvable`);
-    const category = await db.categories.findUnique({where: {slug: data.category.slug}, select: {id: true}});
+    const category = await db.categories.findUnique({where: {slug: data.category.slug}, select: {id: true, name: true}});
 
     const attributes: Attribute[] = [];
     for (const spec of data.attributes) {
@@ -92,7 +94,8 @@ async function main(): Promise<number> {
         if (product.categoryId !== category?.id) problems.push(`${product.slug} existe déjà dans une autre catégorie`);
     }
 
-    console.log(`Catégorie ${data.category.slug} : ${category ? "existante" : "à créer"}`);
+    const renaming = category && category.name !== data.category.name ? `, renommée de ${category.name} en ${data.category.name}` : "";
+    console.log(`Catégorie ${data.category.slug} : ${category ? "existante" : "à créer"}${renaming}`);
     attributes.forEach((attribute) => console.log(`${attribute.spec.code} (${attribute.type}) : ${attribute.id ? "existant" : "à créer"}, lié à la catégorie`));
     console.log(`${data.products.length - existingProducts.length} produit(s) à créer, ${existingProducts.length} déjà présent(s)`);
 
@@ -108,6 +111,9 @@ async function main(): Promise<number> {
 
     const categoryId = category?.id
         ?? (await db.categories.create({data: {name: data.category.name, slug: data.category.slug, logo: data.category.logo}, select: {id: true}})).id;
+    if (category && category.name !== data.category.name) {
+        await db.categories.update({where: {id: category.id}, data: {name: data.category.name}});
+    }
 
     const links = new Map<string, {linkId: string; type: AttributeType}>();
     for (const attribute of attributes) {
