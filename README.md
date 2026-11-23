@@ -31,7 +31,7 @@ This application is **not a public store** - it's an internal management system 
 ## 🚀 Tech Stack
 
 ### Core Framework
-- **Next.js 16.4.3** - React framework with App Router for admin interface and API routes
+- **Next.js 16.4.6** - React framework with App Router for admin interface and API routes
 - **React 19.2.3** - UI library for admin dashboard
 - **TypeScript 5** - Type-safe development
 

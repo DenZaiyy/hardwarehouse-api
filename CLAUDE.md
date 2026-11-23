@@ -5,7 +5,7 @@ This file contains development patterns, code style guidelines, and functionalit
 ## 🏗️ Project Architecture
 
 ### Framework & Structure
-- **Next.js 16** with App Router architecture (16.4.3 installed, `^16.4.3` in `package.json`) — React 19.2.3
+- **Next.js 16** with App Router architecture (16.4.6 installed, `^16.4.6` in `package.json`) — React 19.2.3
 - **TypeScript** for type safety across all files
 - **MongoDB** with Prisma ORM 6.19 (default client, imported from `@prisma/client` through `lib/db.ts`)
 - **Clerk Authentication** for admin-only access
