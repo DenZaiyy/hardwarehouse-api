@@ -1685,5 +1685,71 @@
     ],
     "mpn": "BK037",
     "ean13": "4260052190753"
+  },
+  {
+    "slug": "be-quiet-pure-loop-2-240mm",
+    "sourceUrl": "https://www.bequiet.com/en/watercooler/4399",
+    "images": [
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202/3d/240mm/001.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202/3d/240mm/013.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202/3d/240mm/007.jpg"
+    ],
+    "mpn": "BW017",
+    "ean13": "4260052190692"
+  },
+  {
+    "slug": "be-quiet-pure-loop-2-280mm",
+    "sourceUrl": "https://www.bequiet.com/en/watercooler/4398",
+    "images": [
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202/3d/280mm/001.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202/3d/280mm/013.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202/3d/280mm/007.jpg"
+    ],
+    "mpn": "BW018",
+    "ean13": "4260052190708"
+  },
+  {
+    "slug": "be-quiet-pure-loop-2-360mm",
+    "sourceUrl": "https://www.bequiet.com/en/watercooler/4397",
+    "images": [
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202/3d/360mm/001.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202/3d/360mm/013.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202/3d/360mm/007.jpg"
+    ],
+    "mpn": "BW019",
+    "ean13": "4260052190715"
+  },
+  {
+    "slug": "be-quiet-pure-loop-2-fx-360mm",
+    "sourceUrl": "https://www.bequiet.com/en/watercooler/3743",
+    "images": [
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202%20FX/3d/360mm/001.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202%20FX/3d/360mm/013.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/pureloop/Pure%20Loop%202%20FX/3d/360mm/007.jpg"
+    ],
+    "mpn": "BW015",
+    "ean13": "4260052189047"
+  },
+  {
+    "slug": "be-quiet-silent-loop-3-240mm",
+    "sourceUrl": "https://www.bequiet.com/en/watercooler/5399",
+    "images": [
+      "https://www.bequiet.com/volumes/pim/watercooler/silentloop/SilentLoop3/XR/240/001.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/silentloop/SilentLoop3/XR/240/013.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/silentloop/SilentLoop3/XR/240/007.jpg"
+    ],
+    "mpn": "BW024",
+    "ean13": "4260052192535"
+  },
+  {
+    "slug": "be-quiet-silent-loop-3-360mm",
+    "sourceUrl": "https://www.bequiet.com/en/watercooler/5398",
+    "images": [
+      "https://www.bequiet.com/volumes/pim/watercooler/silentloop/SilentLoop3/XR/360/001.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/silentloop/SilentLoop3/XR/360/013.jpg",
+      "https://www.bequiet.com/volumes/pim/watercooler/silentloop/SilentLoop3/XR/360/007.jpg"
+    ],
+    "mpn": "BW025",
+    "ean13": "4260052192542"
   }
 ]

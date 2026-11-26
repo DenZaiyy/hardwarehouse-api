@@ -332,6 +332,26 @@ et l'API en service, avec l'ancien client Prisma, ne sait pas lire un attribut `
    `be-quiet-pure-rock-pro-3`, `be-quiet-dark-rock-5`, `be-quiet-dark-rock-pro-5`, `be-quiet-dark-rock-elite`), copiées
    par `rsync`, puis reportées en base de production avec `--db-only` et les mêmes slugs.
 
+7. Le refroidissement en deux familles (23 novembre 2026), avant la version de la boutique qui l'utilise : sa règle de
+   hauteur écarterait tous les ventirads d'un boîtier sans hauteur maximale, et l'API refuse (400) un filtre sur un
+   attribut inconnu. Chaque commande se lance en simulation, puis avec `--apply` :
+   - la hauteur maximale du ventirad et les radiateurs acceptés des 16 boîtiers, limités à ces deux attributs pour ne
+     pas réécrire les autres valeurs du fichier :
+     ```bash
+     node --env-file=<variables de la base visée> --import tsx scripts/add-configurator-attributes.ts cooler_height_max radiator_sizes_supported
+     ```
+   - le nom affiché de la catégorie des ventirads, Ventirads (son identifiant `refroidissement` ne change pas) :
+     ```bash
+     node --env-file=<variables de la base visée> --import tsx scripts/add-cooling-category.ts
+     ```
+   - la catégorie Watercooling et ses six watercoolings be quiet! (`scripts/watercooling-catalogue.json`) :
+     ```bash
+     node --env-file=<variables de la base visée> --import tsx scripts/add-cooling-category.ts scripts/watercooling-catalogue.json
+     ```
+   Leurs images suivent le même chemin qu'à l'étape 6, avec les six slugs `be-quiet-pure-loop-2-240mm`,
+   `be-quiet-pure-loop-2-280mm`, `be-quiet-pure-loop-2-360mm`, `be-quiet-pure-loop-2-fx-360mm`,
+   `be-quiet-silent-loop-3-240mm` et `be-quiet-silent-loop-3-360mm`.
+
 Depuis le 4 novembre 2026, le `.env` local vise `next-api-dev`, une copie de la base de production : les étapes 2, 3,
 5 et 6 y ont été répétées (images générées dans `public/images/products/` du worktree du configurateur). Pour la
 production, elles se lancent avec les variables de production, gardées hors du dépôt.
